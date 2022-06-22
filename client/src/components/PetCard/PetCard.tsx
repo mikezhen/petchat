@@ -26,9 +26,6 @@ function PetCard(props: PetProps) {
           Born { `${props.birthday.toLocaleString('default', { month: 'long' })} ${props.birthday.getFullYear()}` }
         </Typography>
         <Typography variant='subtitle2'>
-          { props.microchip ? 'Microchipped' : 'Not Microchipped' }
-        </Typography>
-        <Typography variant='subtitle2'>
           Veterinarian
           <Box sx={{ marginLeft: '2em' }}>
           { props.veterinarianAddress.name }
