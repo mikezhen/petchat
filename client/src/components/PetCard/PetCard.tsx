@@ -30,9 +30,9 @@ function PetCard(props: PetProps) {
           <Box sx={{ marginLeft: '2em' }}>
           { props.veterinarianAddress.name }
           <br />
-          { props.veterinarianAddress.streetAddress1 }
+          { `${props.veterinarianAddress.streetNumber} ${props.veterinarianAddress.route}` }
           <br />
-          { props.veterinarianAddress.addressLocality }, { props.veterinarianAddress.addressRegion } { props.veterinarianAddress.postalCode }
+          { props.veterinarianAddress.locality }, { props.veterinarianAddress.region } { props.veterinarianAddress.postalCode }
           </Box>
         </Typography>
         <Typography variant='body2'>
