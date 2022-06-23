@@ -91,6 +91,18 @@ function App() {
       >
         {
           images.map(({label, imageUrl}) => (
+            <>
+            <Box
+              sx={{
+                background:`linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3) ),  url(${imageUrl}) center no-repeat`,
+                backgroundSize: 'auto,cover',
+                filter: 'blur(5px)',
+                width: '100%',
+                height: 300,
+                position: 'absolute',
+                zIndex: -1
+              }}
+            />
             <Box
               component="img"
               sx={{
@@ -98,10 +110,12 @@ function App() {
                 display: 'block',
                 overflow: 'hidden',
                 margin: 'auto',
+                position: 'relative',
               }}
               alt={label}
               src={imageUrl}
             />
+            </>
           ))
         }
       </SwipeableViews>
