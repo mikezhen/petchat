@@ -83,8 +83,8 @@ function App() {
   }
 
   return (
-    <Container maxWidth="xs">
-      <SwipeableViews
+    <>
+    <SwipeableViews
         index={activeStep}
         onChangeIndex={handleStepChange}
         slideStyle={{ overflow: 'hidden' }}
@@ -128,6 +128,7 @@ function App() {
           </Button>
         }
       />
+    <Container maxWidth="xs">
       <Box sx={{ marginLeft: '10px', marginRight: '10px' }}>
         <Grid container spacing={2} justifyContent="space-between">
           <Grid item>
@@ -167,6 +168,7 @@ function App() {
         </Button>
       </Box> */}
       </Container>
+      </>
   );
 }
 
