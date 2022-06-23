@@ -1,9 +1,12 @@
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Container,
   Grid,
   MobileStepper,
+  Stack,
   Typography
 } from '@mui/material';
 import { 
@@ -47,6 +50,21 @@ function App() {
       imageUrl: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_2908.jpg?alt=media&token=f4a3b0f8-94f8-4736-a4dc-6468693ef0b0'
     }
   ];
+
+  const demographics = [
+    {
+      label: 'Age',
+      value: '11 months'
+    },
+    {
+      label: 'Color',
+      value: 'Black/Tan'
+    },
+    {
+      label: 'Weight',
+      value: '63 lbs'
+    }
+  ]
 
   const maxSteps: number = images.length;
 
@@ -128,6 +146,20 @@ function App() {
           </Grid>
         </Grid>
       </Box>
+      <Stack direction="row" spacing={2} mt={2}>
+        {
+          demographics.map(({ label, value }) => (
+            <Card variant="outlined" sx={{ textAlign: 'center', flex: 1, borderRadius: 6 }}>
+              <CardContent sx={{ paddingBottom: '16px' }}>
+                <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
+                  { label }
+                </Typography>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{ value }</Typography>
+              </CardContent>
+            </Card>
+          ))
+        }
+      </Stack>
       {/* <PetCard {...pet} /> */}
       {/* <Box sx={{ textAlign: 'center', marginY: '8px' }}>
         <Button variant='contained' startIcon={ <NotificationsIcon /> }>
