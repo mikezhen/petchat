@@ -10,11 +10,9 @@ import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
   Male as MaleIcon,
-  Notifications as NotificationsIcon
 } from '@mui/icons-material';
 import './App.css';
 import SwipeableViews from 'react-swipeable-views';
-import PetCard from './components/PetCard/PetCard';
 import Pet from './interfaces/Pet';
 import { useState } from 'react';
 
