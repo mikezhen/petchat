@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -64,7 +65,10 @@ function App() {
       label: 'Weight',
       value: '63 lbs'
     }
-  ]
+  ];
+
+  const avatarUrl = 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fowner-avatar.jpg?alt=media&token=4f4a90ba-fa80-4a9a-bb74-6f0858884811';
+  const description = 'Princeton is a super friendly goofball who will approach and say hello to everyone with his lick attack. He loves food and treats, but has a sensitive stomach so definitely should not overeat!';
 
   const maxSteps: number = images.length;
 
@@ -175,7 +179,12 @@ function App() {
           ))
         }
       </Stack>
-      {/* <PetCard {...pet} /> */}
+
+      <Stack direction="row" spacing={3} mt={4} mb={4} alignItems="center">
+        <Avatar alt="Owner" src={ avatarUrl } sx={{ width: 64, height: 64 }} />
+        <Typography variant="caption" color="text.secondary" paragraph>{ description }</Typography>
+      </Stack>
+      
       {/* <Box sx={{ textAlign: 'center', marginY: '8px' }}>
         <Button variant='contained' startIcon={ <NotificationsIcon /> }>
           Message Me
