@@ -180,7 +180,7 @@ function App() {
                 <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
                   { label }
                 </Typography>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{ value }</Typography>
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>{ value }</Typography>
               </CardContent>
             </Card>
           ))
@@ -204,7 +204,7 @@ function App() {
             />
             <Stack ml={2} mt={2} mb={2} justifyContent="flex-start">
               <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>Veterinarian</Typography>
-              <Typography variant="subtitle2">{ vetAddress.name }</Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>{ vetAddress.name }</Typography>
               <Typography variant="subtitle2">{ addressLine1 }</Typography>
               <Typography variant="subtitle2">{ addressLine2 }</Typography>
             </Stack>
