@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Card,
+  CardActionArea,
   CardContent,
   CardMedia,
   Container,
@@ -193,18 +194,22 @@ function App() {
       
       <Box mb={4}>
       <Card raised sx={{ display: 'flex' }}>
-        <CardMedia
-          component="img"
-          sx={{ width: 128 }}
-          src={staticMapUrl}
-          alt="Google map"
-        />
-        <Stack ml={2} mt={2} mb={2} justifyContent="flex-start">
-          <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>Veterinarian</Typography>
-          <Typography variant="subtitle2">{ vetAddress.name }</Typography>
-          <Typography variant="subtitle2">{ addressLine1 }</Typography>
-          <Typography variant="subtitle2">{ addressLine2 }</Typography>
-        </Stack>
+        <CardActionArea href="https://maps.apple.com/?daddr=2680+NW+Thurman+St,Portland,OR">
+          <Stack direction="row">
+            <CardMedia
+              component="img"
+              sx={{ width: 128 }}
+              src={staticMapUrl}
+              alt="Google map"
+            />
+            <Stack ml={2} mt={2} mb={2} justifyContent="flex-start">
+              <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>Veterinarian</Typography>
+              <Typography variant="subtitle2">{ vetAddress.name }</Typography>
+              <Typography variant="subtitle2">{ addressLine1 }</Typography>
+              <Typography variant="subtitle2">{ addressLine2 }</Typography>
+            </Stack>
+          </Stack>
+        </CardActionArea>
       </Card>
       </Box>
 
