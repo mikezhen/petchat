@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardMedia,
   Container,
   Grid,
   MobileStepper,
@@ -69,6 +70,11 @@ function App() {
 
   const avatarUrl = 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fowner-avatar.jpg?alt=media&token=4f4a90ba-fa80-4a9a-bb74-6f0858884811';
   const description = 'Princeton is a super friendly goofball who will approach and say hello to everyone with his lick attack. He loves food and treats, but has a sensitive stomach so definitely should not overeat!';
+
+  const staticMapUrl = 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fstaticmap.png?alt=media&token=9654cacb-e54c-441c-bc6e-fa9bab84bd2c';
+  const vetAddress = pet.veterinarianAddress;
+  const addressLine1 = `${vetAddress.streetNumber} ${vetAddress.route}`;
+  const addressLine2 = `${vetAddress.locality}, ${vetAddress.region} ${vetAddress.postalCode}`;
 
   const maxSteps: number = images.length;
 
@@ -185,7 +191,24 @@ function App() {
         <Typography variant="caption" color="text.secondary" paragraph>{ description }</Typography>
       </Stack>
       
-      {/* <Box sx={{ textAlign: 'center', marginY: '8px' }}>
+      <Box mb={4}>
+      <Card raised sx={{ display: 'flex' }}>
+        <CardMedia
+          component="img"
+          sx={{ width: 128 }}
+          src={staticMapUrl}
+          alt="Google map"
+        />
+        <Stack ml={2} mt={2} mb={2} justifyContent="flex-start">
+          <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>Veterinarian</Typography>
+          <Typography variant="subtitle2">{ vetAddress.name }</Typography>
+          <Typography variant="subtitle2">{ addressLine1 }</Typography>
+          <Typography variant="subtitle2">{ addressLine2 }</Typography>
+        </Stack>
+      </Card>
+      </Box>
+
+      {/* <Box mt={4} sx={{ textAlign: 'center' }}>
         <Button variant='contained' startIcon={ <NotificationsIcon /> }>
           Message Me
         </Button>
