@@ -10,6 +10,7 @@ interface Pet {
   birthday: Date;
   description: String;
   veterinarianAddress: Address;
+  lost: boolean;
 }
 
 export default Pet;

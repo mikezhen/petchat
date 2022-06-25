@@ -17,6 +17,7 @@ import {
   KeyboardArrowRight,
   Male as MaleIcon,
   Female as FemaleIcon,
+  Notifications as NotificationsIcon,
 } from '@mui/icons-material';
 import './App.css';
 import SwipeableViews from 'react-swipeable-views';
@@ -30,6 +31,7 @@ function App() {
   };
 
   const pet: Pet = {
+    lost: false,
     name: 'Princeton',
     breed: 'German Shepherd Mix',
     sex: 'Male',
@@ -161,7 +163,7 @@ function App() {
         }
       />
     <Container maxWidth="xs">
-      <Box sx={{ marginLeft: '10px', marginRight: '10px' }}>
+      <Box ml={2} mr={2}>
         <Grid container spacing={2} justifyContent="space-between">
           <Grid item>
             <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
@@ -191,12 +193,18 @@ function App() {
         }
       </Stack>
 
-      <Stack direction="row" spacing={3} mt={4} mb={4} alignItems="center">
+      <Stack direction="row" spacing={3} mt={4} alignItems="center">
         <Avatar alt="Owner" src={ avatarUrl } sx={{ width: 64, height: 64 }} />
         <Typography variant="caption" color="text.secondary" paragraph>{ description }</Typography>
       </Stack>
+
+      <Box mt={2} sx={{ textAlign: 'center' }}>
+        <Button variant='contained' color="info" startIcon={ <NotificationsIcon /> }>
+          Contact Owner
+        </Button>
+      </Box>
       
-      <Box mb={4}>
+      <Box mt={4} mb={4}>
       <Card raised sx={{ display: 'flex', borderRadius: 8 }}>
         <CardActionArea href="https://maps.apple.com/?q=Northwest+Neighborhood+Veterinary+Hospital">
           <Stack direction="row">
@@ -216,12 +224,6 @@ function App() {
         </CardActionArea>
       </Card>
       </Box>
-
-      {/* <Box mt={4} sx={{ textAlign: 'center' }}>
-        <Button variant='contained' startIcon={ <NotificationsIcon /> }>
-          Message Me
-        </Button>
-      </Box> */}
       </Container>
       </>
   );
