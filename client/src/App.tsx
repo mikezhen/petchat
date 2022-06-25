@@ -16,16 +16,23 @@ import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
   Male as MaleIcon,
+  Female as FemaleIcon,
 } from '@mui/icons-material';
 import './App.css';
 import SwipeableViews from 'react-swipeable-views';
-import Pet from './interfaces/Pet';
-import { useState } from 'react';
+import Pet, { Sex } from './interfaces/Pet';
+import React, { FC, ReactElement, useState } from 'react';
 
 function App() {
+  const genderIcons: Record<Sex, ReactElement> = {
+    'Female': <FemaleIcon color="error" sx={{ fontSize: 45 }} />,
+    'Male': <MaleIcon color="primary" sx={{ fontSize: 45 }} />,
+  };
+
   const pet: Pet = {
     name: 'Princeton',
     breed: 'German Shepherd Mix',
+    sex: 'Male',
     imageUrl: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_3530.jpg?alt=media&token=4b6f49e7-4189-4c8d-832b-bdd87a7621ad',
     birthday: new Date('2021-07-05T00:00:00'),
     description: 'Super friendly goofball who will say hello to everyone with his lick attack. Loves food and treats, but has sensitive stomach so he should not overeat!',
@@ -57,7 +64,7 @@ function App() {
   const demographics = [
     {
       label: 'Age',
-      value: '11 months'
+      value: '11 mos'
     },
     {
       label: 'Color',
@@ -165,10 +172,7 @@ function App() {
             </Typography>
           </Grid>
           <Grid item xs={2}>
-            <MaleIcon
-              color="primary"
-              sx={{ fontSize: 45 }}
-            />
+            { genderIcons[pet.sex] }
           </Grid>
         </Grid>
       </Box>
@@ -193,12 +197,12 @@ function App() {
       </Stack>
       
       <Box mb={4}>
-      <Card raised sx={{ display: 'flex' }}>
+      <Card raised sx={{ display: 'flex', borderRadius: 8 }}>
         <CardActionArea href="https://maps.apple.com/?daddr=2680+NW+Thurman+St,Portland,OR">
           <Stack direction="row">
             <CardMedia
               component="img"
-              sx={{ width: 128 }}
+              sx={{ width: 128, objectPosition: '0 100%' }}
               src={staticMapUrl}
               alt="Google map"
             />
