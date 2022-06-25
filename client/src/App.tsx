@@ -198,7 +198,7 @@ function App() {
       
       <Box mb={4}>
       <Card raised sx={{ display: 'flex', borderRadius: 8 }}>
-        <CardActionArea href="https://maps.apple.com/?daddr=2680+NW+Thurman+St,Portland,OR">
+        <CardActionArea href="https://maps.apple.com/?q=Northwest+Neighborhood+Veterinary+Hospital">
           <Stack direction="row">
             <CardMedia
               component="img"
