@@ -21,7 +21,7 @@ import {
 import './App.css';
 import SwipeableViews from 'react-swipeable-views';
 import Pet, { Sex } from './interfaces/Pet';
-import React, { FC, ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 
 function App() {
   const genderIcons: Record<Sex, ReactElement> = {
