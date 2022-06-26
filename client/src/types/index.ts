@@ -23,9 +23,9 @@ export interface Weight {
   unit: MassUnit
 }
 
-export interface Photo {
+export interface Image {
   caption: string;
-  imageUrl: string;
+  url: string;
 }
 
 export interface Pet {
@@ -36,7 +36,7 @@ export interface Pet {
   color: string;
   weight: Weight;
   description: string;
-  photos: Photo[];
+  photos: Image[];
   owner: Owner;
   veterinarian: Place;
 }

@@ -7,23 +7,20 @@ import {
   CardContent,
   CardMedia,
   Container,
-  Grid,
-  MobileStepper,
   Stack,
   Typography
 } from '@mui/material';
 import { 
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
   Male as MaleIcon,
   Female as FemaleIcon,
   Notifications as NotificationsIcon,
 } from '@mui/icons-material';
 import './App.css';
-import SwipeableViews from 'react-swipeable-views';
 import Pet, { Sex } from './interfaces/Pet';
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import Header, { HeaderProps } from './components/Header';
+import Carousel, { CarouselProps } from './components/Carousel';
+import { Image } from './types';
 
 function App() {
   const genderIcons: Record<Sex, ReactElement> = {
@@ -49,18 +46,18 @@ function App() {
     }
   }
 
-  const images = [
+  const images: Image[] = [
     {
-      label: 'Happy Princeton on balcony',
-      imageUrl: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_3530.jpg?alt=media&token=4b6f49e7-4189-4c8d-832b-bdd87a7621ad'
+      caption: 'Happy Princeton on balcony',
+      url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_3530.jpg?alt=media&token=4b6f49e7-4189-4c8d-832b-bdd87a7621ad'
     },
     {
-      label: 'Silly Princeton on couch',
-      imageUrl: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_1129.jpg?alt=media&token=846388d9-bfff-44cf-bc52-3b611c1875fe'
+      caption: 'Silly Princeton on couch',
+      url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_1129.jpg?alt=media&token=846388d9-bfff-44cf-bc52-3b611c1875fe'
     },
     {
-      label: 'Princeton laying on the couch',
-      imageUrl: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_2908.jpg?alt=media&token=f4a3b0f8-94f8-4736-a4dc-6468693ef0b0'
+      caption: 'Princeton laying on the couch',
+      url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_2908.jpg?alt=media&token=f4a3b0f8-94f8-4736-a4dc-6468693ef0b0'
     }
   ];
 
@@ -87,88 +84,19 @@ function App() {
   const addressLine1 = `${vetAddress.streetNumber} ${vetAddress.route}`;
   const addressLine2 = `${vetAddress.locality}, ${vetAddress.region} ${vetAddress.postalCode}`;
 
-  const maxSteps: number = images.length;
-
-  const [activeStep, setActiveStep] = useState(0);
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  }
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  }
-
-  const handleStepChange = (step: number) => {
-    setActiveStep(step);
-  }
-
   const headerProps: HeaderProps = {
     title: pet.name,
     subtitle: pet.breed,
     icon: genderIcons[pet.sex],
   };
 
+  const carouselProps: CarouselProps = {
+    images
+  };
+
   return (
     <>
-    <SwipeableViews
-        index={activeStep}
-        onChangeIndex={handleStepChange}
-        slideStyle={{ overflow: 'hidden' }}
-      >
-        {
-          images.map(({label, imageUrl}) => (
-            <>
-            <Box
-              sx={{
-                background:`linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3) ),  url(${imageUrl}) center no-repeat`,
-                backgroundSize: 'auto,cover',
-                filter: 'blur(5px)',
-                width: '100%',
-                height: 300,
-                position: 'absolute',
-                zIndex: -1
-              }}
-            />
-            <Box
-              component="img"
-              sx={{
-                height: 300,
-                display: 'block',
-                overflow: 'hidden',
-                margin: 'auto',
-                position: 'relative',
-              }}
-              alt={label}
-              src={imageUrl}
-            />
-            </>
-          ))
-        }
-      </SwipeableViews>
-      <MobileStepper
-        steps={maxSteps}
-        position="static"
-        activeStep={activeStep}
-        backButton={
-          <Button
-            size="small"
-            onClick={handleBack}
-            disabled={activeStep === 0}
-          >
-            <KeyboardArrowLeft />
-          </Button>
-        }
-        nextButton={
-          <Button
-            size="small"
-            onClick={handleNext}
-            disabled={activeStep === maxSteps - 1}
-          >
-            <KeyboardArrowRight />
-          </Button>
-        }
-      />
+    <Carousel {...carouselProps} />
     <Container maxWidth="xs">
       <Header {...headerProps} />
       <Stack direction="row" spacing={2} mt={2}>
