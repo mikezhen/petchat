@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { ReactElement } from 'react';
 
-type HeaderProps = {
+export type HeaderProps = {
   title: string;
   subtitle: string;
   icon: ReactElement
