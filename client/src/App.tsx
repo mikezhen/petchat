@@ -23,6 +23,7 @@ import './App.css';
 import SwipeableViews from 'react-swipeable-views';
 import Pet, { Sex } from './interfaces/Pet';
 import { ReactElement, useState } from 'react';
+import Header from './components/Header';
 
 function App() {
   const genderIcons: Record<Sex, ReactElement> = {
@@ -163,21 +164,11 @@ function App() {
         }
       />
     <Container maxWidth="xs">
-      <Box ml={2} mr={2}>
-        <Grid container spacing={2} justifyContent="space-between">
-          <Grid item>
-            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-              { pet.name }
-            </Typography>
-            <Typography variant="subtitle1">
-              { pet.breed}
-            </Typography>
-          </Grid>
-          <Grid item xs={2}>
-            { genderIcons[pet.sex] }
-          </Grid>
-        </Grid>
-      </Box>
+      <Header
+        title={ pet.name }
+        subtitle={ pet.breed }
+        icon={ genderIcons[pet.sex] }
+      />
       <Stack direction="row" spacing={2} mt={2}>
         {
           demographics.map(({ label, value }) => (
