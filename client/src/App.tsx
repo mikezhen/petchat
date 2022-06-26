@@ -1,7 +1,5 @@
 import {
-  Avatar,
   Box,
-  Button,
   Card,
   CardActionArea,
   CardContent,
@@ -13,7 +11,6 @@ import {
 import { 
   Male as MaleIcon,
   Female as FemaleIcon,
-  Notifications as NotificationsIcon,
 } from '@mui/icons-material';
 import './App.css';
 import Pet, { Sex } from './interfaces/Pet';
@@ -21,6 +18,7 @@ import { ReactElement } from 'react';
 import Header, { HeaderProps } from './components/Header';
 import Carousel, { CarouselProps } from './components/Carousel';
 import { Image } from './types';
+import ContactCard, { ContactCardProps } from './components/ContactCard';
 
 function App() {
   const genderIcons: Record<Sex, ReactElement> = {
@@ -76,7 +74,6 @@ function App() {
     }
   ];
 
-  const avatarUrl = 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fowner-avatar.jpg?alt=media&token=4f4a90ba-fa80-4a9a-bb74-6f0858884811';
   const description = 'Princeton is a super friendly goofball who will approach and say hello to everyone with his lick attack. He loves food and treats, but has a sensitive stomach so definitely should not overeat!';
 
   const staticMapUrl = 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fstaticmap.png?alt=media&token=9654cacb-e54c-441c-bc6e-fa9bab84bd2c';
@@ -91,8 +88,16 @@ function App() {
   };
 
   const carouselProps: CarouselProps = {
-    images
+    images,
   };
+
+  const contactCardProps: ContactCardProps = {
+    avatar: {
+      caption: 'Owner',
+      url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fowner-avatar.jpg?alt=media&token=4f4a90ba-fa80-4a9a-bb74-6f0858884811'
+    },
+    description,
+  }
 
   return (
     <>
@@ -114,16 +119,7 @@ function App() {
         }
       </Stack>
 
-      <Stack direction="row" spacing={3} mt={4} alignItems="center">
-        <Avatar alt="Owner" src={ avatarUrl } sx={{ width: 64, height: 64 }} />
-        <Typography variant="caption" color="text.secondary" paragraph>{ description }</Typography>
-      </Stack>
-
-      <Box mt={2} sx={{ textAlign: 'center' }}>
-        <Button variant='contained' color="info" startIcon={ <NotificationsIcon /> }>
-          Contact Owner
-        </Button>
-      </Box>
+      <ContactCard {...contactCardProps} />
       
       <Box mt={4} mb={4}>
       <Card raised sx={{ display: 'flex', borderRadius: 8 }}>
