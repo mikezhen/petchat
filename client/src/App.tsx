@@ -13,11 +13,10 @@ import {
   Female as FemaleIcon,
 } from '@mui/icons-material';
 import './App.css';
-import Pet, { Sex } from './interfaces/Pet';
 import { ReactElement } from 'react';
 import Header, { HeaderProps } from './components/Header';
 import Carousel, { CarouselProps } from './components/Carousel';
-import { Image } from './types';
+import { Pet, Sex } from './types';
 import ContactCard, { ContactCardProps } from './components/ContactCard';
 
 function App() {
@@ -27,37 +26,43 @@ function App() {
   };
 
   const pet: Pet = {
-    lost: false,
     name: 'Princeton',
     breed: 'German Shepherd Mix',
     sex: 'Male',
-    imageUrl: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_3530.jpg?alt=media&token=4b6f49e7-4189-4c8d-832b-bdd87a7621ad',
     birthday: new Date('2021-07-05T00:00:00'),
+    color: 'Black/Tan',
+    weight: {value: 63, unit: 'lb'},
     description: 'Super friendly goofball who will say hello to everyone with his lick attack. Loves food and treats, but has sensitive stomach so he should not overeat!',
-    veterinarianAddress: {
+    photos: [
+      {
+        caption: 'Happy Princeton on balcony',
+        url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_3530.jpg?alt=media&token=4b6f49e7-4189-4c8d-832b-bdd87a7621ad'
+      },
+      {
+        caption: 'Silly Princeton on couch',
+        url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_1129.jpg?alt=media&token=846388d9-bfff-44cf-bc52-3b611c1875fe'
+      },
+      {
+        caption: 'Princeton laying on the couch',
+        url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_2908.jpg?alt=media&token=f4a3b0f8-94f8-4736-a4dc-6468693ef0b0'
+      }
+    ],
+    owner: {
+      avatarUrl: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fowner-avatar.jpg?alt=media&token=4f4a90ba-fa80-4a9a-bb74-6f0858884811',
+      phoneNumbers: [],
+      emails: []
+    },
+    veterinarian: {
       name: 'Northwest Neighborhood Veterinary Hospital',
-      streetNumber: 2680,
-      route: 'NW Thurman St',
-      locality: 'Portland', // City
-      region: 'OR', // State or province
-      postalCode: '97210'
+      address: {
+        streetNumber: 2680,
+        route: 'NW Thurman St',
+        locality: 'Portland', // City
+        region: 'OR', // State or province
+        postalCode: '97210'
+      }
     }
   }
-
-  const images: Image[] = [
-    {
-      caption: 'Happy Princeton on balcony',
-      url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_3530.jpg?alt=media&token=4b6f49e7-4189-4c8d-832b-bdd87a7621ad'
-    },
-    {
-      caption: 'Silly Princeton on couch',
-      url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_1129.jpg?alt=media&token=846388d9-bfff-44cf-bc52-3b611c1875fe'
-    },
-    {
-      caption: 'Princeton laying on the couch',
-      url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2FIMG_2908.jpg?alt=media&token=f4a3b0f8-94f8-4736-a4dc-6468693ef0b0'
-    }
-  ];
 
   const demographics = [
     {
@@ -66,18 +71,16 @@ function App() {
     },
     {
       label: 'Color',
-      value: 'Black/Tan'
+      value: pet.color
     },
     {
       label: 'Weight',
-      value: '63 lbs'
+      value: `${pet.weight.value} ${pet.weight.unit}`
     }
   ];
 
-  const description = 'Princeton is a super friendly goofball who will approach and say hello to everyone with his lick attack. He loves food and treats, but has a sensitive stomach so definitely should not overeat!';
-
   const staticMapUrl = 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fstaticmap.png?alt=media&token=9654cacb-e54c-441c-bc6e-fa9bab84bd2c';
-  const vetAddress = pet.veterinarianAddress;
+  const vetAddress = pet.veterinarian.address;
   const addressLine1 = `${vetAddress.streetNumber} ${vetAddress.route}`;
   const addressLine2 = `${vetAddress.locality}, ${vetAddress.region} ${vetAddress.postalCode}`;
 
@@ -88,15 +91,15 @@ function App() {
   };
 
   const carouselProps: CarouselProps = {
-    images,
+    images: pet.photos,
   };
 
   const contactCardProps: ContactCardProps = {
     avatar: {
       caption: 'Owner',
-      url: 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fowner-avatar.jpg?alt=media&token=4f4a90ba-fa80-4a9a-bb74-6f0858884811'
+      url: pet.owner.avatarUrl
     },
-    description,
+    description: pet.description,
   }
 
   return (
@@ -133,7 +136,7 @@ function App() {
             />
             <Stack ml={2} mt={2} mb={2} justifyContent="flex-start">
               <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>Veterinarian</Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>{ vetAddress.name }</Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>{ pet.veterinarian.name }</Typography>
               <Typography variant="subtitle2">{ addressLine1 }</Typography>
               <Typography variant="subtitle2">{ addressLine2 }</Typography>
             </Stack>
