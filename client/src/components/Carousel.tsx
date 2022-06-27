@@ -77,7 +77,7 @@ export default function Carousel({
           <Button
             size='small'
             onClick={handleNext}
-            disabled={activeStep === maxSteps + 1}
+            disabled={activeStep === maxSteps - 1}
           >
             <KeyboardArrowRight />
           </Button>
