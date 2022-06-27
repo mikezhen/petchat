@@ -12,7 +12,7 @@ export default function Carousel({
   images,
 }: CarouselProps) {
   const maxSteps = images.length;
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState<number>(0);
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };

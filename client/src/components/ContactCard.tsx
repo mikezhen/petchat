@@ -5,6 +5,7 @@ import { Image } from '../types'
 export type ContactCardProps = {
   avatar: Image,
   description: string;
+  handleButtonClick: () => void;
   avatarProps?: AvatarProps;
   buttonProps?: ButtonProps;
 }
@@ -12,6 +13,7 @@ export type ContactCardProps = {
 export default function ContactCard({
   avatar,
   description,
+  handleButtonClick,
   avatarProps,
   buttonProps,
 }: ContactCardProps) {
@@ -36,7 +38,12 @@ export default function ContactCard({
         </Typography>
       </Stack>
       <Box mt={2} textAlign='center'>
-        <Button variant='contained' color='info' startIcon={ <NotificationsIcon /> }>
+        <Button
+          variant='contained'
+          color='info'
+          startIcon={ <NotificationsIcon /> }
+          onClick={handleButtonClick}
+        >
           { buttonProps?.children ?? 'Contact Owner' }
         </Button>
       </Box>

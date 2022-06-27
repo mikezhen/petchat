@@ -1,9 +1,10 @@
 import {
   Female as FemaleIcon,
-  Male as MaleIcon
+  Male as MaleIcon,
 } from '@mui/icons-material';
 import { Box, Container, Stack } from '@mui/material';
 import { formatDistanceToNowStrict } from 'date-fns';
+import { parsePhoneNumber, PhoneNumber } from 'libphonenumber-js';
 import { ReactElement } from 'react';
 import AddressCard, { AddressCardProps } from '../components/AddressCard';
 import ContactCard, { ContactCardProps } from '../components/ContactCard';
@@ -28,6 +29,11 @@ export default function PetProfile({
       'Male': <MaleIcon color='primary' sx={{ fontSize }} />
     }[gender];
   };
+
+  const openContactOwner = () => {
+    const phoneNumber: PhoneNumber = parsePhoneNumber(pet.owner.phoneNumbers[0], 'US');
+    window.open(phoneNumber.getURI());
+  };
   
   /** This is after API response */
 
@@ -50,6 +56,7 @@ export default function PetProfile({
       url: pet.owner.avatarUrl
     },
     description: pet.description,
+    handleButtonClick: openContactOwner,
   };
 
   const addressCardProps: AddressCardProps = {
