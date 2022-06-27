@@ -1,9 +1,7 @@
 import {
   Box,
   Card,
-  CardActionArea,
   CardContent,
-  CardMedia,
   Container,
   Stack,
   Typography
@@ -18,6 +16,7 @@ import Header, { HeaderProps } from './components/Header';
 import Carousel, { CarouselProps } from './components/Carousel';
 import { Pet, Sex } from './types';
 import ContactCard, { ContactCardProps } from './components/ContactCard';
+import AddressCard, { AddressCardProps } from './components/AddressCard/AddressCard';
 
 function App() {
   const genderIcons: Record<Sex, ReactElement> = {
@@ -79,11 +78,6 @@ function App() {
     }
   ];
 
-  const staticMapUrl = 'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fstaticmap.png?alt=media&token=9654cacb-e54c-441c-bc6e-fa9bab84bd2c';
-  const vetAddress = pet.veterinarian.address;
-  const addressLine1 = `${vetAddress.streetNumber} ${vetAddress.route}`;
-  const addressLine2 = `${vetAddress.locality}, ${vetAddress.region} ${vetAddress.postalCode}`;
-
   const headerProps: HeaderProps = {
     title: pet.name,
     subtitle: pet.breed,
@@ -100,6 +94,13 @@ function App() {
       url: pet.owner.avatarUrl
     },
     description: pet.description,
+  };
+
+  const addressCardProps: AddressCardProps = {
+    addressType: 'Veterinarian',
+    addressName: pet.veterinarian.name,
+    address: pet.veterinarian.address,
+    mapUrl: `https://maps.apple.com/?q=${encodeURI(pet.veterinarian.name)}`,
   }
 
   return (
@@ -125,24 +126,7 @@ function App() {
       <ContactCard {...contactCardProps} />
       
       <Box mt={4} mb={4}>
-      <Card raised sx={{ display: 'flex', borderRadius: 8 }}>
-        <CardActionArea href="https://maps.apple.com/?q=Northwest+Neighborhood+Veterinary+Hospital">
-          <Stack direction="row">
-            <CardMedia
-              component="img"
-              sx={{ width: 128, objectPosition: '0 100%' }}
-              src={staticMapUrl}
-              alt="Google map"
-            />
-            <Stack ml={2} mt={2} mb={2} justifyContent="flex-start">
-              <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>Veterinarian</Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>{ pet.veterinarian.name }</Typography>
-              <Typography variant="subtitle2">{ addressLine1 }</Typography>
-              <Typography variant="subtitle2">{ addressLine2 }</Typography>
-            </Stack>
-          </Stack>
-        </CardActionArea>
-      </Card>
+        <AddressCard {...addressCardProps} />
       </Box>
       </Container>
       </>
