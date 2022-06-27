@@ -3,6 +3,7 @@ import {
   Male as MaleIcon
 } from '@mui/icons-material';
 import { Box, Container, Stack } from '@mui/material';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { ReactElement } from 'react';
 import AddressCard, { AddressCardProps } from '../components/AddressCard';
 import ContactCard, { ContactCardProps } from '../components/ContactCard';
@@ -30,8 +31,9 @@ export default function PetProfile({
   
   /** This is after API response */
 
+  const currentAge: string = formatDistanceToNowStrict(pet.birthday, { roundingMethod: 'floor' });
   const demographics = [
-    {label: 'Age', value: '11 mos'},
+    {label: 'Age', value: currentAge},
     {label: 'Color', value: pet.color},
     {label: 'Weight', value: `${pet.weight.value} ${pet.weight.unit}`}
   ];
