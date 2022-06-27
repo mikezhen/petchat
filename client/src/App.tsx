@@ -1,10 +1,7 @@
 import {
   Box,
-  Card,
-  CardContent,
   Container,
   Stack,
-  Typography
 } from '@mui/material';
 import { 
   Male as MaleIcon,
@@ -17,6 +14,7 @@ import Carousel, { CarouselProps } from './components/Carousel';
 import { Pet, Sex } from './types';
 import ContactCard, { ContactCardProps } from './components/ContactCard';
 import AddressCard, { AddressCardProps } from './components/AddressCard';
+import InfoItem from './components/InfoItem';
 
 function App() {
   const genderIcons: Record<Sex, ReactElement> = {
@@ -110,15 +108,8 @@ function App() {
       <Header {...headerProps} />
       <Stack direction="row" spacing={2} mt={2}>
         {
-          demographics.map(({ label, value }) => (
-            <Card variant="outlined" sx={{ textAlign: 'center', flex: 1, borderRadius: 6 }}>
-              <CardContent sx={{ paddingBottom: '16px' }}>
-                <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
-                  { label }
-                </Typography>
-                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>{ value }</Typography>
-              </CardContent>
-            </Card>
+          demographics.map((item) => (
+            <InfoItem {...item} />
           ))
         }
       </Stack>
