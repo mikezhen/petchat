@@ -24,7 +24,7 @@ export default function ContactCard({
 
   return (
     <Box>
-      <Stack direction='row' spacing={3} mt={4} alignItems='center'>
+      <Stack direction='row' spacing={3} alignItems='center'>
         <Avatar
           src={avatar.url}
           alt={avatar.caption}

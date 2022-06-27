@@ -29,8 +29,7 @@ export default function AddressCard({
             component='img'
             image={MapIcon}
             alt='Map icon'
-            width={128}
-            sx={{ objectPosition: '0 100%' }}
+            sx={{ width: 128, objectPosition: '0 100%' }}
           />
           <Stack m={2} justifyContent='flex-start'>
             <Typography fontSize={12} color='text.secondary' gutterBottom>

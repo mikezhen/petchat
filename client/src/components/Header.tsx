@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { ReactElement } from 'react';
 
 export type HeaderProps = {
@@ -13,20 +13,18 @@ export default function Header({
   icon,
 }: HeaderProps) {
   return (
-    <Box ml={2} mr={2}>
-      <Grid container spacing={2} justifyContent='space-between'>
-        <Grid item>
-          <Typography variant='h4' sx={{ fontWeight: 'bold' }}>
-            {title}
-          </Typography>
-          <Typography variant='subtitle1'>
-            {subtitle}
-          </Typography>
-        </Grid>
-        <Grid item xs={2}>
-          {icon}
-        </Grid>
+    <Grid container spacing={2} justifyContent='space-between'>
+      <Grid item>
+        <Typography variant='h4' sx={{ fontWeight: 'bold' }}>
+          {title}
+        </Typography>
+        <Typography variant='subtitle1'>
+          {subtitle}
+        </Typography>
       </Grid>
-    </Box>
+      <Grid item xs={2}>
+        {icon}
+      </Grid>
+    </Grid>
   )
 }
