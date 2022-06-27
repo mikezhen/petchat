@@ -16,7 +16,7 @@ import Header, { HeaderProps } from './components/Header';
 import Carousel, { CarouselProps } from './components/Carousel';
 import { Pet, Sex } from './types';
 import ContactCard, { ContactCardProps } from './components/ContactCard';
-import AddressCard, { AddressCardProps } from './components/AddressCard/AddressCard';
+import AddressCard, { AddressCardProps } from './components/AddressCard';
 
 function App() {
   const genderIcons: Record<Sex, ReactElement> = {

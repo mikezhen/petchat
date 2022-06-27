@@ -1,6 +1,6 @@
 import { Card, CardActionArea, CardMedia, Stack, Typography } from '@mui/material'
-import { Address } from '../../types';
-import MapIcon from './mapicon.png';
+import { Address } from '../types';
+import MapIcon from '../assets/mapicon.png';
 
 export type AddressCardProps = {
   addressType: string;
