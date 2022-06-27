@@ -31,7 +31,7 @@ export interface Image {
 export interface Pet {
   name: string;
   breed: string;
-  sex: Sex;
+  gender: Gender;
   birthday: Date;
   color: string;
   weight: Weight;
@@ -42,4 +42,4 @@ export interface Pet {
 }
 
 export type MassUnit = 'lb' | 'kg';
-export type Sex = 'Male' | 'Female';
+export type Gender = 'Male' | 'Female';

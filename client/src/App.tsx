@@ -11,13 +11,13 @@ import './App.css';
 import { ReactElement } from 'react';
 import Header, { HeaderProps } from './components/Header';
 import Carousel, { CarouselProps } from './components/Carousel';
-import { Pet, Sex } from './types';
+import { Pet, Gender } from './types';
 import ContactCard, { ContactCardProps } from './components/ContactCard';
 import AddressCard, { AddressCardProps } from './components/AddressCard';
 import InfoItem from './components/InfoItem';
 
 function App() {
-  const genderIcons: Record<Sex, ReactElement> = {
+  const genderIcons: Record<Gender, ReactElement> = {
     'Female': <FemaleIcon color="error" sx={{ fontSize: 45 }} />,
     'Male': <MaleIcon color="primary" sx={{ fontSize: 45 }} />,
   };
@@ -25,7 +25,7 @@ function App() {
   const pet: Pet = {
     name: 'Princeton',
     breed: 'German Shepherd Mix',
-    sex: 'Male',
+    gender: 'Male',
     birthday: new Date('2021-07-05T00:00:00'),
     color: 'Black/Tan',
     weight: {value: 63, unit: 'lb'},
@@ -79,7 +79,7 @@ function App() {
   const headerProps: HeaderProps = {
     title: pet.name,
     subtitle: pet.breed,
-    icon: genderIcons[pet.sex],
+    icon: genderIcons[pet.gender],
   };
 
   const carouselProps: CarouselProps = {
