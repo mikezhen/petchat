@@ -31,8 +31,9 @@ export default function PetProfile({
   };
 
   const openContactOwner = () => {
+    // TODO: Make API call to retrieve number after click
     const phoneNumber: PhoneNumber = parsePhoneNumber(pet.owner.phoneNumbers[0], 'US');
-    window.open(phoneNumber.getURI());
+    window.open(phoneNumber.getURI(), '_self');
   };
   
   /** This is after API response */
