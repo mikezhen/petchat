@@ -1,14 +1,14 @@
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material'
-import { Box, Button, MobileStepper, MobileStepperProps } from '@mui/material'
-import { useState } from 'react'
-import SwipeableViews from 'react-swipeable-views'
-import { Image } from '../types'
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+import { Box, Button, MobileStepper, MobileStepperProps } from '@mui/material';
+import { useState } from 'react';
+import SwipeableViews from 'react-swipeable-views';
+import { Image } from '../types';
 
 export type CarouselProps = {
   images: Image[];
   height?: number;
   stepperProps?: MobileStepperProps;
-}
+};
 
 export default function Carousel({
   images,
@@ -35,46 +35,40 @@ export default function Carousel({
         onChangeIndex={handleStepChange}
         slideStyle={{ overflow: 'hidden' }}
       >
-        {
-          images.map(({url, caption}) => (
-            <Box>
-              <Box
-                sx={{
-                  background:`linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3) ),  url(${url}) center no-repeat`,
-                  backgroundSize: 'auto,cover',
-                  filter: 'blur(5px)',
-                  width: '100%',
-                  height: carouselHeight,
-                  position: 'absolute',
-                  zIndex: -1
-                }}
-              />
-              <Box
-                component='img'
-                src={url}
-                alt={caption}
-                sx={{
-                  height: carouselHeight,
-                  display: 'block',
-                  overflow: 'hidden',
-                  margin: 'auto',
-                  position: 'relative',
-                }}
-              />
-            </Box>
-          ))
-        }
+        {images.map(({ url, caption }) => (
+          <Box>
+            <Box
+              sx={{
+                background: `linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3) ),  url(${url}) center no-repeat`,
+                backgroundSize: 'auto,cover',
+                filter: 'blur(5px)',
+                width: '100%',
+                height: carouselHeight,
+                position: 'absolute',
+                zIndex: -1,
+              }}
+            />
+            <Box
+              component='img'
+              src={url}
+              alt={caption}
+              sx={{
+                height: carouselHeight,
+                display: 'block',
+                overflow: 'hidden',
+                margin: 'auto',
+                position: 'relative',
+              }}
+            />
+          </Box>
+        ))}
       </SwipeableViews>
       <MobileStepper
         steps={maxSteps}
         position='static'
         activeStep={activeStep}
         backButton={
-          <Button
-            size='small'
-            onClick={handleBack}
-            disabled={activeStep === 0}
-          >
+          <Button size='small' onClick={handleBack} disabled={activeStep === 0}>
             <KeyboardArrowLeft />
           </Button>
         }
@@ -90,5 +84,5 @@ export default function Carousel({
         {...stepperProps}
       />
     </Box>
-  )
+  );
 }

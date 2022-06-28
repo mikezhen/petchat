@@ -1,17 +1,17 @@
-import { Card, CardContent, Typography } from '@mui/material'
+import { Card, CardContent, Typography } from '@mui/material';
 
 export type InfoItemProps = {
   label: string;
   value: string;
-}
+};
 
-export default function InfoItem({
-  label,
-  value,
-}: InfoItemProps) {
+export default function InfoItem({ label, value }: InfoItemProps) {
   // TODO: Remove 24px paddingBottom for last-child in CardContent
   return (
-    <Card variant='outlined' sx={{ textAlign: 'center', flex: 1, borderRadius: 6 }}>
+    <Card
+      variant='outlined'
+      sx={{ textAlign: 'center', flex: 1, borderRadius: 6 }}
+    >
       <CardContent>
         <Typography fontSize={12} color='text.secondary' gutterBottom>
           {label}
@@ -21,5 +21,5 @@ export default function InfoItem({
         </Typography>
       </CardContent>
     </Card>
-  )
+  );
 }

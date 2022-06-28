@@ -1,14 +1,22 @@
 import { Notifications as NotificationsIcon } from '@mui/icons-material';
-import { Avatar, AvatarProps, Box, Button, ButtonProps, Stack, Typography } from '@mui/material'
-import { Image } from '../types'
+import {
+  Avatar,
+  AvatarProps,
+  Box,
+  Button,
+  ButtonProps,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { Image } from '../types';
 
 export type ContactCardProps = {
-  avatar: Image,
+  avatar: Image;
   description: string;
   handleButtonClick: () => void;
   avatarProps?: AvatarProps;
   buttonProps?: ButtonProps;
-}
+};
 
 export default function ContactCard({
   avatar,
@@ -18,7 +26,7 @@ export default function ContactCard({
   buttonProps,
 }: ContactCardProps) {
   // Default dimensions for avatar
-  type Dimension = { width: number, height: number };
+  type Dimension = { width: number; height: number };
   const avatarDimension: Dimension = {
     width: 64,
     height: 64,
@@ -31,23 +39,23 @@ export default function ContactCard({
           src={avatar.url}
           alt={avatar.caption}
           {...avatarProps} // Props first to prevent overriding sx attribute
-          sx={{...avatarDimension, ...avatarProps?.sx}}
+          sx={{ ...avatarDimension, ...avatarProps?.sx }}
         />
         <Typography variant='caption' color='text.secondary' paragraph>
-          { description }
+          {description}
         </Typography>
       </Stack>
       <Box mt={2} textAlign='center'>
         <Button
           variant='contained'
           color='info'
-          startIcon={ <NotificationsIcon /> }
+          startIcon={<NotificationsIcon />}
           onClick={handleButtonClick}
           {...buttonProps}
         >
-          { buttonProps?.children ?? 'Contact Owner' }
+          {buttonProps?.children ?? 'Contact Owner'}
         </Button>
       </Box>
     </Box>
-  )
+  );
 }

@@ -20,7 +20,7 @@ export interface Owner {
 
 export interface Weight {
   value: number;
-  unit: MassUnit
+  unit: MassUnit;
 }
 
 export interface Image {
