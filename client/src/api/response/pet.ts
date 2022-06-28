@@ -41,4 +41,8 @@ const pet: Pet = {
   },
 };
 
-export default pet;
+const PetResponse = async () => {
+  return pet;
+}
+
+export default PetResponse;
