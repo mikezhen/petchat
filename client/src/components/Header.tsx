@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 export type HeaderProps = {
   title: string;
   subtitle: string;
-  icon: ReactElement
+  icon: ReactElement;
 }
 
 export default function Header({
@@ -15,7 +15,7 @@ export default function Header({
   return (
     <Grid container spacing={2} justifyContent='space-between'>
       <Grid item>
-        <Typography variant='h4' sx={{ fontWeight: 'bold' }}>
+        <Typography variant='h4' fontWeight='bold'>
           {title}
         </Typography>
         <Typography variant='subtitle1'>

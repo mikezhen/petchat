@@ -43,6 +43,7 @@ export default function ContactCard({
           color='info'
           startIcon={ <NotificationsIcon /> }
           onClick={handleButtonClick}
+          {...buttonProps}
         >
           { buttonProps?.children ?? 'Contact Owner' }
         </Button>

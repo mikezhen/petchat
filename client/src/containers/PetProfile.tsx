@@ -21,9 +21,9 @@ export default function PetProfile({
 }: PetProfileProps) {
   const GenderIcon = (
     gender: Gender,
-    fontSize?: number,
+    size?: number,
   ): ReactElement => {
-    fontSize = fontSize ?? 45; // Default size if none specified
+    const fontSize = size ?? 45; // Default size if none specified
     return {
       'Female': <FemaleIcon color='error' sx={{ fontSize }} />,
       'Male': <MaleIcon color='primary' sx={{ fontSize }} />
