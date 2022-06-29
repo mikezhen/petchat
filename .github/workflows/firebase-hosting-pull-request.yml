@@ -25,7 +25,7 @@ jobs:
   # Job to build and deploy frontend code to Firebase Hosting
   build_preview_frontend:
     needs: changes
-    if: ${{ (github.event.pull_request.head.repo.full_name == github.repository) && (needs.changes.output.frontend == 'true') }}
+    if: ${{ (github.event.pull_request.head.repo.full_name == github.repository) && (needs.changes.output.frontend == true) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -45,7 +45,7 @@ jobs:
   # Job to build and deploy backend code to Cloud Run
   build_deploy_backend:
     needs: changes
-    if: ${{ (github.event.pull_request.head.repo.full_name == github.repository) && (needs.changes.output.backend == 'true') }}
+    if: ${{ (github.event.pull_request.head.repo.full_name == github.repository) && (needs.changes.output.backend == true) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
