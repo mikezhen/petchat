@@ -81,4 +81,3 @@ jobs:
           image: us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/server:${{ github.sha }}
           env_vars: |
             NODE_ENV=production
-            PORT=8080
