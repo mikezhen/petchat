@@ -64,7 +64,7 @@ jobs:
       - name: Docker Auth
         uses: docker/login-action@v1
         with:
-          registry: gcr.io
+          registry: us-docker.pkg.dev
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.access_token }}
       - name: Build & Push Container
@@ -72,10 +72,10 @@ jobs:
         with:
           context: ./server
           push: true
-          tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          tags: us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
       - name: Deploy to CloudRun
         uses: google-github-actions/deploy-cloudrun@v0
         with:
           project_id: ${{ env.PROJECT_ID }}
           service: ${{ env.SERVICE_NAME }}
-          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          image: us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
