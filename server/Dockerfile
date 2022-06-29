@@ -12,7 +12,7 @@ COPY package*.json ./
 RUN npm ci --production
 
 # Copy build code into the image
-COPY dist ./
+COPY dist ./dist
 
 # Run the web service
 CMD [ "npm", "run", "start:prod" ]
