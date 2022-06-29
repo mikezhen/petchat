@@ -15,4 +15,5 @@ RUN npm ci --production
 COPY dist ./dist
 
 # Run the web service
+EXPOSE 8080
 CMD [ "npm", "run", "start:prod" ]
