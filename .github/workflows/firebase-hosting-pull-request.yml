@@ -77,7 +77,13 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v0
         with:
           project_id: ${{ env.PROJECT_ID }}
-          service: ${{ env.SERVICE_NAME }}
+          service: ${{ env.SERVICE_NAME }}-preview
           image: us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/server:${{ github.sha }}
           env_vars: |
             NODE_ENV=production
+            FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY_PETCHAT_85F05 }}
+            FIREBASE_AUTH_DOMAIN=${{ env.PROJECT_ID }}.firebaseapp.com
+            FIREBASE_PROJECT_ID=${{ env.PROJECT_ID }}
+            FIREBASE_STORAGE_BUCKET=${{ env.PROJECT_ID }}.appspot.com
+            FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID_PETCHAT_85F05 }}
+            FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID_PETCHAT_85F05 }}
