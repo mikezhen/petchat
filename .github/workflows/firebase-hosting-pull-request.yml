@@ -8,7 +8,7 @@ env:
 
 jobs:
   # Job to run change detection
-  detect_changes:
+  changes:
     runs-on: ubuntu-latest
     outputs:
       frontend: ${{ steps.filter.outputs.frontend }}
