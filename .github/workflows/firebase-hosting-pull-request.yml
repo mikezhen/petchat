@@ -3,7 +3,7 @@ name: Deploy application on PR
 on:
   pull_request:
     branches:
-      - master
+      - main
 
 env:
   PROJECT_ID: petchat-85f05
