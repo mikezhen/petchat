@@ -72,10 +72,10 @@ jobs:
         with:
           context: ./server
           push: true
-          tags: us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          tags: us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/server:${{ github.sha }}
       - name: Deploy to CloudRun
         uses: google-github-actions/deploy-cloudrun@v0
         with:
           project_id: ${{ env.PROJECT_ID }}
           service: ${{ env.SERVICE_NAME }}
-          image: us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          image: us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/server:${{ github.sha }}
