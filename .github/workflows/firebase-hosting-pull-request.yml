@@ -39,6 +39,8 @@ jobs:
           node-version: 16.15.0
       - name: Build Package
         run: cd client && npm ci && npm run build
+      - name: Use Preview Firebase Config
+        run: cp ./firebase.preview.json ./firebase.json
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
