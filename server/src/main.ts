@@ -9,6 +9,9 @@ async function bootstrap() {
     abortOnError: false,
   });
 
+  // Set prefix for every registered route
+  app.setGlobalPrefix('api');
+
   // Initialize web session middleware
   app.set('trust proxy', 1);
   app.use(
