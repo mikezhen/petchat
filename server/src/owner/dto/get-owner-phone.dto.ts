@@ -1,3 +1,3 @@
-export class GetOwnerDto {
+export class GetOwnerPhoneDto {
   constructor(readonly primaryPhone: string) {}
 }

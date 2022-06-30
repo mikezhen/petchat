@@ -25,8 +25,9 @@ export default function PetProfile({ pet }: PetProfileProps) {
 
   const openContactOwner = () => {
     // TODO: Make API call to retrieve number after click
+    // TODO: Add a load spinner while waiting for response because CloudRun may have cold-start
     axios
-      .get<OwnerResponse>(`/api/owner/${pet.owner.id}`)
+      .get<OwnerResponse>(`/api/owner/${pet.owner.id}/phone`)
       .then((response) => {
         const phoneNumber: PhoneNumber = parsePhoneNumber(
           response.data.primaryPhone,

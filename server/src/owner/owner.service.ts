@@ -1,9 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { doc, getDoc } from 'firebase/firestore';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { doc, DocumentSnapshot, getDoc } from 'firebase/firestore';
+import {
+  getDownloadURL,
+  list,
+  ListResult,
+  ref,
+  StorageReference,
+} from 'firebase/storage';
+import {
+  EMPTY,
+  from,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  switchMap,
+  throwIfEmpty,
+} from 'rxjs';
 import { FirebaseService } from '../firebase/firebase.service';
-import { CreateOwnerDto } from './dto/create-owner.dto';
-import { GetOwnerDto } from './dto/get-owner.dto';
-import { UpdateOwnerDto } from './dto/update-owner.dto';
+import { GetOwnerAvatarDto } from './dto/get-owner-avatar.dto';
+import { GetOwnerPhoneDto } from './dto/get-owner-phone.dto';
 import {
   Owner,
   OwnerDataConverter as converter,
@@ -11,31 +27,30 @@ import {
 
 @Injectable()
 export class OwnerService {
-  constructor(private readonly firebaseService: FirebaseService) {}
+  constructor(private readonly firebase: FirebaseService) {}
 
-  create(createOwnerDto: CreateOwnerDto) {
-    return 'This action adds a new owner';
-  }
-
-  findAll() {
-    return `This action returns all owner`;
-  }
-
-  async findOne(id: string): Promise<GetOwnerDto> {
-    const ownerSnap = await getDoc(
-      doc(this.firebaseService.firestore(), 'owners', id).withConverter(
-        converter,
+  findAvatar(id: string): Observable<GetOwnerAvatarDto> {
+    const listRef = ref(this.firebase.storage(), `owners/${id}`);
+    return from(list(listRef)).pipe(
+      map((listResult: ListResult) => listResult.items[0]),
+      mergeMap((imageRef: StorageReference) =>
+        imageRef ? of(imageRef) : EMPTY,
       ),
+      throwIfEmpty(() => new NotFoundException(`owner:${id} was not found`)),
+      switchMap((imageRef: StorageReference) => from(getDownloadURL(imageRef))),
+      map((url: string) => new GetOwnerAvatarDto(url)),
     );
-    const owner: Owner = ownerSnap.data();
-    return new GetOwnerDto(owner.primaryPhone);
   }
 
-  update(id: number, updateOwnerDto: UpdateOwnerDto) {
-    return `This action updates a #${id} owner`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} owner`;
+  findOwnerPhone(id: string): Observable<GetOwnerPhoneDto> {
+    const docRef = doc(this.firebase.firestore(), 'owners', id).withConverter(
+      converter,
+    );
+    return from(getDoc(docRef)).pipe(
+      map((docSnap: DocumentSnapshot<Owner>) => docSnap.data()),
+      mergeMap((owner: Owner) => (owner ? of(owner) : EMPTY)),
+      throwIfEmpty(() => new NotFoundException(`owner:${id} was not found`)),
+      map((owner: Owner) => new GetOwnerPhoneDto(owner.primaryPhone)),
+    );
   }
 }
