@@ -24,6 +24,7 @@ const pet: Pet = {
     },
   ],
   owner: {
+    id: 'KiEatjsS8ef31OAfhXIV',
     avatarUrl:
       'https://firebasestorage.googleapis.com/v0/b/petchat-85f05.appspot.com/o/asset%2Fowner-avatar.jpg?alt=media&token=4f4a90ba-fa80-4a9a-bb74-6f0858884811',
     phoneNumbers: ['7031234567'],

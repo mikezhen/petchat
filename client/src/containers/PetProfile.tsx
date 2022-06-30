@@ -1,5 +1,6 @@
 import { Female as FemaleIcon, Male as MaleIcon } from '@mui/icons-material';
 import { Box, Container, Stack } from '@mui/material';
+import axios from 'axios';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { parsePhoneNumber, PhoneNumber } from 'libphonenumber-js';
 import { ReactElement } from 'react';
@@ -7,7 +8,7 @@ import AddressCard, { AddressCardProps } from '../components/AddressCard';
 import ContactCard, { ContactCardProps } from '../components/ContactCard';
 import Header, { HeaderProps } from '../components/Header';
 import InfoItem from '../components/InfoItem';
-import { Gender, Pet } from '../types';
+import { Gender, OwnerResponse, Pet } from '../types';
 
 export type PetProfileProps = {
   pet: Pet;
@@ -24,11 +25,16 @@ export default function PetProfile({ pet }: PetProfileProps) {
 
   const openContactOwner = () => {
     // TODO: Make API call to retrieve number after click
-    const phoneNumber: PhoneNumber = parsePhoneNumber(
-      pet.owner.phoneNumbers[0],
-      'US'
-    );
-    window.open(phoneNumber.getURI(), '_self');
+    axios
+      .get<OwnerResponse>(`/api/owner/${pet.owner.id}`)
+      .then((response) => {
+        const phoneNumber: PhoneNumber = parsePhoneNumber(
+          response.data.primaryPhone,
+          'US'
+        );
+        window.open(phoneNumber.getURI(), '_self');
+      })
+      .catch((error) => console.error(error)); // Temporary handling error in console log
   };
 
   /** This is after API response */

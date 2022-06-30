@@ -13,9 +13,15 @@ export interface Place {
 }
 
 export interface Owner {
+  id: string;
   avatarUrl: string; // URL to the avatar image
   phoneNumbers: string[];
   emails: string[];
+}
+
+/** Temp location to capture API responses */
+export interface OwnerResponse {
+  primaryPhone: string;
 }
 
 export interface Weight {
