@@ -3,6 +3,11 @@ on:
   push:
     branches:
       - main
+
+env:
+  PROJECT_ID: petchat-85f05
+  SERVICE_NAME: petchat
+
 jobs:
   # Job to run change detection
   changes:
