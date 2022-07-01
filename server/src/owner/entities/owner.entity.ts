@@ -7,11 +7,17 @@ import {
 } from 'firebase/firestore';
 
 export class Owner {
-  constructor(
-    readonly primaryPhone: string,
-    readonly emails: string[],
-    readonly phoneNumbers: string[],
-  ) {}
+  static collectionName = 'owners'; // Firestore collection name
+
+  primaryPhone: string;
+  emails: string[];
+  phoneNumbers: string[];
+
+  constructor(data: Owner) {
+    this.primaryPhone = data.primaryPhone;
+    this.emails = data.emails;
+    this.phoneNumbers = data.phoneNumbers;
+  }
 }
 
 export const OwnerDataConverter: FirestoreDataConverter<Owner> = {
@@ -23,7 +29,7 @@ export const OwnerDataConverter: FirestoreDataConverter<Owner> = {
     options: SnapshotOptions,
   ): Owner {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const data = snapshot.data(options)!;
-    return new Owner(data.primaryPhone, data.emails, data.phoneNumbers);
+    const data = snapshot.data(options)! as Owner;
+    return new Owner({ ...data });
   },
 };

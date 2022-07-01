@@ -20,10 +20,7 @@ import {
 import { FirebaseService } from '../firebase/firebase.service';
 import { GetOwnerAvatarDto } from './dto/get-owner-avatar.dto';
 import { GetOwnerPhoneDto } from './dto/get-owner-phone.dto';
-import {
-  Owner,
-  OwnerDataConverter as converter,
-} from './entities/owner.entity';
+import { Owner, OwnerDataConverter } from './entities/owner.entity';
 
 @Injectable()
 export class OwnerService {
@@ -43,11 +40,13 @@ export class OwnerService {
   }
 
   findOwnerPhone(id: string): Observable<GetOwnerPhoneDto> {
-    const docRef = doc(this.firebase.firestore(), 'owners', id).withConverter(
-      converter,
-    );
+    const docRef = doc(
+      this.firebase.firestore(),
+      Owner.collectionName,
+      id,
+    ).withConverter(OwnerDataConverter);
     return from(getDoc(docRef)).pipe(
-      map((docSnap: DocumentSnapshot<Owner>) => docSnap.data()),
+      map((doc: DocumentSnapshot<Owner>) => doc.data()),
       mergeMap((owner: Owner) => (owner ? of(owner) : EMPTY)),
       throwIfEmpty(() => new NotFoundException(`owner:${id} was not found`)),
       map((owner: Owner) => new GetOwnerPhoneDto(owner.primaryPhone)),
