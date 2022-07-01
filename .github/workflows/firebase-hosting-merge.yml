@@ -11,6 +11,8 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       backend: ${{ steps.filter.outputs.backend }}
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
       - uses: dorny/paths-filter@v2
         id: filter
         with:

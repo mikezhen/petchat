@@ -50,8 +50,9 @@ export default function ContactCard({
       <Box mt={2} textAlign='center'>
         <LoadingButton
           variant='contained'
-          loading={buttonLoading}
           color='info'
+          loading={buttonLoading}
+          loadingPosition='start'
           startIcon={<NotificationsIcon />}
           onClick={handleButtonClick}
           {...buttonProps}

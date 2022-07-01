@@ -23,11 +23,9 @@ export default function PetProfile({ pet }: PetProfileProps) {
     }[gender];
   };
 
-  const [contactButtonLoading, setContactButtonLoading] = useState<boolean>(false);
+  const [contactOwnerLoading, setContactOwnerLoading] = useState<boolean>(false);
   const openContactOwner = () => {
-    // TODO: Make API call to retrieve number after click
-    // TODO: Add a load spinner while waiting for response because CloudRun may have cold-start
-    setContactButtonLoading(true);
+    setContactOwnerLoading(true);
     axios
       .get<OwnerResponse>(`/api/owner/${pet.owner.id}/phone`)
       .then((response) => {
@@ -35,7 +33,7 @@ export default function PetProfile({ pet }: PetProfileProps) {
           response.data.primaryPhone,
           'US'
         );
-        setContactButtonLoading(false);
+        setContactOwnerLoading(false);
         window.open(phoneNumber.getURI(), '_self');
       })
       .catch((error) => console.error(error)) // Temporary handling error in console log
@@ -65,7 +63,7 @@ export default function PetProfile({ pet }: PetProfileProps) {
     },
     description: pet.description,
     handleButtonClick: openContactOwner,
-    buttonLoading: contactButtonLoading,
+    buttonLoading: contactOwnerLoading,
   };
 
   const addressCardProps: AddressCardProps = {
