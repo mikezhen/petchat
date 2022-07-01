@@ -3,7 +3,7 @@ import { Box, Container, Stack } from '@mui/material';
 import axios from 'axios';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { parsePhoneNumber, PhoneNumber } from 'libphonenumber-js';
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import AddressCard, { AddressCardProps } from '../components/AddressCard';
 import ContactCard, { ContactCardProps } from '../components/ContactCard';
 import Header, { HeaderProps } from '../components/Header';
@@ -23,9 +23,11 @@ export default function PetProfile({ pet }: PetProfileProps) {
     }[gender];
   };
 
+  const [contactButtonLoading, setContactButtonLoading] = useState<boolean>(false);
   const openContactOwner = () => {
     // TODO: Make API call to retrieve number after click
     // TODO: Add a load spinner while waiting for response because CloudRun may have cold-start
+    setContactButtonLoading(true);
     axios
       .get<OwnerResponse>(`/api/owner/${pet.owner.id}/phone`)
       .then((response) => {
@@ -33,9 +35,10 @@ export default function PetProfile({ pet }: PetProfileProps) {
           response.data.primaryPhone,
           'US'
         );
+        setContactButtonLoading(false);
         window.open(phoneNumber.getURI(), '_self');
       })
-      .catch((error) => console.error(error)); // Temporary handling error in console log
+      .catch((error) => console.error(error)) // Temporary handling error in console log
   };
 
   /** This is after API response */
@@ -62,6 +65,7 @@ export default function PetProfile({ pet }: PetProfileProps) {
     },
     description: pet.description,
     handleButtonClick: openContactOwner,
+    buttonLoading: contactButtonLoading,
   };
 
   const addressCardProps: AddressCardProps = {

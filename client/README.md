@@ -19,6 +19,9 @@ You will also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
+We use the `react-testing-library` to test our UI components at the DOM level to avoid focus on [implementation details](https://kentcdodds.com/blog/testing-implementation-details).\
+Check out [this blog](https://kentcdodds.com/blog/how-to-know-what-to-test) to help figure out what to test!
+
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\

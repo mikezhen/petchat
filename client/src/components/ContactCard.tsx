@@ -3,17 +3,18 @@ import {
   Avatar,
   AvatarProps,
   Box,
-  Button,
   ButtonProps,
   Stack,
   Typography,
 } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { Image } from '../types';
 
 export type ContactCardProps = {
   avatar: Image;
   description: string;
   handleButtonClick: () => void;
+  buttonLoading: boolean;
   avatarProps?: AvatarProps;
   buttonProps?: ButtonProps;
 };
@@ -22,6 +23,7 @@ export default function ContactCard({
   avatar,
   description,
   handleButtonClick,
+  buttonLoading,
   avatarProps,
   buttonProps,
 }: ContactCardProps) {
@@ -46,15 +48,16 @@ export default function ContactCard({
         </Typography>
       </Stack>
       <Box mt={2} textAlign='center'>
-        <Button
+        <LoadingButton
           variant='contained'
+          loading={buttonLoading}
           color='info'
           startIcon={<NotificationsIcon />}
           onClick={handleButtonClick}
           {...buttonProps}
         >
           {buttonProps?.children ?? 'Contact Owner'}
-        </Button>
+        </LoadingButton>
       </Box>
     </Box>
   );
