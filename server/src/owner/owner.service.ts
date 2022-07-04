@@ -18,24 +18,27 @@ import {
   throwIfEmpty,
 } from 'rxjs';
 import { FirebaseService } from '../firebase/firebase.service';
-import { GetOwnerAvatarDto } from './dto/get-owner-avatar.dto';
 import { GetOwnerPhoneDto } from './dto/get-owner-phone.dto';
+import { GetOwnerDto } from './dto/get-owner.dto';
 import { Owner, OwnerDataConverter } from './entities/owner.entity';
 
 @Injectable()
 export class OwnerService {
   constructor(private readonly firebase: FirebaseService) {}
 
-  findAvatar(id: string): Observable<GetOwnerAvatarDto> {
-    const listRef = ref(this.firebase.storage(), `owners/${id}`);
+  findOwner(id: string): Observable<GetOwnerDto> {
+    const listRef = ref(
+      this.firebase.storage(),
+      `${Owner.collectionName}/${id}`,
+    );
     return from(list(listRef)).pipe(
       map((listResult: ListResult) => listResult.items[0]),
-      mergeMap((imageRef: StorageReference) =>
+      switchMap((imageRef: StorageReference) =>
         imageRef ? of(imageRef) : EMPTY,
       ),
       throwIfEmpty(() => new NotFoundException(`owner:${id} was not found`)),
-      switchMap((imageRef: StorageReference) => from(getDownloadURL(imageRef))),
-      map((url: string) => new GetOwnerAvatarDto(url)),
+      mergeMap((imageRef: StorageReference) => getDownloadURL(imageRef)),
+      map((url: string) => new GetOwnerDto(id, url)),
     );
   }
 
@@ -47,7 +50,7 @@ export class OwnerService {
     ).withConverter(OwnerDataConverter);
     return from(getDoc(docRef)).pipe(
       map((doc: DocumentSnapshot<Owner>) => doc.data()),
-      mergeMap((owner: Owner) => (owner ? of(owner) : EMPTY)),
+      switchMap((owner: Owner) => (owner ? of(owner) : EMPTY)),
       throwIfEmpty(() => new NotFoundException(`owner:${id} was not found`)),
       map((owner: Owner) => new GetOwnerPhoneDto(owner.primaryPhone)),
     );
