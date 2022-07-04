@@ -46,7 +46,7 @@ export default function PetProfile({ pet }: PetProfileProps) {
   const demographics = [
     { label: 'Age', value: currentAge },
     { label: 'Color', value: pet.color },
-    { label: 'Weight', value: `${pet.weight.value} ${pet.weight.unit}` },
+    { label: 'Weight', value: `${pet.weight.measurement} ${pet.weight.unit}` },
   ];
 
   const headerProps: HeaderProps = {
