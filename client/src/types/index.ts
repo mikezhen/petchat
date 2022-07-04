@@ -15,37 +15,30 @@ export interface Place {
 export interface Owner {
   id: string;
   avatarUrl: string; // URL to the avatar image
-  phoneNumbers: string[];
-  emails: string[];
-}
-
-/** Temp location to capture API responses */
-export interface OwnerResponse {
-  primaryPhone: string;
 }
 
 export interface Weight {
-  value: number;
+  measurement: number;
   unit: MassUnit;
-}
-
-export interface Image {
-  caption: string;
-  url: string;
 }
 
 export interface Pet {
   name: string;
   breed: string;
   gender: Gender;
-  birthday: Date;
+  birthday: string;
   color: string;
   weight: Weight;
   description: string;
-  photos: Image[];
+  photos: string[];
   owner: Owner;
   veterinarian: Place;
 }
 
 export type MassUnit = 'lb' | 'kg';
 export type Gender = 'Male' | 'Female';
+
+/** Temp location to capture API responses */
+export interface OwnerPhoneResponse {
+  primaryPhone: string;
+}

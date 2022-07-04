@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { GetOwnerAvatarDto } from './dto/get-owner-avatar.dto';
 import { GetOwnerPhoneDto } from './dto/get-owner-phone.dto';
+import { GetOwnerDto } from './dto/get-owner.dto';
 import { OwnerService } from './owner.service';
 
 @Controller('owner')
@@ -13,8 +13,8 @@ export class OwnerController {
     return this.ownerService.findOwnerPhone(id);
   }
 
-  @Get(':id/avatar')
-  findAvatar(@Param('id') id: string): Observable<GetOwnerAvatarDto> {
-    return this.ownerService.findAvatar(id);
+  @Get(':id')
+  findOwner(@Param('id') id: string): Observable<GetOwnerDto> {
+    return this.ownerService.findOwner(id);
   }
 }

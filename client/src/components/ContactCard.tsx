@@ -8,10 +8,9 @@ import {
   Typography,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { Image } from '../types';
 
 export type ContactCardProps = {
-  avatar: Image;
+  avatarUrl: string;
   description: string;
   handleButtonClick: () => void;
   buttonLoading: boolean;
@@ -20,7 +19,7 @@ export type ContactCardProps = {
 };
 
 export default function ContactCard({
-  avatar,
+  avatarUrl,
   description,
   handleButtonClick,
   buttonLoading,
@@ -38,8 +37,8 @@ export default function ContactCard({
     <Box>
       <Stack direction='row' spacing={3} alignItems='center'>
         <Avatar
-          src={avatar.url}
-          alt={avatar.caption}
+          src={avatarUrl}
+          alt='Owner avatar'
           {...avatarProps} // Props first to prevent overriding sx attribute
           sx={{ ...avatarDimension, ...avatarProps?.sx }}
         />

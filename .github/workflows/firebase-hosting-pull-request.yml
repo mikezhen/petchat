@@ -8,6 +8,7 @@ on:
 env:
   PROJECT_ID: petchat-85f05
   SERVICE_NAME: petchat
+  PET_ID: XctAymVwTqu8onOP34ll
 
 jobs:
   # Job to run change detection
@@ -39,6 +40,8 @@ jobs:
           node-version: 16.15.0
       - name: Build Package
         run: cd client && npm ci && npm run build
+        env:
+          REACT_APP_PET_ID: ${{ env.PET_ID }}
       - name: Use Preview Firebase Config
         run: cp ./firebase.preview.json ./firebase.json
       - name: Deploy to Firebase Hosting
