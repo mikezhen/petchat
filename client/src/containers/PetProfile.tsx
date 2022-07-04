@@ -8,7 +8,7 @@ import AddressCard, { AddressCardProps } from '../components/AddressCard';
 import ContactCard, { ContactCardProps } from '../components/ContactCard';
 import Header, { HeaderProps } from '../components/Header';
 import InfoItem from '../components/InfoItem';
-import { Gender, OwnerResponse, Pet } from '../types';
+import { Gender, OwnerPhoneResponse, Pet } from '../types';
 
 export type PetProfileProps = {
   pet: Pet;
@@ -27,7 +27,7 @@ export default function PetProfile({ pet }: PetProfileProps) {
   const openContactOwner = () => {
     setContactOwnerLoading(true);
     axios
-      .get<OwnerResponse>(`/api/owner/${pet.owner.id}/phone`)
+      .get<OwnerPhoneResponse>(`/api/owner/${pet.owner.id}/phone`)
       .then((response) => {
         const phoneNumber: PhoneNumber = parsePhoneNumber(
           response.data.primaryPhone,
@@ -38,8 +38,6 @@ export default function PetProfile({ pet }: PetProfileProps) {
       })
       .catch((error) => console.error(error)) // Temporary handling error in console log
   };
-
-  /** This is after API response */
 
   const currentAge: string = formatDistanceToNowStrict(pet.birthday, {
     roundingMethod: 'floor',
@@ -57,10 +55,7 @@ export default function PetProfile({ pet }: PetProfileProps) {
   };
 
   const contactCardProps: ContactCardProps = {
-    avatar: {
-      caption: 'Owner',
-      url: pet.owner.avatarUrl,
-    },
+    avatarUrl: pet.owner.avatarUrl,
     description: pet.description,
     handleButtonClick: openContactOwner,
     buttonLoading: contactOwnerLoading,

@@ -2,21 +2,20 @@ import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { Box, Button, MobileStepper, MobileStepperProps } from '@mui/material';
 import { useState } from 'react';
 import SwipeableViews from 'react-swipeable-views';
-import { Image } from '../types';
 
 export type CarouselProps = {
-  images: Image[];
+  imageUrls: string[];
   height?: number;
   stepperProps?: MobileStepperProps;
 };
 
 export default function Carousel({
-  images,
+  imageUrls,
   height,
   stepperProps,
 }: CarouselProps) {
   const carouselHeight: number = height ?? 300;
-  const maxSteps: number = images.length;
+  const maxSteps: number = imageUrls.length;
   const [activeStep, setActiveStep] = useState<number>(0);
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -35,7 +34,7 @@ export default function Carousel({
         onChangeIndex={handleStepChange}
         slideStyle={{ overflow: 'hidden' }}
       >
-        {images.map(({ url, caption }) => (
+        {imageUrls.map((url) => (
           <Box>
             <Box
               sx={{
@@ -51,7 +50,7 @@ export default function Carousel({
             <Box
               component='img'
               src={url}
-              alt={caption}
+              alt='Pet photo'
               sx={{
                 height: carouselHeight,
                 display: 'block',
