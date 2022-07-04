@@ -18,7 +18,7 @@ export interface Owner {
 }
 
 export interface Weight {
-  value: number;
+  measurement: number;
   unit: MassUnit;
 }
 
