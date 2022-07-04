@@ -34,8 +34,8 @@ export default function Carousel({
         onChangeIndex={handleStepChange}
         slideStyle={{ overflow: 'hidden' }}
       >
-        {imageUrls.map((url) => (
-          <Box>
+        {imageUrls.map((url, index) => (
+          <Box key={index}>
             <Box
               sx={{
                 background: `linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3) ),  url(${url}) center no-repeat`,

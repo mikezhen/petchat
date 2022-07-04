@@ -44,8 +44,8 @@ export default function AddressCard({
             <Typography variant='subtitle2' fontWeight='bold'>
               {addressName}
             </Typography>
-            {formattedAddress.map((addressLine) => (
-              <Typography variant='subtitle2'>{addressLine}</Typography>
+            {formattedAddress.map((addressLine, index) => (
+              <Typography key={index} variant='subtitle2'>{addressLine}</Typography>
             ))}
           </Stack>
         </Stack>

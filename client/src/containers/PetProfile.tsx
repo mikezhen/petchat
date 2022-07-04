@@ -3,7 +3,7 @@ import { Box, Container, Stack } from '@mui/material';
 import axios from 'axios';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { parsePhoneNumber, PhoneNumber } from 'libphonenumber-js';
-import { ReactElement, useState } from 'react';
+import { Fragment, ReactElement, useState } from 'react';
 import AddressCard, { AddressCardProps } from '../components/AddressCard';
 import ContactCard, { ContactCardProps } from '../components/ContactCard';
 import Header, { HeaderProps } from '../components/Header';
@@ -75,8 +75,10 @@ export default function PetProfile({ pet }: PetProfileProps) {
         <Header {...headerProps} />
       </Box>
       <Stack direction='row' spacing={2} mt={2} mb={4}>
-        {demographics.map((item) => (
-          <InfoItem {...item} />
+        {demographics.map((item, index) => (
+          <Fragment key={index}>
+            <InfoItem {...item} />
+          </Fragment>
         ))}
       </Stack>
       <ContactCard {...contactCardProps} />
