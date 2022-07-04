@@ -26,7 +26,7 @@ export interface Pet {
   name: string;
   breed: string;
   gender: Gender;
-  birthday: Date;
+  birthday: string;
   color: string;
   weight: Weight;
   description: string;

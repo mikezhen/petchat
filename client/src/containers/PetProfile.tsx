@@ -39,7 +39,8 @@ export default function PetProfile({ pet }: PetProfileProps) {
       .catch((error) => console.error(error)) // Temporary handling error in console log
   };
 
-  const currentAge: string = formatDistanceToNowStrict(pet.birthday, {
+  const birthday: Date = new Date(pet.birthday);
+  const currentAge: string = formatDistanceToNowStrict(birthday, {
     roundingMethod: 'floor',
   });
   const demographics = [

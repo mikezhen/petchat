@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.get<Pet>(`/api/pet/${petId}`)
+      const response = await axios.get<Pet>(`/api/pet/${petId}`);
       setPet(response.data);
     }
     fetchData();
