@@ -1,6 +1,6 @@
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { Box, Button, MobileStepper, MobileStepperProps } from '@mui/material';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import SwipeableViews from 'react-swipeable-views';
 
 export type CarouselProps = {
@@ -35,7 +35,7 @@ export default function Carousel({
         slideStyle={{ overflow: 'hidden' }}
       >
         {imageUrls.map((url, index) => (
-          <Box key={index}>
+          <Fragment key={index}>
             <Box
               sx={{
                 background: `linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3) ),  url(${url}) center no-repeat`,
@@ -59,7 +59,7 @@ export default function Carousel({
                 position: 'relative',
               }}
             />
-          </Box>
+          </Fragment>
         ))}
       </SwipeableViews>
       <MobileStepper
