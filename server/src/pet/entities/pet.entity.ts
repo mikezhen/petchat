@@ -3,10 +3,9 @@ import {
   DocumentReference,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
-  SnapshotOptions,
   Timestamp,
   WithFieldValue,
-} from 'firebase/firestore';
+} from 'firebase-admin/firestore';
 import { Owner } from 'src/owner/entities/owner.entity';
 import { Weight } from 'src/shared/interface/weight.interface';
 import { Gender } from 'src/shared/type/gender.type';
@@ -34,12 +33,8 @@ export const PetDataConverter: FirestoreDataConverter<Pet> = {
   toFirestore(pet: WithFieldValue<Pet>): DocumentData {
     return { ...pet };
   },
-  fromFirestore(
-    snapshot: QueryDocumentSnapshot,
-    options: SnapshotOptions,
-  ): Pet {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const data = snapshot.data(options)! as Pet;
+  fromFirestore(snapshot: QueryDocumentSnapshot): Pet {
+    const data = snapshot.data() as Pet;
     return new Pet({ ...data });
   },
 };

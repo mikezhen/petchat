@@ -2,9 +2,8 @@ import {
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
-  SnapshotOptions,
   WithFieldValue,
-} from 'firebase/firestore';
+} from 'firebase-admin/firestore';
 import { Address } from 'src/shared/interface/address.interface';
 
 export class Place {
@@ -23,12 +22,8 @@ export const PlaceDataConverter: FirestoreDataConverter<Place> = {
   toFirestore(place: WithFieldValue<Place>): DocumentData {
     return { ...place };
   },
-  fromFirestore(
-    snapshot: QueryDocumentSnapshot,
-    options: SnapshotOptions,
-  ): Place {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const data = snapshot.data(options)! as Place;
+  fromFirestore(snapshot: QueryDocumentSnapshot): Place {
+    const data = snapshot.data() as Place;
     return new Place({ ...data });
   },
 };
