@@ -2,9 +2,8 @@ import {
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
-  SnapshotOptions,
   WithFieldValue,
-} from 'firebase/firestore';
+} from 'firebase-admin/firestore';
 
 export class Owner {
   static collectionName = 'owners'; // Firestore collection name
@@ -24,12 +23,8 @@ export const OwnerDataConverter: FirestoreDataConverter<Owner> = {
   toFirestore(owner: WithFieldValue<Owner>): DocumentData {
     return { ...owner };
   },
-  fromFirestore(
-    snapshot: QueryDocumentSnapshot,
-    options: SnapshotOptions,
-  ): Owner {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const data = snapshot.data(options)! as Owner;
+  fromFirestore(snapshot: QueryDocumentSnapshot): Owner {
+    const data = snapshot.data() as Owner;
     return new Owner({ ...data });
   },
 };
