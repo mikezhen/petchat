@@ -7,5 +7,6 @@ import { FirebaseModule } from 'src/firebase/firebase.module';
   controllers: [OwnerController],
   providers: [OwnerService],
   imports: [FirebaseModule],
+  exports: [OwnerService],
 })
 export class OwnerModule {}

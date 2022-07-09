@@ -43,8 +43,8 @@ export class OwnerService {
   }
 
   findOwnerPhone(id: string): Observable<GetOwnerPhoneDto> {
-    const firestore = this.firebase.firestore();
-    const docRef = firestore
+    const docRef = this.firebase
+      .firestore()
       .doc(`${Owner.collectionName}/${id}`)
       .withConverter(OwnerDataConverter);
     return from(docRef.get()).pipe(
