@@ -4,15 +4,18 @@ import Carousel, { CarouselProps } from './components/Carousel';
 import { Pet } from './types';
 import PetProfile, { PetProfileProps } from './containers/PetProfile';
 import './App.css';
+import { Backdrop, CircularProgress } from '@mui/material';
 
 function App() {
   const petId: string = process.env.REACT_APP_PET_ID!;
   const [pet, setPet] = useState<Pet>();
+  const [dataLoading, setDataLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchData() {
       const response = await axios.get<Pet>(`/api/pet/${petId}`);
       setPet(response.data);
+      setDataLoading(false);
     }
     fetchData();
   });
@@ -31,6 +34,12 @@ function App() {
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={dataLoading}
+      >
+        <CircularProgress color='inherit' />
+      </Backdrop>
       {carouselProps && <Carousel {...carouselProps} />}
       {petProfileProps && <PetProfile {...petProfileProps} />}
     </>
