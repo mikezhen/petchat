@@ -86,6 +86,7 @@ jobs:
           image: us-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/server:${{ github.sha }}
           env_vars: |
             NODE_ENV=production
+            GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.FIREBASE_ADMIN_SDK_PETCHAT_85F05 }}
             FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY_PETCHAT_85F05 }}
             FIREBASE_AUTH_DOMAIN=${{ env.PROJECT_ID }}.firebaseapp.com
             FIREBASE_PROJECT_ID=${{ env.PROJECT_ID }}
