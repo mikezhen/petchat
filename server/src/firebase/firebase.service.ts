@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { App, applicationDefault, initializeApp } from 'firebase-admin/app';
+import { App, cert, initializeApp } from 'firebase-admin/app';
 import { Firestore, getFirestore } from 'firebase-admin/firestore';
 import {
   FirebaseApp as FirebaseWebApp,
@@ -15,7 +15,7 @@ export class FirebaseService {
 
   constructor(configService: ConfigService) {
     this.firebaseApp = initializeApp({
-      credential: applicationDefault(),
+      credential: cert(configService.get('firebase-admin')),
     });
     this.firebaseWebApp = initializeWebApp(configService.get('firebase'));
   }
