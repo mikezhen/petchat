@@ -16,7 +16,6 @@ jobs:
     outputs:
       frontend: ${{ steps.filter.outputs.frontend }}
       backend: ${{ steps.filter.outputs.backend }}
-      infrastructure: ${{ steps.filter.outputs.infrastructure }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -28,9 +27,6 @@ jobs:
               - 'client/**'
             backend:
               - 'server/**'
-            infrastructure:
-              - '*.rules'
-              - '*.indexes.json'
   # Job to build and deploy frontend code to Firebase Hosting
   build_deploy_frontend:
     needs: changes
@@ -98,16 +94,3 @@ jobs:
             FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID_PETCHAT_85F05 }}
             FIREBASE_ADMIN_SDK_CLIENT_EMAIL=${{ secrets.FIREBASE_ADMIN_SDK_CLIENT_EMAIL_PETCHAT_85F05 }}
             FIREBASE_ADMIN_SDK_PRIVATE_KEY=${{ secrets.FIREBASE_ADMIN_SDK_PRIVATE_KEY_PETCHAT_85F05 }}
-  configure_infrastructure:
-    needs: changes
-    if: ${{ needs.changes.outputs.infrastructure == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Update Configurations
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only firestore,storage
-        env:
-          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PETCHAT_85F05 }}
