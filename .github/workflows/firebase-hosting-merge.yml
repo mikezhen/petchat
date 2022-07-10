@@ -110,4 +110,4 @@ jobs:
         with:
           args: deploy --only firestore,storage
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_CI_TOKEN_PETCHAT_85F05 }}
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PETCHAT_85F05 }}
