@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { doc, DocumentSnapshot, getDoc } from 'firebase/firestore';
+import { DocumentSnapshot } from 'firebase-admin/firestore';
 import {
   getDownloadURL,
   list,
@@ -17,7 +17,7 @@ import {
   switchMap,
   throwIfEmpty,
 } from 'rxjs';
-import { FirebaseService } from '../firebase/firebase.service';
+import { FirebaseService } from 'src/firebase/firebase.service';
 import { GetOwnerPhoneDto } from './dto/get-owner-phone.dto';
 import { GetOwnerDto } from './dto/get-owner.dto';
 import { Owner, OwnerDataConverter } from './entities/owner.entity';
@@ -43,12 +43,11 @@ export class OwnerService {
   }
 
   findOwnerPhone(id: string): Observable<GetOwnerPhoneDto> {
-    const docRef = doc(
-      this.firebase.firestore(),
-      Owner.collectionName,
-      id,
-    ).withConverter(OwnerDataConverter);
-    return from(getDoc(docRef)).pipe(
+    const docRef = this.firebase
+      .firestore()
+      .doc(`${Owner.collectionName}/${id}`)
+      .withConverter(OwnerDataConverter);
+    return from(docRef.get()).pipe(
       map((doc: DocumentSnapshot<Owner>) => doc.data()),
       switchMap((owner: Owner) => (owner ? of(owner) : EMPTY)),
       throwIfEmpty(() => new NotFoundException(`owner:${id} was not found`)),

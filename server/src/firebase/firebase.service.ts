@@ -1,22 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { FirebaseApp, initializeApp } from 'firebase/app';
-import { Firestore, getFirestore } from 'firebase/firestore';
-import { FirebaseStorage, getStorage } from 'firebase/storage';
-import firebaseConfig from './config';
+import { ConfigService } from '@nestjs/config';
+import { App, cert, initializeApp } from 'firebase-admin/app';
+import { Firestore, getFirestore } from 'firebase-admin/firestore';
+import {
+  FirebaseApp as FirebaseWebApp,
+  initializeApp as initializeWebApp,
+} from 'firebase/app';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
 
 @Injectable()
 export class FirebaseService {
-  private firebaseApp: FirebaseApp;
+  private firebaseApp: App;
+  private firebaseWebApp: FirebaseWebApp; // Web v9 modular client for storage APIs
 
-  constructor() {
-    this.firebaseApp = initializeApp(firebaseConfig);
+  constructor(configService: ConfigService) {
+    this.firebaseApp = initializeApp({
+      credential: cert(configService.get('firebase-admin')),
+    });
+    this.firebaseWebApp = initializeWebApp(configService.get('firebase'));
   }
 
   firestore = (): Firestore => {
     return getFirestore(this.firebaseApp);
   };
 
+  /**
+   * Utilize the Web v9 modular client since Admin SDK is lacking functionality
+   * @returns {FirebaseStorage}
+   */
   storage = (): FirebaseStorage => {
-    return getStorage(this.firebaseApp);
+    return getStorage(this.firebaseWebApp);
   };
 }

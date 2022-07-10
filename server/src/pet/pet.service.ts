@@ -1,10 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import {
-  doc,
-  DocumentReference,
-  DocumentSnapshot,
-  getDoc,
-} from 'firebase/firestore';
+import { DocumentReference, DocumentSnapshot } from 'firebase-admin/firestore';
 import { getDownloadURL, list, ListResult, ref } from 'firebase/storage';
 import {
   EMPTY,
@@ -31,12 +26,11 @@ export class PetService {
   ) {}
 
   findPet(id: string): Observable<GetPetDto> {
-    const docRef = doc(
-      this.firebase.firestore(),
-      Pet.collectionName,
-      id,
-    ).withConverter(PetDataConverter);
-    return from(getDoc(docRef)).pipe(
+    const docRef = this.firebase
+      .firestore()
+      .doc(`${Pet.collectionName}/${id}`)
+      .withConverter(PetDataConverter);
+    return from(docRef.get()).pipe(
       map((doc: DocumentSnapshot<Pet>) => doc.data()),
       switchMap((pet: Pet) => (pet ? of(pet) : EMPTY)),
       throwIfEmpty(() => new NotFoundException(`pet:${id} was not found`)),
@@ -72,7 +66,7 @@ export class PetService {
   }
 
   findPetVeterinarian(docRef: DocumentReference<Place>): Observable<Place> {
-    return from(getDoc(docRef.withConverter(PlaceDataConverter))).pipe(
+    return from(docRef.withConverter(PlaceDataConverter).get()).pipe(
       map((doc: DocumentSnapshot<Place>) => doc.data()),
     );
   }

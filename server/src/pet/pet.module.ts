@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { PetService } from './pet.service';
 import { PetController } from './pet.controller';
-import { FirebaseService } from 'src/firebase/firebase.service';
-import { OwnerService } from 'src/owner/owner.service';
+import { FirebaseModule } from 'src/firebase/firebase.module';
+import { OwnerModule } from 'src/owner/owner.module';
 
 @Module({
   controllers: [PetController],
-  providers: [PetService, FirebaseService, OwnerService],
+  providers: [PetService],
+  imports: [FirebaseModule, OwnerModule],
 })
 export class PetModule {}
