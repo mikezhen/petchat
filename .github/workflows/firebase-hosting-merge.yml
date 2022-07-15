@@ -115,7 +115,7 @@ jobs:
         with:
           name: image-processor
           runtime: nodejs16
-          entry_point: index.js
+          entry_point: processImage
           env_vars:
             FIREBASE_FUNCTION_ORIGIN_TOKEN=${{ env.PROJECT_ID }}
           source_dir: function
