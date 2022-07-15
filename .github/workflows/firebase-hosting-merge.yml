@@ -16,6 +16,7 @@ jobs:
     outputs:
       frontend: ${{ steps.filter.outputs.frontend }}
       backend: ${{ steps.filter.outputs.backend }}
+      function: ${{ steps.filter.outputs.function }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -27,6 +28,8 @@ jobs:
               - 'client/**'
             backend:
               - 'server/**'
+            function:
+              - 'function/**'
   # Job to build and deploy frontend code to Firebase Hosting
   build_deploy_frontend:
     needs: changes
@@ -94,3 +97,22 @@ jobs:
             FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID_PETCHAT_85F05 }}
             FIREBASE_ADMIN_SDK_CLIENT_EMAIL=${{ secrets.FIREBASE_ADMIN_SDK_CLIENT_EMAIL_PETCHAT_85F05 }}
             FIREBASE_ADMIN_SDK_PRIVATE_KEY=${{ secrets.FIREBASE_ADMIN_SDK_PRIVATE_KEY_PETCHAT_85F05 }}
+  deploy_cloud_function:
+    needs: change
+    if: ${{ needs.changes.outputs.function == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Deploy Function
+        uses: google-github-actions/deploy-cloud-functions@v0
+        with:
+          name: image-processor
+          runtime: nodejs16
+          entry_point: index.js
+          env_vars:
+            FIREBASE_FUNCTION_ORIGIN_TOKEN=${{ env.PROJECT_ID }}
+          source_dir: function
+          description: Resize & compress uploaded images for petchat
+          event_trigger_type: google.storage.object.finalize
+          event_trigger_resource: ${{ env.PROJECT_ID }}.appspot.com
