@@ -1,0 +1,16 @@
+{
+  "name": "image-processor",
+  "version": "1.0.0",
+  "description": "Resize & compress uploaded images for petchat",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^6.2.2",
+    "firebase-functions": "^3.22.0",
+    "sharp": "^0.30.7"
+  }
+}
