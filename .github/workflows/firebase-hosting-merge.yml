@@ -121,4 +121,4 @@ jobs:
           source_dir: function
           description: Resize & compress uploaded images for petchat
           event_trigger_type: google.storage.object.finalize
-          event_trigger_resource: ${{ env.PROJECT_ID }}.appspot.com
+          event_trigger_resource: projects/${{ env.PROJECT_ID }}/buckets/${{ env.PROJECT_ID }}.appspot.com
