@@ -15,6 +15,9 @@ Reference sample Cloud Storage event [here](https://cloud.google.com/functions/d
 ## Reference
 
 [Trigger function on Cloud Storage changes](https://firebase.google.com/docs/functions/gcp-storage-events#trigger-function-on-storage-changes)
+
 [Example function code from Firebase](https://github.com/firebase/functions-samples/blob/main/image-sharp/functions/index.js)
+
 [Sharp library documentation for `resize` function](https://sharp.pixelplumbing.com/api-resize)
+
 [Github Actions: Deploy Cloud Functions](https://github.com/google-github-actions/deploy-cloud-functions)
