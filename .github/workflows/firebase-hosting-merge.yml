@@ -118,7 +118,7 @@ jobs:
           entry_point: processImage
           env_vars: |
             FIREBASE_FUNCTION_ORIGIN=${{ env.PROJECT_ID }}
-            FIREBASE_CONFIG='{"projectId":${{ env.PROJECT_ID }},"storageBucket":${{ env.PROJECT_ID }}.appspot.com}'
+            FIREBASE_STORAGE_BUCKET=${{ env.PROJECT_ID }}.appspot.com
           source_dir: function
           description: Resize & compress uploaded images for petchat
           event_trigger_type: google.storage.object.finalize
