@@ -62,5 +62,5 @@ exports.processImage = functions.storage.bucket(STORAGE_BUCKET).object().onFinal
   bucket.file(filePath).createReadStream().pipe(pipeline);
 
   return new Promise((resolve, reject) => uploadStream.on('finish', resolve).on('error', reject))
-    .finally(() => bucket.file(filePath).delete());
+    // .finally(() => bucket.file(filePath).delete());
 });
