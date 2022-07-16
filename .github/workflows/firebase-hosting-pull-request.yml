@@ -116,9 +116,8 @@ jobs:
           name: image-processor-staging
           runtime: nodejs16
           entry_point: processImage
-          env_vars:
+          env_vars: |
             FIREBASE_FUNCTION_ORIGIN_TOKEN=${{ env.PROJECT_ID }}
-            FIREBASE_STORAGE_BUCKET=staging.${{ env.PROJECT_ID }}.appspot.com
           source_dir: function
           description: Resize & compress uploaded images for petchat
           event_trigger_type: google.storage.object.finalize
