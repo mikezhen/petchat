@@ -6,7 +6,7 @@ const sharp = require('sharp');
 
 const FUNCTION_ORIGIN = env.FIREBASE_FUNCTION_ORIGIN;
 const STORAGE_BUCKET = env.FIREBASE_STORAGE_BUCKET;
-const IMAGE_MAX_HEIGHT = 450; // pixels
+const IMAGE_MAX_HEIGHT = 600; // pixels
 
 const storage = new Storage();
 
