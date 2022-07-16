@@ -5,6 +5,7 @@ const sharp = require('sharp');
 const { env } = require('process');
 
 const FUNCTION_ORIGIN_TOKEN = env.FIREBASE_FUNCTION_ORIGIN_TOKEN;
+const STORAGE_BUCKET = env.FIREBASE_STORAGE_BUCKET || 'local';
 const IMAGE_MAX_HEIGHT = 600; // pixels
 
 const storage = new Storage();
@@ -37,7 +38,7 @@ function shouldProcessFile(metadata) {
 /**
  * Process image when it's uploaded in the Storage bucket
  */
-exports.processImage = functions.storage.object().onFinalize((object) => {
+exports.processImage = functions.storage.bucket(STORAGE_BUCKET).object().onFinalize((object) => {
   const fileBucket = object.bucket;
   const filePath = object.name;
   const contentType = object.contentType;
