@@ -29,7 +29,7 @@ function shouldProcessPrefix(filePath) {
  */
 function shouldProcessFile(metadata) {
   return metadata
-    ? metadata?.firebaseFunctionOriginToken !== FUNCTION_ORIGIN
+    ? metadata?.firebaseFunctionOrigin !== FUNCTION_ORIGIN
     : true;
 }
 
