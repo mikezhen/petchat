@@ -6,7 +6,7 @@ const sharp = require('sharp');
 
 const FUNCTION_ORIGIN = env.FIREBASE_FUNCTION_ORIGIN;
 const STORAGE_BUCKET = env.FIREBASE_STORAGE_BUCKET;
-const IMAGE_MAX_HEIGHT = 600; // pixels
+const IMAGE_MAX_HEIGHT = 450; // pixels
 
 const storage = new Storage();
 
@@ -78,7 +78,7 @@ exports.processImage = functions.storage
 
     // Resize the height porportionally based on landscape vs portrait
     const pipeline = sharp();
-    pipeline.resize({ height: IMAGE_MAX_HEIGHT }).pipe(uploadStream);
+    pipeline.resize({ height: IMAGE_MAX_HEIGHT }).withMetadata().pipe(uploadStream);
 
     // Send the file back to override the original file in the bucket
     bucket.file(filePath).createReadStream().pipe(pipeline);
