@@ -3,7 +3,7 @@ const { Storage } = require('@google-cloud/storage');
 const { env } = require('process');
 const sharp = require('sharp');
 
-const FUNCTION_ORIGIN_TOKEN = env.FIREBASE_FUNCTION_ORIGIN_TOKEN;
+const FUNCTION_ORIGIN = env.FIREBASE_FUNCTION_ORIGIN;
 const IMAGE_MAX_HEIGHT = 600; // pixels
 
 const storage = new Storage();
@@ -28,7 +28,7 @@ function shouldProcessPrefix(filePath) {
  */
 function shouldProcessFile(metadata) {
   return metadata
-    ? metadata?.firebaseFunctionOriginToken !== FUNCTION_ORIGIN_TOKEN
+    ? metadata?.firebaseFunctionOriginToken !== FUNCTION_ORIGIN
     : true;
 }
 
@@ -36,7 +36,6 @@ function shouldProcessFile(metadata) {
  * Process image when it's uploaded in the Storage bucket
  */
 exports.processImage = functions.storage
-  .bucket()
   .object()
   .onFinalize((object) => {
     const fileBucket = object.bucket;
@@ -61,7 +60,7 @@ exports.processImage = functions.storage
     const metadata = {
       contentType,
       metadata: {
-        firebaseFunctionOriginToken: FUNCTION_ORIGIN_TOKEN
+        firebaseFunctionOrigin: FUNCTION_ORIGIN
       }
     };
     const uploadStream = bucket
