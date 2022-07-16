@@ -41,6 +41,7 @@ function shouldProcessFile(metadata) {
 
 /**
  * Process image when it's uploaded in the Storage bucket
+ * Main entrypoint for the Cloud Function
  */
 exports.processImage = functions.storage
   .bucket(STORAGE_BUCKET)
