@@ -43,10 +43,14 @@ exports.processImage = functions.storage.bucket(STORAGE_BUCKET).object().onFinal
   const filePath = object.name;
   const contentType = object.contentType;
 
+  functions.logger.info(`Storage event triggered by: ${filePath}`);
+
   // Only process files considered to be valid images / photos
   if (!contentType.startsWith('image/') ||
       !shouldProcessPrefix(filePath) ||
       !shouldProcessFile(object.metadata)) return null;
+
+  functions.logger.info('Processing image...');
 
   const bucket = storage.bucket(fileBucket);
 
@@ -62,5 +66,5 @@ exports.processImage = functions.storage.bucket(STORAGE_BUCKET).object().onFinal
   bucket.file(filePath).createReadStream().pipe(pipeline);
 
   return new Promise((resolve, reject) => uploadStream.on('finish', resolve).on('error', reject))
-    // .finally(() => bucket.file(filePath).delete());
+    .finally(() => functions.logger.info(`Processed: ${filePath}`));
 });
