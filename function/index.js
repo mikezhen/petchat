@@ -59,10 +59,15 @@ exports.processImage = functions.storage
     const bucket = storage.bucket(fileBucket);
 
     // Create write stream for the processed image
-    const metadata = { firebaseFunctionOriginToken: FUNCTION_ORIGIN_TOKEN };
+    const metadata = {
+      contentType,
+      metadata: {
+        firebaseFunctionOriginToken: FUNCTION_ORIGIN_TOKEN
+      }
+    };
     const uploadStream = bucket
       .file(filePath)
-      .createWriteStream({ contentType, metadata });
+      .createWriteStream({ metadata });
 
     // Resize the height porportionally based on landscape vs portrait
     const pipeline = sharp();
