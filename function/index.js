@@ -1,6 +1,7 @@
 const functions = require('firebase-functions');
 const { Storage } = require('@google-cloud/storage');
 const { env } = require('process');
+const path = require('path');
 const sharp = require('sharp');
 
 const FUNCTION_ORIGIN = env.FIREBASE_FUNCTION_ORIGIN;
@@ -10,15 +11,20 @@ const IMAGE_MAX_HEIGHT = 600; // pixels
 const storage = new Storage();
 
 /**
- * Determines if image requires processing based on top-level prefix
+ * Determines if image requires processing based on prefix & path pattern
  * Only certain images should be processed
  *
  * @param {string} filePath
  * @return {boolean}
  */
 function shouldProcessPrefix(filePath) {
-  const imagePrefixes = ['owners/', 'pets/'];
-  return imagePrefixes.some((prefix) => filePath.startsWith(prefix));
+  const validPrefixes = ['owners', 'pets'];
+  const fileName = path.basename(filePath);
+  // Valid pattern: owners/abc123id/Image_1234.jpg
+  const filePattern = new RegExp(
+    `^(${validPrefixes.join('|')})/\\w+/${fileName}$`
+  );
+  return filePattern.test(filePath);
 }
 
 /**
