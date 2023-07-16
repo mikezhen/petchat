@@ -24,7 +24,7 @@ jobs:
       - name: Build Package
         run: cd server && npm ci && npm run build
       - name: Google Auth
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v1
         id: auth
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PETCHAT_85F05 }}
@@ -45,8 +45,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Google Auth
+        uses: google-github-actions/auth@v1
+        id: auth
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PETCHAT_85F05 }}
+          token_format: access_token
       - name: Deploy to CloudRun
-        uses: google-github-actions/deploy-cloudrun@v0
+        uses: google-github-actions/deploy-cloudrun@v1
         with:
           project_id: ${{ env.PROJECT_ID }}
           service: ${{ format('{0}{1}', env.SERVICE_NAME, (github.event.pull_request.head.repo.full_name == github.repository && '-preview') || '') }}
