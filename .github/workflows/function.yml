@@ -2,6 +2,8 @@ name: Build & deploy functions
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'function/**'
   pull_request:
