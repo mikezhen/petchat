@@ -5,10 +5,10 @@ on:
     paths:
       - 'client/**'
   pull_request:
-    branches:
-      - main
-    paths:
-      - 'client/**'
+    # branches:
+    #   - main
+    # paths:
+    #   - 'client/**'
 
 env:
   PROJECT_ID: petchat-85f05
