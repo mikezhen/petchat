@@ -1,0 +1,61 @@
+name: Build & deploy frontend
+
+on:
+  push:
+    paths:
+      - 'client/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'client/**'
+
+env:
+  PROJECT_ID: petchat-85f05
+  SERVICE_NAME: petchat
+  PET_ID: XctAymVwTqu8onOP34ll
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Node Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.15.0
+      - name: Build Package
+        run: cd client && npm ci && npm run build
+        env:
+          REACT_APP_PET_ID: ${{ env.PET_ID }}
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: client/build
+          if-no-files-found: error
+      - name: Use Preview Firebase Config
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        run: cp ./firebase.preview.json ./firebase.json
+      - name: Upload Firebase Config as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: ./firebase.json
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3.0.1
+        with:
+          name: build-artifact
+      - name: List artifact contents
+        run: ls -R
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PETCHAT_85F05 }}
+          projectId: ${{ env.PROJECT_ID }}
