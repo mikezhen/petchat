@@ -5,10 +5,10 @@ on:
     paths:
       - 'client/**'
   pull_request:
-    # branches:
-    #   - main
-    # paths:
-    #   - 'client/**'
+    branches:
+      - main
+    paths:
+      - 'client/**'
 
 env:
   PROJECT_ID: petchat-85f05
@@ -34,6 +34,7 @@ jobs:
         with:
           name: build-artifact
           path: client/build
+          if-no-files-found: error
       - name: Use Preview Firebase Config
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         run: cp ./firebase.preview.json ./firebase.json
