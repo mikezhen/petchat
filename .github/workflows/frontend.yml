@@ -2,6 +2,8 @@ name: Build & deploy frontend
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'client/**'
   pull_request:
