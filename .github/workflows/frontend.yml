@@ -5,10 +5,10 @@ on:
     paths:
       - 'client/**'
   pull_request:
-    branches:
-      - main
-    paths:
-      - 'client/**'
+    # branches:
+    #   - main
+    # paths:
+    #   - 'client/**'
 
 env:
   PROJECT_ID: petchat-85f05
@@ -51,8 +51,7 @@ jobs:
         uses: actions/download-artifact@v3.0.1
         with:
           name: build-artifact
-      - name: List artifact contents
-        run: ls -R
+          path: client/build
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
