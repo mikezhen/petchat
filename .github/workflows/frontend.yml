@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-artifact
-          path: client/build/
+          path: client/build
       - name: Use Preview Firebase Config
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         run: cp ./firebase.preview.json ./firebase.json
