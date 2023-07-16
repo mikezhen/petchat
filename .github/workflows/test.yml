@@ -1,0 +1,7 @@
+name: test-workflows
+
+on: [pull_request]
+
+jobs:
+  call-frontend-workflow:
+    uses: mikezhen/petchat/.github/workflows/frontend.yml@66012b1ec0db615274693f4cb3e4b7ff9302bc78
