@@ -30,7 +30,7 @@ jobs:
         env:
           REACT_APP_PET_ID: ${{ env.PET_ID }}
       - name: Upload Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifact
           path: client/build
@@ -39,7 +39,7 @@ jobs:
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         run: cp ./firebase.preview.json ./firebase.json
       - name: Upload Firebase Config as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifact
           path: ./firebase.json
