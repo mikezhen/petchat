@@ -38,7 +38,7 @@ jobs:
         with:
           name: build-artifact
           path: |
-            client/build
+            client/build/**
             ./firebase.json
           if-no-files-found: error
   deploy:
