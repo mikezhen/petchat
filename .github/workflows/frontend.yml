@@ -26,6 +26,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.15.0
+      - name: Use Preview Firebase Config
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        run: cp ./firebase.preview.json ./firebase.json
       - name: Build Package
         run: cd client && npm ci && npm run build
         env:
@@ -36,14 +39,6 @@ jobs:
           name: build-artifact
           path: client/build
           if-no-files-found: error
-      - name: Use Preview Firebase Config
-        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-        run: cp ./firebase.preview.json ./firebase.json
-      - name: Upload Firebase Config as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: config-artifact
-          path: ./firebase.json
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -51,7 +46,7 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: config-artifact
+          name: build-artifact
       - name: List artifact contents
         run: ls -R
       - name: Deploy to Firebase Hosting
