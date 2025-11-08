@@ -26,7 +26,7 @@ jobs:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PETCHAT_85F05 }}
           token_format: access_token
       - name: Deploy Function
-        uses: google-github-actions/deploy-cloud-functions@v4
+        uses: google-github-actions/deploy-cloud-functions@v2
         with:
           name: image-processor-staging
           runtime: nodejs22
