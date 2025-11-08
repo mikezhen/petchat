@@ -28,7 +28,7 @@
     "@nestjs/platform-express": "^10.4.20",
     "@nestjs/platform-socket.io": "^10.0.5",
     "@nestjs/websockets": "^10.0.5",
-    "express-session": "^1.17.3",
+    "express-session": "^1.18.2",
     "firebase": "^9.23.0",
     "firebase-admin": "^11.4.1",
     "reflect-metadata": "^0.1.13",
