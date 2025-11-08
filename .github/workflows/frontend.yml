@@ -8,8 +8,7 @@ on:
       - 'client/**'
   pull_request:
     paths:
-      # - 'client/**'
-      - '**'
+      - 'client/**'
 
 env:
   PROJECT_ID: petchat-85f05
