@@ -25,30 +25,30 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.15.0
+      - name: Use Preview Firebase Config
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        run: cp ./firebase.preview.json ./firebase.json
       - name: Build Package
         run: cd client && npm ci && npm run build
         env:
           REACT_APP_PET_ID: ${{ env.PET_ID }}
+      - name: Flatten Artifact Files
+        run: |
+          mkdir -p staging-artifact
+          cp firebase.json staging-artifact/
+          cp -r client/build/. staging-artifact/
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: client/build
+          path: staging-artifact/
           if-no-files-found: error
-      - name: Use Preview Firebase Config
-        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-        run: cp ./firebase.preview.json ./firebase.json
-      - name: Upload Firebase Config as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifact
-          path: ./firebase.json
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v3.0.1
+        uses: actions/download-artifact@v4
         with:
           name: build-artifact
       - name: List artifact contents
@@ -59,3 +59,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PETCHAT_85F05 }}
           projectId: ${{ env.PROJECT_ID }}
+          channelId: ${{ github.ref == 'refs/heads/main' && 'live' || '' }}
