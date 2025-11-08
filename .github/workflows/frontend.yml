@@ -33,13 +33,16 @@ jobs:
         run: cd client && npm ci && npm run build
         env:
           REACT_APP_PET_ID: ${{ env.PET_ID }}
+      - name: Flatten Artifact Files
+        run: |
+          mkdir -p staging-artifact
+          cp firebase.json staging-artifact/
+          cp -r client/build/. staging-artifact/
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: |
-            client/build/**/
-            firebase.json
+          path: staging-artifact/
           if-no-files-found: error
   deploy:
     needs: build
