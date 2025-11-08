@@ -59,3 +59,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PETCHAT_85F05 }}
           projectId: ${{ env.PROJECT_ID }}
+          channelId: ${{ github.ref == 'refs/heads/main' && 'live' || '' }}
