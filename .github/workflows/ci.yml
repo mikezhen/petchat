@@ -32,15 +32,15 @@ jobs:
         run: npm run build
         env:
           # Public Firebase config — safe to store as non-secret env vars
-          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY_PAWCODE_85F05 }}
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: pawcode.firebaseapp.com
           NEXT_PUBLIC_FIREBASE_PROJECT_ID: pawcode
           NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: pawcode.firebasestorage.app
-          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
-          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID_PAWCODE_85F05 }}
+          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID_PAWCODE_85F05 }}
           NEXT_PUBLIC_APP_URL: https://pawcode.web.app
           # Admin SDK — server-only, needed for SSR page builds
           FIREBASE_PROJECT_ID: pawcode
-          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL_PAWCODE_85F05 }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY_PAWCODE_85F05 }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY_PAWCODE_85F05 }}
