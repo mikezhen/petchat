@@ -1,30 +1,30 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-static'
 
+import { Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'next/navigation'
 import QRCode from 'qrcode'
 import Link from 'next/link'
 
-export default function QRPage() {
-  const { id } = useParams<{ id: string }>()
+function QRPageInner() {
+  const params = useSearchParams()
+  const id = params.get('id') ?? ''
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [dataUrl, setDataUrl] = useState<string | null>(null)
-  const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL}/pet/${id}`
+  const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL}/pet?id=${id}`
 
   useEffect(() => {
-    if (!canvasRef.current) return
+    if (!canvasRef.current || !id) return
     QRCode.toCanvas(canvasRef.current, profileUrl, {
       width: 300,
       margin: 2,
       color: { dark: '#000000', light: '#ffffff' },
     }, (err) => {
-      if (!err && canvasRef.current) {
-        setDataUrl(canvasRef.current.toDataURL('image/png'))
-      }
+      if (!err && canvasRef.current) setDataUrl(canvasRef.current.toDataURL('image/png'))
     })
-  }, [profileUrl])
+  }, [id, profileUrl])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,7 +42,7 @@ export default function QRPage() {
         {dataUrl && (
           <a
             href={dataUrl}
-            download={`pawcode-qr.png`}
+            download="pawcode-qr.png"
             className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold text-center rounded-lg py-3 transition-colors"
           >
             Download QR Code (PNG)
@@ -59,14 +59,18 @@ export default function QRPage() {
           </ul>
         </div>
 
-        <Link
-          href={`/pet/${id}`}
-          target="_blank"
-          className="text-sm text-orange-500 hover:underline"
-        >
+        <Link href={`/pet?id=${id}`} target="_blank" className="text-sm text-orange-500 hover:underline">
           Preview finder page →
         </Link>
       </main>
     </div>
+  )
+}
+
+export default function QRPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen text-gray-400">Loading…</div>}>
+      <QRPageInner />
+    </Suspense>
   )
 }

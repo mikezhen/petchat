@@ -1,6 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-static'
 
 import { useState } from 'react'
 import { signInWithEmailAndPassword } from 'firebase/auth'

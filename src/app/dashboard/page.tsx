@@ -1,6 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-static'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -97,13 +97,13 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
                   <Link
-                    href={`/dashboard/pets/${pet.id}/qr`}
+                    href={`/dashboard/qr?id=${pet.id}`}
                     className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium transition-colors"
                   >
                     QR
                   </Link>
                   <Link
-                    href={`/dashboard/pets/${pet.id}/edit`}
+                    href={`/dashboard/edit?id=${pet.id}`}
                     className="text-xs bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg font-medium transition-colors"
                   >
                     Edit

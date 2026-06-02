@@ -1,6 +1,6 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-static'
 
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
@@ -16,7 +16,7 @@ export default function NewPetPage() {
   const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>) => {
     if (!user) return
     const petId = await createPet(user.uid, data)
-    router.push(`/dashboard/pets/${petId}/qr`)
+    router.push(`/dashboard/qr?id=${petId}`)
   }
 
   return (
