@@ -11,6 +11,7 @@ import { useAuth } from '@/lib/auth-context'
 import { getFirebaseStorage } from '@/lib/firebase'
 import { getUser, updateUser } from '@/lib/users'
 import { formatPhone } from '@/lib/formatPhone'
+import { resizeImage } from '@/lib/resizeImage'
 
 export default function ProfilePage() {
   const { user, loading } = useAuth()
@@ -18,7 +19,7 @@ export default function ProfilePage() {
   const [form, setForm] = useState({ fullName: '', phone: '', hasWhatsApp: false })
   const [email, setEmail] = useState('')
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
-  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -43,7 +44,7 @@ export default function ProfilePage() {
     })
   }, [user])
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > 10 * 1024 * 1024) {
@@ -52,8 +53,9 @@ export default function ProfilePage() {
       return
     }
     setError('')
-    setPhotoFile(file)
-    setPhotoPreview(URL.createObjectURL(file))
+    const blob = await resizeImage(file, { maxDimension: 400, quality: 0.85 })
+    setPhotoFile(blob)
+    setPhotoPreview(URL.createObjectURL(blob))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,7 +68,7 @@ export default function ProfilePage() {
       let finalPhotoUrl = photoUrl
       if (photoFile) {
         const storageRef = ref(getFirebaseStorage(), `users/${user.uid}/avatar.jpg`)
-        await uploadBytes(storageRef, photoFile, { contentType: photoFile.type || 'image/jpeg' })
+        await uploadBytes(storageRef, photoFile, { contentType: 'image/jpeg' })
         finalPhotoUrl = await getDownloadURL(storageRef)
         setPhotoUrl(finalPhotoUrl)
       }

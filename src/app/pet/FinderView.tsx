@@ -261,7 +261,7 @@ export default function FinderView({ petId }: { petId: string }) {
 
         <div className="relative w-full aspect-square bg-gray-100">
           {pet.photoUrl
-            ? <Image src={pet.photoUrl} alt={`Photo of ${pet.name}`} fill className="object-cover" />
+            ? <Image src={pet.photoUrl} alt={`Photo of ${pet.name}`} fill sizes="(max-width: 448px) 100vw, 448px" priority className="object-cover" />
             : <div className="flex items-center justify-center h-full text-7xl" aria-hidden="true">🐾</div>
           }
           <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold ${STATUS_STYLES[pet.status]}`}>

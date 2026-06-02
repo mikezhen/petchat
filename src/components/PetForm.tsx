@@ -6,6 +6,7 @@ import { getFirebaseStorage } from '@/lib/firebase'
 import Image from 'next/image'
 import type { Pet, EmergencyContact, PetGender, PetStatus, UserProfile } from '@/types'
 import { formatPhone } from '@/lib/formatPhone'
+import { resizeImage } from '@/lib/resizeImage'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 
@@ -35,7 +36,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
     contacts: initial?.contacts?.filter(c => !c.isPrimary).map(c => ({ ...c, phone: formatPhone(c.phone) })) ?? [],
   })
 
-  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.photoUrl ?? null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -59,7 +60,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
   const removeContact = (i: number) =>
     setForm(f => ({ ...f, contacts: f.contacts.filter((_, idx) => idx !== i) }))
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > 10 * 1024 * 1024) {
@@ -68,8 +69,9 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
       return
     }
     setError('')
-    setPhotoFile(file)
-    setPhotoPreview(URL.createObjectURL(file))
+    const blob = await resizeImage(file, { maxDimension: 1080, quality: 0.82 })
+    setPhotoFile(blob)
+    setPhotoPreview(URL.createObjectURL(blob))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,7 +83,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
       if (photoFile) {
         const id = petId ?? `temp-${Date.now()}`
         const storageRef = ref(getFirebaseStorage(), `pets/${id}/photo.jpg`)
-        await uploadBytes(storageRef, photoFile, { contentType: photoFile.type || 'image/jpeg' })
+        await uploadBytes(storageRef, photoFile, { contentType: 'image/jpeg' })
         photoUrl = await getDownloadURL(storageRef)
       }
       const primaryContact: EmergencyContact = {
