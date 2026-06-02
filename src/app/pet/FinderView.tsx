@@ -156,7 +156,9 @@ function ContactModal({
 
 export default function FinderView({ petId }: { petId: string }) {
   const [pet, setPet] = useState<Pet | null>(null)
-  const [ownerPhotoUrl, setOwnerPhotoUrl] = useState<string | null>(null)
+  const [ownerLive, setOwnerLive] = useState<{
+    name: string; phone: string; hasWhatsApp: boolean; photoUrl: string | null
+  } | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [showContact, setShowContact] = useState(false)
@@ -188,7 +190,12 @@ export default function FinderView({ petId }: { petId: string }) {
         setPet(loadedPet)
         if (d.ownerId) {
           getUser(d.ownerId as string).then(profile => {
-            if (profile?.photoUrl) setOwnerPhotoUrl(profile.photoUrl)
+            if (profile) setOwnerLive({
+              name: profile.fullName,
+              phone: profile.phone,
+              hasWhatsApp: profile.hasWhatsApp,
+              photoUrl: profile.photoUrl ?? null,
+            })
           }).catch(() => {})
         }
       } catch {
@@ -347,8 +354,13 @@ export default function FinderView({ petId }: { petId: string }) {
 
       {showContact && (
         <ContactModal
-          contacts={pet.contacts}
-          ownerPhotoUrl={ownerPhotoUrl}
+          contacts={ownerLive
+            ? pet.contacts.map(c => c.isPrimary
+                ? { ...c, name: ownerLive.name, phone: ownerLive.phone, hasWhatsApp: ownerLive.hasWhatsApp }
+                : c)
+            : pet.contacts
+          }
+          ownerPhotoUrl={ownerLive?.photoUrl ?? null}
           onClose={() => setShowContact(false)}
         />
       )}
