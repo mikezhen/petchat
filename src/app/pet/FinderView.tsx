@@ -268,7 +268,8 @@ export default function FinderView({ petId }: { petId: string }) {
           </div>
           {pet.status === 'lost' && (
             <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-3 px-4">
-              <p className="text-sm font-medium">Please tap &quot;Contact Owner&quot; below to reach them</p>
+              <p className="text-sm font-bold">I&apos;m lost! Please help me get home.</p>
+              <p className="text-xs mt-0.5 opacity-90">Tap &quot;Contact Owner&quot; below to reach my owner</p>
             </div>
           )}
         </div>
@@ -278,8 +279,8 @@ export default function FinderView({ petId }: { petId: string }) {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-between">
               <span>{pet.name}</span>
-              {pet.gender === 'male' && <span className="text-blue-500">♂</span>}
-              {pet.gender === 'female' && <span className="text-pink-400">♀</span>}
+              {pet.gender === 'male' && <span className="text-blue-500 text-2xl font-black">♂</span>}
+              {pet.gender === 'female' && <span className="text-pink-400 text-2xl font-black">♀</span>}
             </h1>
             {(pet.breed || pet.color) && (
               <p className="text-gray-700 mt-1">{[pet.breed, pet.color].filter(Boolean).join(' · ')}</p>
@@ -324,24 +325,22 @@ export default function FinderView({ petId }: { petId: string }) {
             </div>
           )}
 
-          <div className="pt-4 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-500">
-              Powered by <span className="font-semibold text-orange-500">PawCode</span> — real-time pet ID tags
-            </p>
-          </div>
         </div>
       </div>
 
       {/* Floating Contact Owner button */}
       {hasContacts && (
         <div className="fixed bottom-0 inset-x-0 z-10 flex justify-center pointer-events-none">
-          <div className="w-full max-w-md px-5 pb-8 pt-3 bg-white border-t border-gray-100 pointer-events-auto">
+          <div className="w-full max-w-md px-5 pb-6 pt-3 bg-white border-t border-gray-100 pointer-events-auto">
             <button
               onClick={() => setShowContact(true)}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-4 text-base transition-colors"
             >
               Contact Owner
             </button>
+            <p className="text-center text-xs text-gray-400 mt-2">
+              Powered by <span className="font-semibold text-orange-400">PawCode</span> — real-time pet ID tags
+            </p>
           </div>
         </div>
       )}

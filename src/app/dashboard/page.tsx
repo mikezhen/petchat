@@ -160,10 +160,10 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Action bar */}
-                <div className="border-t border-gray-100 px-4 py-3 flex items-center gap-2">
+                <div className="border-t border-gray-100 px-4 py-3 grid grid-cols-3 gap-2">
                   <Link
                     href={`/dashboard/qr?id=${pet.id}`}
-                    className="flex items-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg font-medium transition-colors flex-shrink-0"
+                    className="flex items-center justify-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg font-medium transition-colors"
                   >
                     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
                       <rect x="0" y="0" width="5" height="5" rx="1" fill="currentColor"/>
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                   </Link>
                   <Link
                     href={`/dashboard/edit?id=${pet.id}`}
-                    className="flex items-center gap-1.5 text-xs bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-2 rounded-lg font-medium transition-colors flex-shrink-0"
+                    className="flex items-center justify-center gap-1.5 text-xs bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-2 rounded-lg font-medium transition-colors"
                   >
                     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
                       <path d="M9 1.5a1.5 1.5 0 0 1 2.5 1.5L4 11H1.5V8.5L9 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
@@ -188,13 +188,13 @@ export default function DashboardPage() {
                   </Link>
                   <button
                     onClick={() => toggleStatus(pet)}
-                    className={`flex-1 text-sm font-semibold py-2 rounded-xl transition-colors ${
+                    className={`text-xs font-semibold py-2 rounded-lg transition-colors ${
                       pet.status === 'lost'
                         ? 'bg-green-500 hover:bg-green-600 text-white'
                         : 'bg-red-50 hover:bg-red-100 text-red-600'
                     }`}
                   >
-                    {pet.status === 'lost' ? 'Mark Safe' : 'Mark as Lost'}
+                    {pet.status === 'lost' ? 'Mark Safe' : 'Mark Lost'}
                   </button>
                 </div>
 

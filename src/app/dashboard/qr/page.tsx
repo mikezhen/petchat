@@ -5,6 +5,8 @@ export const dynamic = 'force-static'
 import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { doc, getDoc } from 'firebase/firestore'
+import { getFirebaseDb } from '@/lib/firebase'
 import QRCode from 'qrcode'
 import Link from 'next/link'
 
@@ -13,7 +15,15 @@ function QRPageInner() {
   const id = params.get('id') ?? ''
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [dataUrl, setDataUrl] = useState<string | null>(null)
+  const [petName, setPetName] = useState<string | null>(null)
   const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL}/pet?id=${id}`
+
+  useEffect(() => {
+    if (!id) return
+    getDoc(doc(getFirebaseDb(), 'pets', id)).then(snap => {
+      if (snap.exists()) setPetName(snap.data().name ?? null)
+    }).catch(() => {})
+  }, [id])
 
   useEffect(() => {
     if (!canvasRef.current || !id) return
@@ -30,7 +40,12 @@ function QRPageInner() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
         <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">←</Link>
-        <h1 className="text-lg font-semibold text-gray-900">Your QR Code</h1>
+        <div>
+          <h1 className="text-lg font-semibold text-gray-900">
+            {petName ? `${petName}'s QR Code` : 'QR Code'}
+          </h1>
+          {petName && <p className="text-xs text-gray-400">Scan to view {petName}'s profile</p>}
+        </div>
       </header>
 
       <main className="max-w-md mx-auto p-6 flex flex-col items-center gap-6">
