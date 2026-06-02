@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { getFirebaseDb } from '@/lib/firebase'
 import type { Pet, EmergencyContact } from '@/types'
@@ -36,6 +36,9 @@ function ContactModal({
   ownerPhotoUrl?: string | null
   onClose: () => void
 }) {
+  const [dragY, setDragY] = useState(0)
+  const dragStartY = useRef<number | null>(null)
+
   const primary = contacts.find(c => c.isPrimary) ?? contacts[0]
   if (!primary) return null
 
@@ -43,6 +46,25 @@ function ContactModal({
   const initials = primary.name
     ? primary.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
     : '?'
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    dragStartY.current = e.touches[0].clientY
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (dragStartY.current === null) return
+    const delta = e.touches[0].clientY - dragStartY.current
+    if (delta > 0) setDragY(delta)
+  }
+
+  const handleTouchEnd = () => {
+    if (dragY > 100) {
+      onClose()
+    } else {
+      setDragY(0)
+    }
+    dragStartY.current = null
+  }
 
   return (
     <div
@@ -52,14 +74,19 @@ function ContactModal({
       aria-label="Contact owner"
     >
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
 
       {/* Sheet */}
-      <div className="relative w-full max-w-md bg-white rounded-t-3xl px-5 pt-4 pb-8 space-y-5">
+      <div
+        className="relative w-full max-w-md bg-white rounded-t-3xl px-5 pt-4 pb-10 space-y-5"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          transform: `translateY(${dragY}px)`,
+          transition: dragY === 0 ? 'transform 0.25s ease' : 'none',
+        }}
+      >
         {/* Drag handle */}
         <div className="flex justify-center mb-1">
           <div className="w-10 h-1 rounded-full bg-gray-300" />
@@ -73,10 +100,7 @@ function ContactModal({
               : <span className="text-2xl font-bold text-orange-500">{initials}</span>
             }
           </div>
-          <div className="text-center">
-            <p className="text-lg font-semibold text-gray-900">{primary.name}</p>
-            <p className="text-sm text-gray-500">{primary.relationship || 'Owner'}</p>
-          </div>
+          <p className="text-lg font-semibold text-gray-900">{primary.name}</p>
         </div>
 
         {/* Action buttons */}
@@ -124,14 +148,6 @@ function ContactModal({
             ))}
           </div>
         )}
-
-        {/* Close */}
-        <button
-          onClick={onClose}
-          className="w-full py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
-        >
-          Close
-        </button>
       </div>
     </div>
   )
@@ -257,7 +273,8 @@ export default function FinderView({ petId }: { petId: string }) {
           )}
         </div>
 
-        <div className="p-5 space-y-5">
+        {/* Extra bottom padding so content clears the floating button */}
+        <div className="p-5 pb-28 space-y-5">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-between">
               <span>{pet.name}</span>
@@ -295,15 +312,6 @@ export default function FinderView({ petId }: { petId: string }) {
             </div>
           )}
 
-          {hasContacts && (
-            <button
-              onClick={() => setShowContact(true)}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-4 text-base transition-colors"
-            >
-              Contact Owner
-            </button>
-          )}
-
           {(pet.vet?.name || pet.vet?.phone) && (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
               <p className="text-gray-900 font-semibold text-sm mb-1">🏥 Veterinarian</p>
@@ -323,6 +331,20 @@ export default function FinderView({ petId }: { petId: string }) {
           </div>
         </div>
       </div>
+
+      {/* Floating Contact Owner button */}
+      {hasContacts && (
+        <div className="fixed bottom-0 inset-x-0 z-10 flex justify-center pointer-events-none">
+          <div className="w-full max-w-md px-5 pb-8 pt-3 bg-white border-t border-gray-100 pointer-events-auto">
+            <button
+              onClick={() => setShowContact(true)}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-4 text-base transition-colors"
+            >
+              Contact Owner
+            </button>
+          </div>
+        </div>
+      )}
 
       {showContact && (
         <ContactModal
