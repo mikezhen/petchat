@@ -73,7 +73,7 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
       if (photoFile) {
         const id = petId ?? `temp-${Date.now()}`
         const storageRef = ref(getFirebaseStorage(), `pets/${id}/photo.jpg`)
-        await uploadBytes(storageRef, photoFile)
+        await uploadBytes(storageRef, photoFile, { contentType: photoFile.type || 'image/jpeg' })
         photoUrl = await getDownloadURL(storageRef)
       }
       await onSubmit({ ...form, photoUrl })
