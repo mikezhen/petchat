@@ -110,14 +110,27 @@ export default function DashboardPage() {
                   <div className="flex gap-2 flex-shrink-0">
                     <Link
                       href={`/dashboard/qr?id=${pet.id}`}
-                      className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                      className="flex items-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
                     >
+                      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                        <rect x="0" y="0" width="5" height="5" rx="1" fill="currentColor"/>
+                        <rect x="8" y="0" width="5" height="5" rx="1" fill="currentColor"/>
+                        <rect x="0" y="8" width="5" height="5" rx="1" fill="currentColor"/>
+                        <rect x="8" y="8" width="2" height="2" fill="currentColor"/>
+                        <rect x="11" y="8" width="2" height="2" fill="currentColor"/>
+                        <rect x="8" y="11" width="2" height="2" fill="currentColor"/>
+                        <rect x="11" y="11" width="2" height="2" fill="currentColor"/>
+                      </svg>
                       QR
                     </Link>
                     <Link
                       href={`/dashboard/edit?id=${pet.id}`}
-                      className="text-xs bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                      className="flex items-center gap-1.5 text-xs bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg font-medium transition-colors"
                     >
+                      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                        <path d="M9 1.5a1.5 1.5 0 0 1 2.5 1.5L4 11H1.5V8.5L9 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                        <path d="M7.5 3l2 2" stroke="currentColor" strokeWidth="1.3"/>
+                      </svg>
                       Edit
                     </Link>
                   </div>
