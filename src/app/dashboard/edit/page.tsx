@@ -45,7 +45,7 @@ function EditPageInner() {
         <h1 className="text-lg font-semibold text-gray-900">Edit {pet.name}</h1>
       </header>
       <main className="max-w-lg mx-auto p-4">
-        <PetForm initial={pet} petId={id} ownerProfile={ownerProfile} onSubmit={handleSubmit} submitLabel="Save changes" />
+        <PetForm initial={pet} petId={id} ownerProfile={ownerProfile} onSubmit={handleSubmit} submitLabel="Save Changes" />
       </main>
     </div>
   )

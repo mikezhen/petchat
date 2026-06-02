@@ -118,7 +118,7 @@ export default function DashboardPage() {
             href="/dashboard/pets/new"
             className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
           >
-            + Add pet
+            + Add Pet
           </Link>
         </div>
 
@@ -133,7 +133,7 @@ export default function DashboardPage() {
               href="/dashboard/pets/new"
               className="inline-block mt-4 bg-orange-500 text-white text-sm font-semibold px-6 py-2.5 rounded-lg"
             >
-              Add pet
+              Add Pet
             </Link>
           </div>
         ) : (

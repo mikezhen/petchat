@@ -65,7 +65,7 @@ export default function RegisterPage() {
   const sharedFields = (
     <>
       <div>
-        <label htmlFor="fullName" className="block text-sm font-medium text-gray-900 mb-1">Full name</label>
+        <label htmlFor="fullName" className="block text-sm font-medium text-gray-900 mb-1">Name</label>
         <input
           id="fullName"
           type="text"
@@ -89,7 +89,7 @@ export default function RegisterPage() {
         />
       </div>
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-1">Phone number</label>
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-1">Phone Number</label>
         <input
           id="phone"
           type="tel"
@@ -147,7 +147,7 @@ export default function RegisterPage() {
                 onClick={() => { setSent(false); setForm(f => ({ ...f, email: '' })) }}
                 className="text-sm text-orange-600 hover:underline"
               >
-                Use a different email
+                Use A Different Email
               </button>
             </div>
           ) : (
@@ -159,7 +159,7 @@ export default function RegisterPage() {
                 disabled={loading}
                 className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-2.5 transition-colors"
               >
-                {loading ? 'Sending…' : 'Send magic link'}
+                {loading ? 'Sending…' : 'Send Magic Link'}
               </button>
             </form>
           )
@@ -185,7 +185,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-2.5 transition-colors"
             >
-              {loading ? 'Creating account…' : 'Create account'}
+              {loading ? 'Creating Account…' : 'Create Account'}
             </button>
           </form>
         )}

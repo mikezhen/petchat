@@ -122,11 +122,11 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
                 <span className="text-white text-sm font-semibold">Change Photo</span>
               </div>
               <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-md pointer-events-none">
-                Tap to change
+                Tap To Change
               </div>
             </>
           ) : (
-            <span className="text-gray-600 text-sm">Tap to Upload Photo</span>
+            <span className="text-gray-600 text-sm">Tap To Upload Photo</span>
           )}
         </div>
         <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} aria-hidden="true" />
@@ -285,7 +285,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           <span className="text-sm font-medium text-gray-900">Emergency Contacts</span>
           {form.contacts.length < 2 && (
             <button type="button" onClick={addContact} className="text-xs text-orange-600 font-medium hover:underline">
-              + Add contact
+              + Add Contact
             </button>
           )}
         </div>
@@ -295,7 +295,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           <div className="bg-orange-100 border border-orange-200 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-semibold text-orange-700 uppercase tracking-wide">Primary Contact · You</span>
-              <a href="/dashboard/profile" className="text-xs text-orange-600 hover:underline">Edit in Profile →</a>
+              <a href="/dashboard/profile" className="text-xs text-orange-600 hover:underline">Edit In Profile →</a>
             </div>
             <p className="text-sm font-semibold text-gray-900">{ownerProfile.fullName || '—'}</p>
             <p className="text-sm text-gray-600">{ownerProfile.phone || '—'}</p>

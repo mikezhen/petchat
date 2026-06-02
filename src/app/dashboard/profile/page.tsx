@@ -186,7 +186,7 @@ export default function ProfilePage() {
             disabled={saving}
             className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-3 transition-colors"
           >
-            {saving ? 'Saving…' : 'Save changes'}
+            {saving ? 'Saving…' : 'Save Changes'}
           </button>
         </form>
       </main>

@@ -75,7 +75,7 @@ function QRPageInner() {
         </div>
 
         <Link href={`/pet?id=${id}`} target="_blank" className="text-sm text-orange-500 hover:underline">
-          Preview finder page →
+          Preview Finder Page →
         </Link>
       </main>
     </div>

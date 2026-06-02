@@ -142,7 +142,7 @@ function CallbackInner() {
           href="/login"
           className="block w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg py-2.5 text-center transition-colors"
         >
-          Back to login
+          Back To Login
         </a>
       </div>
     </div>

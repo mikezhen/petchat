@@ -105,7 +105,7 @@ export default function LoginPage() {
                 onClick={() => { setSent(false); setEmail('') }}
                 className="text-sm text-orange-600 hover:underline"
               >
-                Use a different email
+                Use A Different Email
               </button>
             </div>
           ) : (
@@ -128,7 +128,7 @@ export default function LoginPage() {
                 disabled={submitting}
                 className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-2.5 transition-colors"
               >
-                {submitting ? 'Sending…' : 'Send magic link'}
+                {submitting ? 'Sending…' : 'Send Magic Link'}
               </button>
             </form>
           )

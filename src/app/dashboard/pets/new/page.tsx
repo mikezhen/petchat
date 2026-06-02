@@ -37,13 +37,13 @@ export default function NewPetPage() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
         <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">←</Link>
-        <h1 className="text-lg font-semibold text-gray-900">Add new pet</h1>
+        <h1 className="text-lg font-semibold text-gray-900">Add New Pet</h1>
       </header>
       <main className="max-w-lg mx-auto p-4">
         <PetForm
           ownerProfile={ownerProfile}
           onSubmit={handleSubmit}
-          submitLabel="Save & get QR code"
+          submitLabel="Save & Get QR Code"
           hideStatus
         />
       </main>
