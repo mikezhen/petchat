@@ -37,14 +37,6 @@ jobs:
           NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID_PAWCODE_85F05 }}
           NEXT_PUBLIC_APP_URL: https://pawcode-85f05.web.app
 
-      - name: Install Cloud Functions dependencies
-        run: npm ci
-        working-directory: functions
-
-      - name: Build Cloud Functions
-        run: npm run build
-        working-directory: functions
-
       - uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAWCODE_85F05 }}
@@ -54,9 +46,6 @@ jobs:
 
       - name: Deploy Firestore rules & indexes
         run: firebase deploy --only firestore,storage --project pawcode-85f05
-
-      - name: Deploy Cloud Functions
-        run: firebase deploy --only functions --project pawcode-85f05
 
       - name: Deploy to Firebase Hosting
         run: firebase deploy --only hosting --project pawcode-85f05
