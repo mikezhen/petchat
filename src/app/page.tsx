@@ -6,7 +6,7 @@ export default function Home() {
       <div className="text-center max-w-md">
         <span className="text-6xl">🐾</span>
         <h1 className="text-4xl font-bold text-gray-900 mt-4">PawCode</h1>
-        <p className="text-gray-500 mt-3 text-lg">
+        <p className="text-gray-700 mt-3 text-lg">
           Smart QR tags for your pet. Update your contact info anytime.
           Get notified the moment your tag is scanned.
         </p>

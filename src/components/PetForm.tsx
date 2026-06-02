@@ -95,36 +95,42 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
 
       {/* Photo */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Photo</label>
+        <label className="block text-sm font-medium text-gray-900 mb-2">Photo</label>
         <div
           onClick={() => fileRef.current?.click()}
+          role="button"
+          tabIndex={0}
+          aria-label="Upload pet photo"
+          onKeyDown={e => e.key === 'Enter' && fileRef.current?.click()}
           className="w-full aspect-video bg-gray-100 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative hover:bg-gray-200 transition-colors"
         >
           {photoPreview
-            ? <img src={photoPreview} alt="Pet photo" className="w-full h-full object-cover" />
-            : <span className="text-gray-400 text-sm">Tap to upload photo</span>
+            ? <img src={photoPreview} alt="Pet photo preview" className="w-full h-full object-cover" />
+            : <span className="text-gray-600 text-sm">Tap to upload photo</span>
           }
         </div>
-        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} aria-hidden="true" />
       </div>
 
       {/* Name + status */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Pet name *</label>
+          <label htmlFor="pet-name" className="block text-sm font-medium text-gray-900 mb-1">Pet name *</label>
           <input
+            id="pet-name"
             type="text" required
             value={form.name}
             onChange={e => setField('name', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <label htmlFor="pet-status" className="block text-sm font-medium text-gray-900 mb-1">Status</label>
           <select
+            id="pet-status"
             value={form.status}
             onChange={e => setField('status', e.target.value as PetStatus)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
           >
             <option value="active">Active</option>
             <option value="lost">Lost 🚨</option>
@@ -136,55 +142,59 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
       {/* Breed + color */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Breed</label>
+          <label htmlFor="pet-breed" className="block text-sm font-medium text-gray-900 mb-1">Breed</label>
           <input
+            id="pet-breed"
             type="text"
             value={form.breed}
             onChange={e => setField('breed', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+          <label htmlFor="pet-color" className="block text-sm font-medium text-gray-900 mb-1">Color</label>
           <input
+            id="pet-color"
             type="text"
             value={form.color}
             onChange={e => setField('color', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
       </div>
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+        <label htmlFor="pet-description" className="block text-sm font-medium text-gray-900 mb-1">Description</label>
         <textarea
+          id="pet-description"
           rows={3}
           value={form.description}
           onChange={e => setField('description', e.target.value)}
           placeholder="Personality, habits, how to approach them…"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
         />
       </div>
 
       {/* Medical notes */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Medical notes</label>
+        <label htmlFor="pet-medical" className="block text-sm font-medium text-gray-900 mb-1">Medical notes</label>
         <textarea
+          id="pet-medical"
           rows={2}
           value={form.medicalNotes}
           onChange={e => setField('medicalNotes', e.target.value)}
           placeholder="Allergies, medications, vet contact…"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
         />
       </div>
 
       {/* Contacts */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <label className="text-sm font-medium text-gray-700">Emergency contacts</label>
+          <span className="text-sm font-medium text-gray-900">Emergency contacts</span>
           {form.contacts.length < 3 && (
-            <button type="button" onClick={addContact} className="text-xs text-orange-500 font-medium hover:underline">
+            <button type="button" onClick={addContact} className="text-xs text-orange-600 font-medium hover:underline">
               + Add contact
             </button>
           )}
@@ -193,7 +203,7 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
           {form.contacts.map((c, i) => (
             <div key={i} className="bg-gray-50 rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <label className="flex items-center gap-2 text-sm text-gray-900 cursor-pointer">
                   <input
                     type="radio"
                     name="primaryContact"
@@ -204,7 +214,11 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
                   Primary contact
                 </label>
                 {form.contacts.length > 1 && (
-                  <button type="button" onClick={() => removeContact(i)} className="text-xs text-red-400 hover:text-red-600">
+                  <button
+                    type="button"
+                    onClick={() => removeContact(i)}
+                    className="text-xs text-red-600 hover:text-red-800"
+                  >
                     Remove
                   </button>
                 )}
@@ -212,29 +226,35 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
               <div className="grid grid-cols-2 gap-3">
                 <input
                   type="text" required placeholder="Name"
+                  id={`contact-${i}-name`}
+                  aria-label={`Contact ${i + 1} name`}
                   value={c.name}
                   onChange={e => setContact(i, 'name', e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
                 <input
                   type="tel" required placeholder="Phone"
+                  id={`contact-${i}-phone`}
+                  aria-label={`Contact ${i + 1} phone`}
                   value={c.phone}
                   onChange={e => setContact(i, 'phone', e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
               <input
                 type="text" placeholder="Relationship (owner, vet, neighbor…)"
+                id={`contact-${i}-relationship`}
+                aria-label={`Contact ${i + 1} relationship`}
                 value={c.relationship}
                 onChange={e => setContact(i, 'relationship', e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
           ))}
         </div>
       </div>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
 
       <button
         type="submit"

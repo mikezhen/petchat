@@ -45,12 +45,12 @@ export default function DashboardPage() {
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between">
         <span className="text-xl font-bold text-orange-500">🐾 PawCode</span>
         <div className="flex items-center gap-4">
-          <Link href="/dashboard/profile" className="text-sm text-gray-500 hover:text-gray-700">
+          <Link href="/dashboard/profile" className="text-sm text-gray-700 hover:text-gray-900">
             Profile
           </Link>
           <button
             onClick={() => signOut(getFirebaseAuth()).then(() => router.push('/login'))}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-gray-700 hover:text-gray-900"
           >
             Sign out
           </button>
@@ -72,9 +72,9 @@ export default function DashboardPage() {
           <div className="text-center py-12 text-gray-400">Loading…</div>
         ) : pets.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-            <span className="text-5xl">🐶</span>
-            <p className="mt-4 text-gray-600 font-medium">No pets yet</p>
-            <p className="text-sm text-gray-400 mt-1">Add your first pet to get a QR tag</p>
+            <span className="text-5xl" aria-hidden="true">🐶</span>
+            <p className="mt-4 text-gray-900 font-medium">No pets yet</p>
+            <p className="text-sm text-gray-600 mt-1">Add your first pet to get a QR tag</p>
             <Link
               href="/dashboard/pets/new"
               className="inline-block mt-4 bg-orange-500 text-white text-sm font-semibold px-6 py-2.5 rounded-lg"
@@ -98,7 +98,7 @@ export default function DashboardPage() {
                       {STATUS_LABEL[pet.status]}
                     </span>
                   </div>
-                  {pet.breed && <p className="text-sm text-gray-400 truncate">{pet.breed}</p>}
+                  {pet.breed && <p className="text-sm text-gray-600 truncate">{pet.breed}</p>}
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
                   <Link

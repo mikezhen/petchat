@@ -54,7 +54,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">←</Link>
+        <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">←</Link>
         <h1 className="text-lg font-semibold text-gray-900">My Profile</h1>
       </header>
 
@@ -62,40 +62,46 @@ export default function ProfilePage() {
         <form onSubmit={handleSubmit} className="space-y-5 bg-white rounded-2xl border border-gray-100 p-6">
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
+            <label htmlFor="fullName" className="block text-sm font-medium text-gray-900 mb-1">Full name</label>
             <input
+              id="fullName"
               type="text"
               required
+              autoComplete="name"
               value={form.fullName}
               onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone number</label>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-1">Phone number</label>
             <input
+              id="phone"
               type="tel"
               required
+              autoComplete="tel"
               value={form.phone}
               onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-1">Email</label>
             <input
+              id="email"
               type="email"
               value={email}
               disabled
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-400 cursor-not-allowed"
+              aria-describedby="email-hint"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
             />
-            <p className="text-xs text-gray-400 mt-1">Email cannot be changed here.</p>
+            <p id="email-hint" className="text-xs text-gray-600 mt-1">Email cannot be changed here.</p>
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          {saved && <p className="text-green-600 text-sm">Changes saved.</p>}
+          {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
+          {saved && <p role="status" className="text-green-700 text-sm">Changes saved.</p>}
 
           <button
             type="submit"

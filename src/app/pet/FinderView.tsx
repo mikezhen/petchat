@@ -26,28 +26,28 @@ function ContactButtons({ contacts }: { contacts: EmergencyContact[] }) {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-gray-500 text-center">Contact {primary.name}</p>
+      <p className="text-sm text-gray-700 text-center">Contact {primary.name}</p>
       <div className="grid grid-cols-3 gap-2">
         <a href={`tel:${phone}`} className="flex flex-col items-center gap-1 bg-green-500 hover:bg-green-600 text-white rounded-xl py-4 transition-colors">
-          <span className="text-2xl">📞</span>
+          <span className="text-2xl" aria-hidden="true">📞</span>
           <span className="text-xs font-medium">Call</span>
         </a>
         <a href={`sms:${phone}`} className="flex flex-col items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white rounded-xl py-4 transition-colors">
-          <span className="text-2xl">💬</span>
+          <span className="text-2xl" aria-hidden="true">💬</span>
           <span className="text-xs font-medium">Text</span>
         </a>
         <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl py-4 transition-colors">
-          <span className="text-2xl">📱</span>
+          <span className="text-2xl" aria-hidden="true">📱</span>
           <span className="text-xs font-medium">WhatsApp</span>
         </a>
       </div>
       {contacts.length > 1 && (
         <div className="mt-2 space-y-2">
-          <p className="text-xs text-gray-400 text-center">Also try</p>
+          <p className="text-xs text-gray-600 text-center font-medium">Also try</p>
           {contacts.filter(c => !c.isPrimary).map((c, i) => (
             <a key={i} href={`tel:${c.phone.replace(/\D/g, '')}`} className="flex items-center justify-between w-full bg-gray-100 hover:bg-gray-200 rounded-lg px-4 py-3 transition-colors">
-              <span className="text-sm font-medium">{c.name}</span>
-              <span className="text-sm text-gray-500">{c.relationship} · {c.phone}</span>
+              <span className="text-sm font-medium text-gray-900">{c.name}</span>
+              <span className="text-sm text-gray-600">{c.relationship} · {c.phone}</span>
             </a>
           ))}
         </div>
@@ -127,7 +127,7 @@ export default function FinderView({ petId }: { petId: string }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-400">Loading…</p>
+        <p className="text-gray-600">Loading…</p>
       </div>
     )
   }
@@ -136,9 +136,9 @@ export default function FinderView({ petId }: { petId: string }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <span className="text-5xl">🐾</span>
-          <p className="mt-4 text-gray-600 font-medium">Pet not found</p>
-          <p className="text-sm text-gray-400 mt-1">This tag may no longer be active.</p>
+          <span className="text-5xl" aria-hidden="true">🐾</span>
+          <p className="mt-4 text-gray-900 font-medium">Pet not found</p>
+          <p className="text-sm text-gray-600 mt-1">This tag may no longer be active.</p>
         </div>
       </div>
     )
@@ -157,8 +157,8 @@ export default function FinderView({ petId }: { petId: string }) {
 
         <div className="relative w-full aspect-square bg-gray-100">
           {pet.photoUrl
-            ? <img src={pet.photoUrl} alt={pet.name} className="w-full h-full object-cover" />
-            : <div className="flex items-center justify-center h-full text-7xl">🐾</div>
+            ? <img src={pet.photoUrl} alt={`Photo of ${pet.name}`} className="w-full h-full object-cover" />
+            : <div className="flex items-center justify-center h-full text-7xl" aria-hidden="true">🐾</div>
           }
           <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold ${STATUS_STYLES[pet.status]}`}>
             {STATUS_LABEL[pet.status]}
@@ -169,7 +169,7 @@ export default function FinderView({ petId }: { petId: string }) {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">{pet.name}</h1>
             {(pet.breed || pet.color) && (
-              <p className="text-gray-500 mt-1">{[pet.breed, pet.color].filter(Boolean).join(' · ')}</p>
+              <p className="text-gray-700 mt-1">{[pet.breed, pet.color].filter(Boolean).join(' · ')}</p>
             )}
           </div>
 
@@ -182,18 +182,18 @@ export default function FinderView({ petId }: { petId: string }) {
 
           {pet.description && (
             <div>
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">About</h2>
+              <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">About</h2>
               <p className="text-gray-700 text-sm leading-relaxed">{pet.description}</p>
             </div>
           )}
 
           <div>
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Contact Owner</h2>
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Contact Owner</h2>
             <ContactButtons contacts={pet.contacts} />
           </div>
 
           <div className="pt-4 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-500">
               Powered by <span className="font-semibold text-orange-500">PawCode</span> — real-time pet ID tags
             </p>
           </div>
