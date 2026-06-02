@@ -5,6 +5,7 @@ export interface EmergencyContact {
   phone: string
   relationship: string
   isPrimary: boolean
+  hasWhatsApp: boolean
 }
 
 export type PetGender = 'male' | 'female' | ''

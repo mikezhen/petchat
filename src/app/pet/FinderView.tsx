@@ -36,7 +36,7 @@ function ContactButtons({ contacts }: { contacts: EmergencyContact[] }) {
   return (
     <div className="space-y-3">
       <p className="text-sm text-gray-700 text-center">Contact {primary.name}</p>
-      <div className="grid grid-cols-3 gap-2">
+      <div className={`grid gap-2 ${primary.hasWhatsApp ? 'grid-cols-3' : 'grid-cols-2'}`}>
         <a href={`tel:${phone}`} className="flex flex-col items-center gap-1 bg-green-500 hover:bg-green-600 text-white rounded-xl py-4 transition-colors">
           <span className="text-2xl" aria-hidden="true">📞</span>
           <span className="text-xs font-medium">Call</span>
@@ -45,10 +45,12 @@ function ContactButtons({ contacts }: { contacts: EmergencyContact[] }) {
           <span className="text-2xl" aria-hidden="true">💬</span>
           <span className="text-xs font-medium">Text</span>
         </a>
-        <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl py-4 transition-colors">
-          <span className="text-2xl" aria-hidden="true">📱</span>
-          <span className="text-xs font-medium">WhatsApp</span>
-        </a>
+        {primary.hasWhatsApp && (
+          <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl py-4 transition-colors">
+            <span className="text-2xl" aria-hidden="true">📱</span>
+            <span className="text-xs font-medium">WhatsApp</span>
+          </a>
+        )}
       </div>
       {contacts.length > 1 && (
         <div className="mt-2 space-y-2">
@@ -161,13 +163,6 @@ export default function FinderView({ petId }: { petId: string }) {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-md mx-auto bg-white min-h-screen shadow-sm">
 
-        {pet.status === 'lost' && (
-          <div className="bg-red-500 text-white text-center py-3 px-4">
-            <p className="font-bold text-lg">🚨 This pet is LOST</p>
-            <p className="text-sm opacity-90">Please contact the owner using the buttons below</p>
-          </div>
-        )}
-
         <div className="relative w-full aspect-square bg-gray-100">
           {pet.photoUrl
             ? <img src={pet.photoUrl} alt={`Photo of ${pet.name}`} className="w-full h-full object-cover" />
@@ -176,6 +171,11 @@ export default function FinderView({ petId }: { petId: string }) {
           <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold ${STATUS_STYLES[pet.status]}`}>
             {STATUS_LABEL[pet.status]}
           </div>
+          {pet.status === 'lost' && (
+            <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-3 px-4">
+              <p className="text-sm font-medium">Please contact the owner using the buttons below</p>
+            </div>
+          )}
         </div>
 
         <div className="p-5 space-y-5">

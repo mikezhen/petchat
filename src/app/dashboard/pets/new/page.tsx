@@ -28,6 +28,7 @@ export default function NewPetPage() {
         phone: profile?.phone ?? '',
         relationship: 'Owner',
         isPrimary: true,
+        hasWhatsApp: false,
       }])
     })
   }, [user])
