@@ -19,7 +19,9 @@ function getFirebaseApp() {
 let _emulatorsConnected = false
 
 function connectEmulators() {
-  if (_emulatorsConnected || process.env.NODE_ENV !== 'development') return
+  if (_emulatorsConnected) return
+  if (process.env.NODE_ENV !== 'development') return
+  if (process.env.NEXT_PUBLIC_USE_EMULATOR === 'false') return
   _emulatorsConnected = true
   try {
     connectAuthEmulator(getAuth(getFirebaseApp()), 'http://localhost:9099', { disableWarnings: true })
