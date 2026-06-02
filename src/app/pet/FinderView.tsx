@@ -27,7 +27,15 @@ const STATUS_LABEL: Record<string, string> = {
   active: 'Has a home',
 }
 
-function ContactButtons({ contacts, ownerPhotoUrl }: { contacts: EmergencyContact[]; ownerPhotoUrl?: string | null }) {
+function ContactModal({
+  contacts,
+  ownerPhotoUrl,
+  onClose,
+}: {
+  contacts: EmergencyContact[]
+  ownerPhotoUrl?: string | null
+  onClose: () => void
+}) {
   const primary = contacts.find(c => c.isPrimary) ?? contacts[0]
   if (!primary) return null
 
@@ -37,47 +45,94 @@ function ContactButtons({ contacts, ownerPhotoUrl }: { contacts: EmergencyContac
     : '?'
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Contact Owner</h2>
-      <div className="flex flex-col items-center gap-2">
-        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-orange-100 flex-shrink-0 flex items-center justify-center">
-          {ownerPhotoUrl
-            ? <Image src={ownerPhotoUrl} alt={primary.name} fill className="object-cover" />
-            : <span className="text-lg font-bold text-orange-500">{initials}</span>
-          }
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Contact owner"
+    >
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/50"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Sheet */}
+      <div className="relative w-full max-w-md bg-white rounded-t-3xl px-5 pt-4 pb-8 space-y-5">
+        {/* Drag handle */}
+        <div className="flex justify-center mb-1">
+          <div className="w-10 h-1 rounded-full bg-gray-300" />
         </div>
-        <div className="text-center">
-          <p className="text-base font-semibold text-gray-900">{primary.name}</p>
-          <p className="text-xs text-gray-500">{primary.relationship || 'Owner'}</p>
+
+        {/* Owner identity */}
+        <div className="flex flex-col items-center gap-2 pt-1">
+          <div className="relative w-20 h-20 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center">
+            {ownerPhotoUrl
+              ? <Image src={ownerPhotoUrl} alt={primary.name} fill className="object-cover" />
+              : <span className="text-2xl font-bold text-orange-500">{initials}</span>
+            }
+          </div>
+          <div className="text-center">
+            <p className="text-lg font-semibold text-gray-900">{primary.name}</p>
+            <p className="text-sm text-gray-500">{primary.relationship || 'Owner'}</p>
+          </div>
         </div>
-      </div>
-      <div className={`grid gap-2 ${primary.hasWhatsApp ? 'grid-cols-3' : 'grid-cols-2'}`}>
-        <a href={`tel:${phone}`} className="flex flex-col items-center gap-1 bg-green-500 hover:bg-green-600 text-white rounded-xl py-4 transition-colors">
-          <span className="text-2xl" aria-hidden="true">📞</span>
-          <span className="text-xs font-medium">Call</span>
-        </a>
-        <a href={`sms:${phone}`} className="flex flex-col items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white rounded-xl py-4 transition-colors">
-          <span className="text-2xl" aria-hidden="true">💬</span>
-          <span className="text-xs font-medium">Text</span>
-        </a>
-        {primary.hasWhatsApp && (
-          <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl py-4 transition-colors">
-            <span className="text-2xl" aria-hidden="true">📱</span>
-            <span className="text-xs font-medium">WhatsApp</span>
+
+        {/* Action buttons */}
+        <div className={`grid gap-3 ${primary.hasWhatsApp ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          <a
+            href={`tel:${phone}`}
+            className="flex flex-col items-center gap-1.5 bg-green-500 hover:bg-green-600 text-white rounded-2xl py-5 transition-colors"
+          >
+            <span className="text-2xl" aria-hidden="true">📞</span>
+            <span className="text-sm font-semibold">Call</span>
           </a>
-        )}
-      </div>
-      {contacts.length > 1 && (
-        <div className="mt-2 space-y-2">
-          <p className="text-xs text-gray-600 text-center font-medium">Also try</p>
-          {contacts.filter(c => !c.isPrimary).map((c, i) => (
-            <a key={i} href={`tel:${c.phone.replace(/\D/g, '')}`} className="flex items-center justify-between w-full bg-gray-100 hover:bg-gray-200 rounded-lg px-4 py-3 transition-colors">
-              <span className="text-sm font-medium text-gray-900">{c.name}</span>
-              <span className="text-sm text-gray-600">{c.relationship} · {c.phone}</span>
+          <a
+            href={`sms:${phone}`}
+            className="flex flex-col items-center gap-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl py-5 transition-colors"
+          >
+            <span className="text-2xl" aria-hidden="true">💬</span>
+            <span className="text-sm font-semibold">Text</span>
+          </a>
+          {primary.hasWhatsApp && (
+            <a
+              href={`https://wa.me/${phone}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl py-5 transition-colors"
+            >
+              <span className="text-2xl" aria-hidden="true">📱</span>
+              <span className="text-sm font-semibold">WhatsApp</span>
             </a>
-          ))}
+          )}
         </div>
-      )}
+
+        {/* Additional contacts */}
+        {contacts.filter(c => !c.isPrimary).length > 0 && (
+          <div className="space-y-2">
+            <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Also Try</p>
+            {contacts.filter(c => !c.isPrimary).map((c, i) => (
+              <a
+                key={i}
+                href={`tel:${c.phone.replace(/\D/g, '')}`}
+                className="flex items-center justify-between w-full bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-3 transition-colors"
+              >
+                <span className="text-sm font-medium text-gray-900">{c.name}</span>
+                <span className="text-sm text-gray-500">{c.relationship} · {c.phone}</span>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {/* Close */}
+        <button
+          onClick={onClose}
+          className="w-full py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+        >
+          Close
+        </button>
+      </div>
     </div>
   )
 }
@@ -87,6 +142,7 @@ export default function FinderView({ petId }: { petId: string }) {
   const [ownerPhotoUrl, setOwnerPhotoUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [showContact, setShowContact] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -127,7 +183,6 @@ export default function FinderView({ petId }: { petId: string }) {
     load()
   }, [petId])
 
-  // Log scan event to Firestore — Cloud Function picks it up and sends email
   useEffect(() => {
     if (!petId) return
     const logScan = async () => {
@@ -181,6 +236,8 @@ export default function FinderView({ petId }: { petId: string }) {
     )
   }
 
+  const hasContacts = pet.contacts.length > 0
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-md mx-auto bg-white min-h-screen shadow-sm">
@@ -195,7 +252,7 @@ export default function FinderView({ petId }: { petId: string }) {
           </div>
           {pet.status === 'lost' && (
             <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-3 px-4">
-              <p className="text-sm font-medium">Please contact the owner using the buttons below</p>
+              <p className="text-sm font-medium">Please tap &quot;Contact Owner&quot; below to reach them</p>
             </div>
           )}
         </div>
@@ -238,9 +295,14 @@ export default function FinderView({ petId }: { petId: string }) {
             </div>
           )}
 
-          <div>
-            <ContactButtons contacts={pet.contacts} ownerPhotoUrl={ownerPhotoUrl} />
-          </div>
+          {hasContacts && (
+            <button
+              onClick={() => setShowContact(true)}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-4 text-base transition-colors"
+            >
+              Contact Owner
+            </button>
+          )}
 
           {(pet.vet?.name || pet.vet?.phone) && (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
@@ -261,6 +323,14 @@ export default function FinderView({ petId }: { petId: string }) {
           </div>
         </div>
       </div>
+
+      {showContact && (
+        <ContactModal
+          contacts={pet.contacts}
+          ownerPhotoUrl={ownerPhotoUrl}
+          onClose={() => setShowContact(false)}
+        />
+      )}
     </div>
   )
 }
