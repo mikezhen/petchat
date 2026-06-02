@@ -44,6 +44,7 @@ export default function NewPetPage() {
           ownerProfile={ownerProfile}
           onSubmit={handleSubmit}
           submitLabel="Save & get QR code"
+          hideStatus
         />
       </main>
     </div>

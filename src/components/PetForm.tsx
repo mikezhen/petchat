@@ -16,11 +16,12 @@ interface PetFormProps {
   ownerProfile: Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'>
   onSubmit: (data: FormData) => Promise<void>
   submitLabel: string
+  hideStatus?: boolean
 }
 
 const BLANK_CONTACT: EmergencyContact = { name: '', phone: '', relationship: '', isPrimary: false, hasWhatsApp: false }
 
-export default function PetForm({ initial, petId, ownerProfile, onSubmit, submitLabel }: PetFormProps) {
+export default function PetForm({ initial, petId, ownerProfile, onSubmit, submitLabel, hideStatus = false }: PetFormProps) {
   const [form, setForm] = useState<FormData>({
     name: initial?.name ?? '',
     photoUrl: initial?.photoUrl ?? null,
@@ -112,7 +113,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           tabIndex={0}
           aria-label="Upload pet photo"
           onKeyDown={e => e.key === 'Enter' && fileRef.current?.click()}
-          className="w-full aspect-video bg-gray-100 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative hover:bg-gray-200 transition-colors"
+          className="w-full aspect-video bg-gray-200 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative hover:bg-gray-300 transition-colors"
         >
           {photoPreview ? (
             <>
@@ -143,8 +144,8 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
         />
       </div>
 
-      {/* Status toggle */}
-      <div>
+      {/* Status toggle — hidden during initial creation */}
+      {!hideStatus && <div>
         <span className="block text-sm font-medium text-gray-900 mb-2">Status</span>
         <div className="grid grid-cols-2 rounded-xl overflow-hidden border border-gray-200" role="group" aria-label="Pet status">
           <button
@@ -170,7 +171,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             🚨 Report Lost
           </button>
         </div>
-      </div>
+      </div>}
 
       {/* Breed + color */}
       <div className="grid grid-cols-2 gap-4">
