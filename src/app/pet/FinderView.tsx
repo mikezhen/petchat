@@ -268,7 +268,7 @@ export default function FinderView({ petId }: { petId: string }) {
           </div>
           {pet.status === 'lost' && (
             <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-3 px-4">
-              <p className="text-sm font-bold">Please help me get home by contacting my owner</p>
+              <p className="text-sm font-bold">Help me get home — contact my owner</p>
             </div>
           )}
         </div>
