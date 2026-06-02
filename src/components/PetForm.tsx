@@ -255,7 +255,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
       <div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="vet-name" className="block text-sm font-medium text-gray-900 mb-1">Veterinarian Clinic Name</label>
+            <label htmlFor="vet-name" className="block text-sm font-medium text-gray-900 mb-1">Vet Clinic Name</label>
             <input
               id="vet-name"
               type="text"
@@ -266,7 +266,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             />
           </div>
           <div>
-            <label htmlFor="vet-phone" className="block text-sm font-medium text-gray-900 mb-1">Veterinarian Phone Number</label>
+            <label htmlFor="vet-phone" className="block text-sm font-medium text-gray-900 mb-1">Vet Phone Number</label>
             <input
               id="vet-phone"
               type="tel"
