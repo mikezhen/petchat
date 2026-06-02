@@ -120,30 +120,44 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
         <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} aria-hidden="true" />
       </div>
 
-      {/* Name + status */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="pet-name" className="block text-sm font-medium text-gray-900 mb-1">Pet name *</label>
-          <input
-            id="pet-name"
-            type="text" required
-            value={form.name}
-            onChange={e => setField('name', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
-        </div>
-        <div>
-          <label htmlFor="pet-status" className="block text-sm font-medium text-gray-900 mb-1">Status</label>
-          <select
-            id="pet-status"
-            value={form.status}
-            onChange={e => setField('status', e.target.value as PetStatus)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+      {/* Name */}
+      <div>
+        <label htmlFor="pet-name" className="block text-sm font-medium text-gray-900 mb-1">Pet name *</label>
+        <input
+          id="pet-name"
+          type="text" required
+          value={form.name}
+          onChange={e => setField('name', e.target.value)}
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
+
+      {/* Status toggle */}
+      <div>
+        <span className="block text-sm font-medium text-gray-900 mb-2">Status</span>
+        <div className="grid grid-cols-2 rounded-xl overflow-hidden border border-gray-200" role="group" aria-label="Pet status">
+          <button
+            type="button"
+            onClick={() => setField('status', 'active')}
+            className={`py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500 ${
+              form.status === 'active'
+                ? 'bg-green-500 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
+            }`}
           >
-            <option value="active">Active</option>
-            <option value="lost">Lost 🚨</option>
-            <option value="found">Found ✅</option>
-          </select>
+            Safe at home
+          </button>
+          <button
+            type="button"
+            onClick={() => setField('status', 'lost')}
+            className={`py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500 ${
+              form.status === 'lost'
+                ? 'bg-red-500 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            🚨 Report Lost
+          </button>
         </div>
       </div>
 

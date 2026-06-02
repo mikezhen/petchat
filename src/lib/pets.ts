@@ -17,7 +17,7 @@ function toPet(id: string, data: Record<string, unknown>): Pet {
     gender: (data.gender as Pet['gender']) ?? '',
     birthday: (data.birthday as string) ?? '',
     description: (data.description as string) ?? '',
-    status: (data.status as PetStatus) ?? 'active',
+    status: (data.status === 'lost' ? 'lost' : 'active') as PetStatus,
     medicalNotes: (data.medicalNotes as string) ?? '',
     vet: (data.vet as Pet['vet']) ?? { name: '', phone: '' },
     contacts: (data.contacts as EmergencyContact[]) ?? [],

@@ -1,4 +1,4 @@
-export type PetStatus = 'active' | 'lost' | 'found'
+export type PetStatus = 'active' | 'lost'
 
 export interface EmergencyContact {
   name: string

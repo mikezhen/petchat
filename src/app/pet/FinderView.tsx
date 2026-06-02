@@ -18,13 +18,11 @@ function formatAge(birthday: string): string {
 
 const STATUS_STYLES: Record<string, string> = {
   lost:   'bg-red-500 text-white',
-  found:  'bg-green-500 text-white',
   active: 'bg-gray-200 text-gray-700',
 }
 
 const STATUS_LABEL: Record<string, string> = {
   lost:   '🚨 LOST',
-  found:  '✅ FOUND',
   active: 'Has a home',
 }
 
@@ -229,7 +227,6 @@ export default function FinderView({ petId }: { petId: string }) {
           )}
 
           <div>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Contact Owner</h2>
             <ContactButtons contacts={pet.contacts} />
           </div>
 

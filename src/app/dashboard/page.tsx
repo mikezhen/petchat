@@ -9,17 +9,16 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '@/lib/auth-context'
 import { getFirebaseAuth } from '@/lib/firebase'
-import { getPetsByOwner } from '@/lib/pets'
+import { getPetsByOwner, updatePet } from '@/lib/pets'
 import type { Pet } from '@/types'
 
 const STATUS_BADGE: Record<string, string> = {
   lost:   'bg-red-100 text-red-700',
-  found:  'bg-green-100 text-green-700',
   active: 'bg-gray-100 text-gray-600',
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  lost: 'Lost', found: 'Found', active: 'Active',
+  lost: 'Lost', active: 'Active',
 }
 
 export default function DashboardPage() {
@@ -38,6 +37,12 @@ export default function DashboardPage() {
       .then(setPets)
       .finally(() => setPetsLoading(false))
   }, [user])
+
+  const toggleStatus = async (pet: Pet) => {
+    const next = pet.status === 'lost' ? 'active' : 'lost'
+    await updatePet(pet.id, { status: next })
+    setPets(ps => ps.map(p => p.id === pet.id ? { ...p, status: next } : p))
+  }
 
   if (loading || !user) return null
 
@@ -102,6 +107,16 @@ export default function DashboardPage() {
                   {pet.breed && <p className="text-sm text-gray-600 truncate">{pet.breed}</p>}
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => toggleStatus(pet)}
+                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
+                      pet.status === 'lost'
+                        ? 'bg-green-500 hover:bg-green-600 text-white'
+                        : 'bg-red-50 hover:bg-red-100 text-red-600'
+                    }`}
+                  >
+                    {pet.status === 'lost' ? 'Mark Safe' : 'Lost?'}
+                  </button>
                   <Link
                     href={`/dashboard/qr?id=${pet.id}`}
                     className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
