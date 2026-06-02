@@ -9,12 +9,12 @@ import { useAuth } from '@/lib/auth-context'
 import { createPet } from '@/lib/pets'
 import { getUser } from '@/lib/users'
 import PetForm from '@/components/PetForm'
-import type { Pet, EmergencyContact } from '@/types'
+import type { Pet, UserProfile } from '@/types'
 
 export default function NewPetPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const [defaultContacts, setDefaultContacts] = useState<EmergencyContact[] | null>(null)
+  const [ownerProfile, setOwnerProfile] = useState<Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'> | null>(null)
 
   useEffect(() => {
     if (!loading && !user) router.push('/login')
@@ -23,13 +23,11 @@ export default function NewPetPage() {
   useEffect(() => {
     if (!user) return
     getUser(user.uid).then(profile => {
-      setDefaultContacts([{
-        name: profile?.fullName ?? '',
+      setOwnerProfile({
+        fullName: profile?.fullName ?? '',
         phone: profile?.phone ?? '',
-        relationship: 'Owner',
-        isPrimary: true,
-        hasWhatsApp: false,
-      }])
+        hasWhatsApp: profile?.hasWhatsApp ?? false,
+      })
     })
   }, [user])
 
@@ -39,17 +37,17 @@ export default function NewPetPage() {
     router.push(`/dashboard/qr?id=${petId}`)
   }
 
-  if (loading || !user || defaultContacts === null) return null
+  if (loading || !user || ownerProfile === null) return null
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">←</Link>
+        <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">←</Link>
         <h1 className="text-lg font-semibold text-gray-900">Add new pet</h1>
       </header>
       <main className="max-w-lg mx-auto p-4">
         <PetForm
-          initial={{ contacts: defaultContacts }}
+          ownerProfile={ownerProfile}
           onSubmit={handleSubmit}
           submitLabel="Save & get QR code"
         />

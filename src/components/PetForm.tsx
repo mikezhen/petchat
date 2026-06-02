@@ -3,20 +3,21 @@
 import { useState, useRef } from 'react'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { getFirebaseStorage } from '@/lib/firebase'
-import type { Pet, EmergencyContact, PetGender, PetStatus } from '@/types'
+import type { Pet, EmergencyContact, PetGender, PetStatus, UserProfile } from '@/types'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 
 interface PetFormProps {
   initial?: Partial<FormData>
   petId?: string
+  ownerProfile: Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'>
   onSubmit: (data: FormData) => Promise<void>
   submitLabel: string
 }
 
 const BLANK_CONTACT: EmergencyContact = { name: '', phone: '', relationship: '', isPrimary: false, hasWhatsApp: false }
 
-export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFormProps) {
+export default function PetForm({ initial, petId, ownerProfile, onSubmit, submitLabel }: PetFormProps) {
   const [form, setForm] = useState<FormData>({
     name: initial?.name ?? '',
     photoUrl: initial?.photoUrl ?? null,
@@ -29,9 +30,7 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
     status: initial?.status ?? 'active',
     medicalNotes: initial?.medicalNotes ?? '',
     vet: initial?.vet ?? { name: '', phone: '' },
-    contacts: initial?.contacts?.length
-      ? initial.contacts
-      : [{ ...BLANK_CONTACT, isPrimary: true }],
+    contacts: initial?.contacts?.filter(c => !c.isPrimary) ?? [],
   })
 
   const [photoFile, setPhotoFile] = useState<File | null>(null)
@@ -47,14 +46,11 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
     setForm(f => {
       const contacts = [...f.contacts]
       contacts[i] = { ...contacts[i], [field]: value }
-      if (field === 'isPrimary' && value === true) {
-        contacts.forEach((c, idx) => { if (idx !== i) c.isPrimary = false })
-      }
       return { ...f, contacts }
     })
 
   const addContact = () => {
-    if (form.contacts.length >= 3) return
+    if (form.contacts.length >= 2) return
     setForm(f => ({ ...f, contacts: [...f.contacts, { ...BLANK_CONTACT }] }))
   }
 
@@ -86,7 +82,14 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
         await uploadBytes(storageRef, photoFile, { contentType: photoFile.type || 'image/jpeg' })
         photoUrl = await getDownloadURL(storageRef)
       }
-      await onSubmit({ ...form, photoUrl })
+      const primaryContact: EmergencyContact = {
+        name: ownerProfile.fullName,
+        phone: ownerProfile.phone,
+        relationship: 'Owner',
+        isPrimary: true,
+        hasWhatsApp: ownerProfile.hasWhatsApp,
+      }
+      await onSubmit({ ...form, photoUrl, contacts: [primaryContact, ...form.contacts] })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save')
     } finally {
@@ -267,41 +270,45 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
       <div>
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-medium text-gray-900">Emergency contacts</span>
-          {form.contacts.length < 3 && (
+          {form.contacts.length < 2 && (
             <button type="button" onClick={addContact} className="text-xs text-orange-600 font-medium hover:underline">
               + Add contact
             </button>
           )}
         </div>
         <div className="space-y-3">
+
+          {/* Owner — read-only primary contact */}
+          <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-orange-700 uppercase tracking-wide">Primary contact · You</span>
+              <a href="/dashboard/profile" className="text-xs text-orange-600 hover:underline">Edit in Profile →</a>
+            </div>
+            <p className="text-sm font-semibold text-gray-900">{ownerProfile.fullName || '—'}</p>
+            <p className="text-sm text-gray-600">{ownerProfile.phone || '—'}</p>
+            {ownerProfile.hasWhatsApp && (
+              <p className="text-xs text-emerald-700 mt-1">Available on WhatsApp</p>
+            )}
+          </div>
+
+          {/* Additional contacts */}
           {form.contacts.map((c, i) => (
             <div key={i} className="bg-gray-50 rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 text-sm text-gray-900 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="primaryContact"
-                    checked={c.isPrimary}
-                    onChange={() => setContact(i, 'isPrimary', true)}
-                    className="accent-orange-500"
-                  />
-                  Primary contact
-                </label>
-                {form.contacts.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeContact(i)}
-                    className="text-xs text-red-600 hover:text-red-800"
-                  >
-                    Remove
-                  </button>
-                )}
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Additional contact</span>
+                <button
+                  type="button"
+                  onClick={() => removeContact(i)}
+                  className="text-xs text-red-600 hover:text-red-800"
+                >
+                  Remove
+                </button>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <input
                   type="text" required placeholder="Name"
                   id={`contact-${i}-name`}
-                  aria-label={`Contact ${i + 1} name`}
+                  aria-label={`Additional contact ${i + 1} name`}
                   value={c.name}
                   onChange={e => setContact(i, 'name', e.target.value)}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -309,16 +316,16 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
                 <input
                   type="tel" required placeholder="Phone"
                   id={`contact-${i}-phone`}
-                  aria-label={`Contact ${i + 1} phone`}
+                  aria-label={`Additional contact ${i + 1} phone`}
                   value={c.phone}
                   onChange={e => setContact(i, 'phone', e.target.value)}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
               <input
-                type="text" placeholder="Relationship (owner, vet, neighbor…)"
+                type="text" placeholder="Relationship (e.g. spouse, vet, neighbor)"
                 id={`contact-${i}-relationship`}
-                aria-label={`Contact ${i + 1} relationship`}
+                aria-label={`Additional contact ${i + 1} relationship`}
                 value={c.relationship}
                 onChange={e => setContact(i, 'relationship', e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"

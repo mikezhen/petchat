@@ -38,6 +38,7 @@ export interface UserProfile {
   fullName: string
   phone: string
   email: string
+  hasWhatsApp: boolean
   createdAt: Date
 }
 
