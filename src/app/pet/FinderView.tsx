@@ -179,15 +179,16 @@ export default function FinderView({ petId }: { petId: string }) {
 
         <div className="p-5 space-y-5">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{pet.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {pet.name}
+              {pet.gender === 'male' && <span className="text-blue-500 ml-1">♂</span>}
+              {pet.gender === 'female' && <span className="text-pink-400 ml-1">♀</span>}
+            </h1>
             {(pet.breed || pet.color) && (
               <p className="text-gray-700 mt-1">{[pet.breed, pet.color].filter(Boolean).join(' · ')}</p>
             )}
-            {(pet.gender || pet.weight || pet.birthday) && (
+            {(pet.weight || pet.birthday) && (
               <div className="flex flex-wrap gap-2 mt-2">
-                {pet.gender && (
-                  <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full capitalize">{pet.gender}</span>
-                )}
                 {pet.weight && (
                   <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">{pet.weight}</span>
                 )}
