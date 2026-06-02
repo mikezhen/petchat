@@ -104,7 +104,7 @@ export default function DashboardPage() {
                 <div className="flex gap-2 flex-shrink-0">
                   <Link
                     href={`/dashboard/qr?id=${pet.id}`}
-                    className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                    className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
                   >
                     QR
                   </Link>
