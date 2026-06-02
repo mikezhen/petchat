@@ -108,7 +108,7 @@ export default function ProfilePage() {
               {photoPreview ? (
                 <>
                   <Image src={photoPreview} alt="Profile photo" fill className="object-cover" />
-                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-all flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-colors flex items-center justify-center">
                     <span className="text-white text-xs font-semibold opacity-0 hover:opacity-100 transition-opacity">Change</span>
                   </div>
                 </>
