@@ -37,17 +37,17 @@ function ContactButtons({ contacts, ownerPhotoUrl }: { contacts: EmergencyContac
     : '?'
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Contact Owner</h2>
-      <div className="flex items-center gap-3 mb-1">
-        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-orange-100 flex-shrink-0 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-2">
+        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-orange-100 flex-shrink-0 flex items-center justify-center">
           {ownerPhotoUrl
             ? <Image src={ownerPhotoUrl} alt={primary.name} fill className="object-cover" />
-            : <span className="text-sm font-bold text-orange-500">{initials}</span>
+            : <span className="text-lg font-bold text-orange-500">{initials}</span>
           }
         </div>
-        <div>
-          <p className="text-sm font-semibold text-gray-900">{primary.name}</p>
+        <div className="text-center">
+          <p className="text-base font-semibold text-gray-900">{primary.name}</p>
           <p className="text-xs text-gray-500">{primary.relationship || 'Owner'}</p>
         </div>
       </div>
@@ -212,13 +212,13 @@ export default function FinderView({ petId }: { petId: string }) {
             )}
             {(pet.weight || pet.birthday) && (
               <div className="flex flex-wrap gap-2 mt-2">
-                {pet.weight && (
-                  <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">{pet.weight}</span>
-                )}
                 {pet.birthday && (
                   <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">
                     {formatAge(pet.birthday)}
                   </span>
+                )}
+                {pet.weight && (
+                  <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">{pet.weight}</span>
                 )}
               </div>
             )}
@@ -238,6 +238,10 @@ export default function FinderView({ petId }: { petId: string }) {
             </div>
           )}
 
+          <div>
+            <ContactButtons contacts={pet.contacts} ownerPhotoUrl={ownerPhotoUrl} />
+          </div>
+
           {(pet.vet?.name || pet.vet?.phone) && (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
               <p className="text-gray-900 font-semibold text-sm mb-1">🏥 Veterinarian</p>
@@ -249,10 +253,6 @@ export default function FinderView({ petId }: { petId: string }) {
               )}
             </div>
           )}
-
-          <div>
-            <ContactButtons contacts={pet.contacts} ownerPhotoUrl={ownerPhotoUrl} />
-          </div>
 
           <div className="pt-4 border-t border-gray-100 text-center">
             <p className="text-xs text-gray-500">

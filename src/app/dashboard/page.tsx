@@ -91,44 +91,48 @@ export default function DashboardPage() {
         ) : (
           <div className="space-y-3">
             {pets.map(pet => (
-              <div key={pet.id} className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4">
-                <div className="relative w-14 h-14 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 flex items-center justify-center text-2xl">
-                  {pet.photoUrl
-                    ? <Image src={pet.photoUrl} alt={pet.name} fill className="object-cover" />
-                    : <span aria-hidden="true">🐾</span>}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-gray-900 truncate">{pet.name}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_BADGE[pet.status]}`}>
-                      {STATUS_LABEL[pet.status]}
-                    </span>
+              <div key={pet.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                <div className="flex items-center gap-4 p-4">
+                  <div className="relative w-14 h-14 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 flex items-center justify-center text-2xl">
+                    {pet.photoUrl
+                      ? <Image src={pet.photoUrl} alt={pet.name} fill className="object-cover" />
+                      : <span aria-hidden="true">🐾</span>}
                   </div>
-                  {pet.breed && <p className="text-sm text-gray-600 truncate">{pet.breed}</p>}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-gray-900 truncate">{pet.name}</p>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_BADGE[pet.status]}`}>
+                        {STATUS_LABEL[pet.status]}
+                      </span>
+                    </div>
+                    {pet.breed && <p className="text-sm text-gray-600 truncate">{pet.breed}</p>}
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0">
+                    <Link
+                      href={`/dashboard/qr?id=${pet.id}`}
+                      className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                    >
+                      QR
+                    </Link>
+                    <Link
+                      href={`/dashboard/edit?id=${pet.id}`}
+                      className="text-xs bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                    >
+                      Edit
+                    </Link>
+                  </div>
                 </div>
-                <div className="flex gap-2 flex-shrink-0">
+                <div className="border-t border-gray-100 px-4 py-3">
                   <button
                     onClick={() => toggleStatus(pet)}
-                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
+                    className={`w-full text-sm font-semibold py-2 rounded-xl transition-colors ${
                       pet.status === 'lost'
                         ? 'bg-green-500 hover:bg-green-600 text-white'
                         : 'bg-red-50 hover:bg-red-100 text-red-600'
                     }`}
                   >
-                    {pet.status === 'lost' ? 'Mark Safe' : 'Lost?'}
+                    {pet.status === 'lost' ? 'Mark Safe' : 'Mark as Lost'}
                   </button>
-                  <Link
-                    href={`/dashboard/qr?id=${pet.id}`}
-                    className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
-                  >
-                    QR
-                  </Link>
-                  <Link
-                    href={`/dashboard/edit?id=${pet.id}`}
-                    className="text-xs bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg font-medium transition-colors"
-                  >
-                    Edit
-                  </Link>
                 </div>
               </div>
             ))}

@@ -115,15 +115,15 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           {photoPreview ? (
             <>
               <Image src={photoPreview} alt="Pet photo preview" fill className="object-cover rounded-xl" />
-              <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-all flex items-center justify-center rounded-xl">
-                <span className="text-white text-sm font-semibold opacity-0 hover:opacity-100 transition-opacity">Change photo</span>
+              <div className="absolute inset-0 rounded-xl opacity-0 hover:opacity-100 transition-opacity bg-black/30 flex items-center justify-center">
+                <span className="text-white text-sm font-semibold">Change Photo</span>
               </div>
-              <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-md pointer-events-none">
+              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-md pointer-events-none">
                 Tap to change
               </div>
             </>
           ) : (
-            <span className="text-gray-600 text-sm">Tap to upload photo</span>
+            <span className="text-gray-600 text-sm">Tap to Upload Photo</span>
           )}
         </div>
         <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} aria-hidden="true" />
@@ -131,7 +131,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
 
       {/* Name */}
       <div>
-        <label htmlFor="pet-name" className="block text-sm font-medium text-gray-900 mb-1">Pet name *</label>
+        <label htmlFor="pet-name" className="block text-sm font-medium text-gray-900 mb-1">Pet Name *</label>
         <input
           id="pet-name"
           type="text" required
@@ -154,7 +154,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
                 : 'bg-white text-gray-600 hover:bg-gray-50'
             }`}
           >
-            Safe at home
+            Safe at Home
           </button>
           <button
             type="button"
@@ -250,10 +250,10 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
 
       {/* Vet */}
       <div>
-        <span className="block text-sm font-medium text-gray-900 mb-3">Vet information</span>
-        <div className="grid grid-cols-2 gap-3">
+        <span className="block text-sm font-medium text-gray-900 mb-3">Veterinarian Information</span>
+        <div className="space-y-3">
           <div>
-            <label htmlFor="vet-name" className="block text-xs font-medium text-gray-700 mb-1">Vet name / clinic</label>
+            <label htmlFor="vet-name" className="block text-xs font-medium text-gray-700 mb-1">Clinic Name</label>
             <input
               id="vet-name"
               type="text"
@@ -264,7 +264,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             />
           </div>
           <div>
-            <label htmlFor="vet-phone" className="block text-xs font-medium text-gray-700 mb-1">Vet phone</label>
+            <label htmlFor="vet-phone" className="block text-xs font-medium text-gray-700 mb-1">Clinic Phone Number</label>
             <input
               id="vet-phone"
               type="tel"
@@ -280,7 +280,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
       {/* Contacts */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium text-gray-900">Emergency contacts</span>
+          <span className="text-sm font-medium text-gray-900">Emergency Contacts</span>
           {form.contacts.length < 2 && (
             <button type="button" onClick={addContact} className="text-xs text-orange-600 font-medium hover:underline">
               + Add contact
@@ -292,7 +292,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           {/* Owner — read-only primary contact */}
           <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-orange-700 uppercase tracking-wide">Primary contact · You</span>
+              <span className="text-xs font-semibold text-orange-700 uppercase tracking-wide">Primary Contact · You</span>
               <a href="/dashboard/profile" className="text-xs text-orange-600 hover:underline">Edit in Profile →</a>
             </div>
             <p className="text-sm font-semibold text-gray-900">{ownerProfile.fullName || '—'}</p>
@@ -306,7 +306,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           {form.contacts.map((c, i) => (
             <div key={i} className="bg-gray-50 rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Additional contact</span>
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Additional Contact</span>
                 <button
                   type="button"
                   onClick={() => removeContact(i)}
