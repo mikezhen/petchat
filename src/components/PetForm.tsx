@@ -103,7 +103,6 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
 
       {/* Photo */}
       <div>
-        <label className="block text-sm font-medium text-gray-900 mb-2">Photo</label>
         <div
           onClick={() => fileRef.current?.click()}
           role="button"
@@ -250,10 +249,9 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
 
       {/* Vet */}
       <div>
-        <span className="block text-sm font-medium text-gray-900 mb-3">Veterinarian Information</span>
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="vet-name" className="block text-xs font-medium text-gray-700 mb-1">Clinic Name</label>
+            <label htmlFor="vet-name" className="block text-sm font-medium text-gray-900 mb-1">Veterinarian Clinic Name</label>
             <input
               id="vet-name"
               type="text"
@@ -264,7 +262,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             />
           </div>
           <div>
-            <label htmlFor="vet-phone" className="block text-xs font-medium text-gray-700 mb-1">Clinic Phone Number</label>
+            <label htmlFor="vet-phone" className="block text-sm font-medium text-gray-900 mb-1">Veterinarian Phone Number</label>
             <input
               id="vet-phone"
               type="tel"
