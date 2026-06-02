@@ -269,7 +269,6 @@ export default function FinderView({ petId }: { petId: string }) {
           {pet.status === 'lost' && (
             <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-3 px-4">
               <p className="text-sm font-bold">I&apos;m lost! Please help me get home.</p>
-              <p className="text-xs mt-0.5 opacity-90">Tap &quot;Contact Owner&quot; below to reach my owner</p>
             </div>
           )}
         </div>
@@ -279,8 +278,8 @@ export default function FinderView({ petId }: { petId: string }) {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-between">
               <span>{pet.name}</span>
-              {pet.gender === 'male' && <span className="text-blue-500 text-2xl font-black">♂</span>}
-              {pet.gender === 'female' && <span className="text-pink-400 text-2xl font-black">♀</span>}
+              {pet.gender === 'male' && <span className="text-blue-500">♂</span>}
+              {pet.gender === 'female' && <span className="text-pink-400">♀</span>}
             </h1>
             {(pet.breed || pet.color) && (
               <p className="text-gray-700 mt-1">{[pet.breed, pet.color].filter(Boolean).join(' · ')}</p>
