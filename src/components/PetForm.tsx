@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { getFirebaseStorage } from '@/lib/firebase'
-import type { Pet, EmergencyContact, PetStatus } from '@/types'
+import type { Pet, EmergencyContact, PetGender, PetStatus } from '@/types'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 
@@ -22,9 +22,13 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
     photoUrl: initial?.photoUrl ?? null,
     breed: initial?.breed ?? '',
     color: initial?.color ?? '',
+    weight: initial?.weight ?? '',
+    gender: initial?.gender ?? '',
+    birthday: initial?.birthday ?? '',
     description: initial?.description ?? '',
     status: initial?.status ?? 'active',
     medicalNotes: initial?.medicalNotes ?? '',
+    vet: initial?.vet ?? { name: '', phone: '' },
     contacts: initial?.contacts?.length
       ? initial.contacts
       : [{ ...BLANK_CONTACT, isPrimary: true }],
@@ -163,6 +167,47 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
         </div>
       </div>
 
+      {/* Weight + Gender */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="pet-weight" className="block text-sm font-medium text-gray-900 mb-1">Weight</label>
+          <input
+            id="pet-weight"
+            type="text"
+            value={form.weight}
+            onChange={e => setField('weight', e.target.value)}
+            placeholder="e.g. 25 lbs"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+        </div>
+        <div>
+          <label htmlFor="pet-gender" className="block text-sm font-medium text-gray-900 mb-1">Gender</label>
+          <select
+            id="pet-gender"
+            value={form.gender}
+            onChange={e => setField('gender', e.target.value as PetGender)}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          >
+            <option value="">Not specified</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Birthday */}
+      <div>
+        <label htmlFor="pet-birthday" className="block text-sm font-medium text-gray-900 mb-1">Birthday</label>
+        <input
+          id="pet-birthday"
+          type="date"
+          value={form.birthday}
+          max={new Date().toISOString().split('T')[0]}
+          onChange={e => setField('birthday', e.target.value)}
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
+
       {/* Description */}
       <div>
         <label htmlFor="pet-description" className="block text-sm font-medium text-gray-900 mb-1">Description</label>
@@ -187,6 +232,35 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
           placeholder="Allergies, medications, vet contact…"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
         />
+      </div>
+
+      {/* Vet */}
+      <div>
+        <span className="block text-sm font-medium text-gray-900 mb-3">Vet information</span>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="vet-name" className="block text-xs font-medium text-gray-700 mb-1">Vet name / clinic</label>
+            <input
+              id="vet-name"
+              type="text"
+              value={form.vet.name}
+              onChange={e => setField('vet', { ...form.vet, name: e.target.value })}
+              placeholder="City Vet Clinic"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="vet-phone" className="block text-xs font-medium text-gray-700 mb-1">Vet phone</label>
+            <input
+              id="vet-phone"
+              type="tel"
+              value={form.vet.phone}
+              onChange={e => setField('vet', { ...form.vet, phone: e.target.value })}
+              placeholder="(555) 000-0000"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Contacts */}

@@ -6,6 +6,15 @@ import { getFirebaseDb } from '@/lib/firebase'
 import type { Pet, EmergencyContact } from '@/types'
 import { Timestamp } from 'firebase/firestore'
 
+function formatAge(birthday: string): string {
+  const born = new Date(birthday)
+  const now = new Date()
+  const months = (now.getFullYear() - born.getFullYear()) * 12 + (now.getMonth() - born.getMonth())
+  if (months < 12) return `${months} mo old`
+  const years = Math.floor(months / 12)
+  return `${years} yr${years !== 1 ? 's' : ''} old`
+}
+
 const STATUS_STYLES: Record<string, string> = {
   lost:   'bg-red-500 text-white',
   found:  'bg-green-500 text-white',
@@ -74,9 +83,13 @@ export default function FinderView({ petId }: { petId: string }) {
           photoUrl: d.photoUrl ?? null,
           breed: d.breed ?? '',
           color: d.color ?? '',
+          weight: d.weight ?? '',
+          gender: d.gender ?? '',
+          birthday: d.birthday ?? '',
           description: d.description ?? '',
           status: d.status ?? 'active',
           medicalNotes: d.medicalNotes ?? '',
+          vet: d.vet ?? { name: '', phone: '' },
           contacts: d.contacts ?? [],
           createdAt: (d.createdAt as Timestamp)?.toDate() ?? new Date(),
           updatedAt: (d.updatedAt as Timestamp)?.toDate() ?? new Date(),
@@ -171,6 +184,21 @@ export default function FinderView({ petId }: { petId: string }) {
             {(pet.breed || pet.color) && (
               <p className="text-gray-700 mt-1">{[pet.breed, pet.color].filter(Boolean).join(' · ')}</p>
             )}
+            {(pet.gender || pet.weight || pet.birthday) && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {pet.gender && (
+                  <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full capitalize">{pet.gender}</span>
+                )}
+                {pet.weight && (
+                  <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">{pet.weight}</span>
+                )}
+                {pet.birthday && (
+                  <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">
+                    {formatAge(pet.birthday)}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {pet.medicalNotes && (
@@ -184,6 +212,18 @@ export default function FinderView({ petId }: { petId: string }) {
             <div>
               <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">About</h2>
               <p className="text-gray-700 text-sm leading-relaxed">{pet.description}</p>
+            </div>
+          )}
+
+          {(pet.vet?.name || pet.vet?.phone) && (
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <p className="text-gray-900 font-semibold text-sm mb-1">🏥 Vet</p>
+              {pet.vet.name && <p className="text-sm text-gray-700">{pet.vet.name}</p>}
+              {pet.vet.phone && (
+                <a href={`tel:${pet.vet.phone.replace(/\D/g, '')}`} className="text-sm text-orange-600 font-medium hover:underline">
+                  {pet.vet.phone}
+                </a>
+              )}
             </div>
           )}
 

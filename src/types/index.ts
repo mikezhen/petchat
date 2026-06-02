@@ -7,6 +7,13 @@ export interface EmergencyContact {
   isPrimary: boolean
 }
 
+export type PetGender = 'male' | 'female' | ''
+
+export interface VetInfo {
+  name: string
+  phone: string
+}
+
 export interface Pet {
   id: string
   ownerId: string
@@ -14,9 +21,13 @@ export interface Pet {
   photoUrl: string | null
   breed: string
   color: string
+  weight: string
+  gender: PetGender
+  birthday: string
   description: string
   status: PetStatus
   medicalNotes: string
+  vet: VetInfo
   contacts: EmergencyContact[]
   createdAt: Date
   updatedAt: Date
