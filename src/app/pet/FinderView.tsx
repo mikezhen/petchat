@@ -6,8 +6,10 @@ import { getFirebaseDb } from '@/lib/firebase'
 import type { Pet, EmergencyContact } from '@/types'
 import { Timestamp } from 'firebase/firestore'
 import Image from 'next/image'
+import Link from 'next/link'
 import { getUser } from '@/lib/users'
 import { formatPhone } from '@/lib/formatPhone'
+import { useAuth } from '@/lib/auth-context'
 
 function formatAge(birthday: string): string {
   const born = new Date(birthday)
@@ -155,6 +157,7 @@ function ContactModal({
 }
 
 export default function FinderView({ petId }: { petId: string }) {
+  const { user } = useAuth()
   const [pet, setPet] = useState<Pet | null>(null)
   const [ownerLive, setOwnerLive] = useState<{
     name: string; phone: string; hasWhatsApp: boolean; photoUrl: string | null
@@ -346,7 +349,11 @@ export default function FinderView({ petId }: { petId: string }) {
               Contact Owner
             </button>
             <p className="text-center text-xs text-gray-400 mt-2">
-              Powered by <span className="font-semibold text-orange-400">PawCode</span> — real-time pet ID tags
+              Powered by{' '}
+              <Link href={user ? '/dashboard' : '/'} className="font-semibold text-orange-400 hover:underline">
+                PawCode
+              </Link>
+              {' '}— real-time pet ID tags
             </p>
           </div>
         </div>
