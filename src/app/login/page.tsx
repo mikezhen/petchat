@@ -2,43 +2,51 @@
 
 export const dynamic = 'force-static'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { signInWithEmailAndPassword, sendSignInLinkToEmail } from 'firebase/auth'
 import type { ActionCodeSettings } from 'firebase/auth'
 import { getFirebaseAuth } from '@/lib/firebase'
 import { EMAIL_STORAGE_KEY } from '@/app/auth/callback/page'
+import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 type Mode = 'password' | 'magic'
 
 export default function LoginPage() {
+  const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [mode, setMode] = useState<Mode>('magic')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [sent, setSent] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (!authLoading && user) router.replace('/dashboard')
+  }, [user, authLoading, router])
+
+  if (authLoading || user) return null
 
   const handlePassword = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
+    setSubmitting(true)
     try {
       await signInWithEmailAndPassword(getFirebaseAuth(), email, password)
       router.push('/dashboard')
     } catch {
       setError('Invalid email or password')
     } finally {
-      setLoading(false)
+      setSubmitting(false)
     }
   }
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
+    setSubmitting(true)
     try {
       const settings: ActionCodeSettings = {
         url: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
@@ -50,7 +58,7 @@ export default function LoginPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send link')
     } finally {
-      setLoading(false)
+      setSubmitting(false)
     }
   }
 
@@ -117,10 +125,10 @@ export default function LoginPage() {
               {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={submitting}
                 className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-2.5 transition-colors"
               >
-                {loading ? 'Sending…' : 'Send magic link'}
+                {submitting ? 'Sending…' : 'Send magic link'}
               </button>
             </form>
           )
@@ -153,10 +161,10 @@ export default function LoginPage() {
             {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
             <button
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-2.5 transition-colors"
             >
-              {loading ? 'Signing in…' : 'Sign in'}
+              {submitting ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
         )}

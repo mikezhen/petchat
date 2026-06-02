@@ -1,6 +1,22 @@
-import Link from "next/link";
+'use client'
+
+export const dynamic = 'force-static'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/auth-context'
+import Link from 'next/link'
 
 export default function Home() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && user) router.replace('/dashboard')
+  }, [user, loading, router])
+
+  if (loading || user) return null
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="text-center max-w-md">
@@ -26,5 +42,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  );
+  )
 }
