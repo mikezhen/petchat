@@ -162,7 +162,7 @@ export default function ProfilePage() {
               />
               <span className="text-sm font-medium text-gray-900">I&apos;m available on WhatsApp</span>
             </label>
-            <p className="text-[10px] text-gray-500 mt-1 ml-7">Check this option to display a WhatsApp button on your pet&apos;s Finder page</p>
+            <p className="text-[xx-small] text-gray-500 mt-1 ml-7">Check this option to display a WhatsApp button on your pet&apos;s Finder page</p>
           </div>
 
           <div>
