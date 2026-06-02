@@ -121,7 +121,7 @@ export default function ProfilePage() {
               onClick={() => fileRef.current?.click()}
               className="text-xs text-orange-600 font-medium hover:underline"
             >
-              {photoPreview ? 'Change photo' : 'Upload photo'}
+              {photoPreview ? 'Change Photo' : 'Upload Photo'}
             </button>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} aria-hidden="true" />
           </div>
@@ -175,7 +175,6 @@ export default function ProfilePage() {
               aria-describedby="email-hint"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-500 cursor-not-allowed"
             />
-            <p id="email-hint" className="text-xs text-gray-600 mt-1">Email cannot be changed</p>
           </div>
 
           {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
