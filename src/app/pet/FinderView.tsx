@@ -330,7 +330,7 @@ export default function FinderView({ petId }: { petId: string }) {
       {/* Floating Contact Owner button */}
       {hasContacts && (
         <div className="fixed bottom-0 inset-x-0 z-10 flex justify-center pointer-events-none">
-          <div className="w-full max-w-md px-5 pb-6 pt-3 bg-white border-t border-gray-100 pointer-events-auto">
+          <div className="w-full max-w-md px-5 pb-1 pt-3 bg-white border-t border-gray-100 pointer-events-auto">
             <button
               onClick={() => setShowContact(true)}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-4 text-base transition-colors"
