@@ -127,7 +127,7 @@ export default function ProfilePage() {
           </div>
 
           <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-900 mb-1">Full name</label>
+            <label htmlFor="fullName" className="block text-sm font-medium text-gray-900 mb-1">Name</label>
             <input
               id="fullName"
               type="text"
@@ -140,7 +140,7 @@ export default function ProfilePage() {
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-1">Phone number</label>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-1">Phone Number</label>
             <input
               id="phone"
               type="tel"
@@ -162,7 +162,7 @@ export default function ProfilePage() {
               />
               <span className="text-sm font-medium text-gray-900">I&apos;m available on WhatsApp</span>
             </label>
-            <p className="text-xs text-gray-600 mt-1 ml-7">Shows a WhatsApp button on your pet&apos;s finder page.</p>
+            <p className="text-[10px] text-gray-500 mt-1 ml-7">Check this option to display a WhatsApp button on your pet&apos;s Finder page</p>
           </div>
 
           <div>
@@ -175,7 +175,7 @@ export default function ProfilePage() {
               aria-describedby="email-hint"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-500 cursor-not-allowed"
             />
-            <p id="email-hint" className="text-xs text-gray-600 mt-1">Email cannot be changed here.</p>
+            <p id="email-hint" className="text-xs text-gray-600 mt-1">Email cannot be changed</p>
           </div>
 
           {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
