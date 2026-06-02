@@ -20,8 +20,8 @@
     "resend": "^6.12.4"
   },
   "optionalDependencies": {
-    "lightningcss-darwin-arm64": "1.32.0",
-    "lightningcss-darwin-x64": "1.32.0"
+    "lightningcss-darwin-arm64": "file:stubs/lightningcss-darwin-arm64",
+    "lightningcss-darwin-x64": "file:stubs/lightningcss-darwin-x64"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
