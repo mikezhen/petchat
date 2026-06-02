@@ -112,10 +112,19 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           onKeyDown={e => e.key === 'Enter' && fileRef.current?.click()}
           className="w-full aspect-video bg-gray-100 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative hover:bg-gray-200 transition-colors"
         >
-          {photoPreview
-            ? <Image src={photoPreview} alt="Pet photo preview" fill className="object-cover rounded-xl" />
-            : <span className="text-gray-600 text-sm">Tap to upload photo</span>
-          }
+          {photoPreview ? (
+            <>
+              <Image src={photoPreview} alt="Pet photo preview" fill className="object-cover rounded-xl" />
+              <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-all flex items-center justify-center rounded-xl">
+                <span className="text-white text-sm font-semibold opacity-0 hover:opacity-100 transition-opacity">Change photo</span>
+              </div>
+              <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-md pointer-events-none">
+                Tap to change
+              </div>
+            </>
+          ) : (
+            <span className="text-gray-600 text-sm">Tap to upload photo</span>
+          )}
         </div>
         <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} aria-hidden="true" />
       </div>
@@ -226,28 +235,15 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
         />
       </div>
 
-      {/* Description */}
+      {/* Notes */}
       <div>
-        <label htmlFor="pet-description" className="block text-sm font-medium text-gray-900 mb-1">Description</label>
+        <label htmlFor="pet-description" className="block text-sm font-medium text-gray-900 mb-1">Notes</label>
         <textarea
           id="pet-description"
           rows={3}
           value={form.description}
           onChange={e => setField('description', e.target.value)}
           placeholder="Personality, habits, how to approach them…"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
-        />
-      </div>
-
-      {/* Medical notes */}
-      <div>
-        <label htmlFor="pet-medical" className="block text-sm font-medium text-gray-900 mb-1">Medical notes</label>
-        <textarea
-          id="pet-medical"
-          rows={2}
-          value={form.medicalNotes}
-          onChange={e => setField('medicalNotes', e.target.value)}
-          placeholder="Allergies, medications, vet contact…"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
         />
       </div>

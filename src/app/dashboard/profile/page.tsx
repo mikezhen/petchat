@@ -2,10 +2,13 @@
 
 export const dynamic = 'force-static'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { useAuth } from '@/lib/auth-context'
+import { getFirebaseStorage } from '@/lib/firebase'
 import { getUser, updateUser } from '@/lib/users'
 
 export default function ProfilePage() {
@@ -13,10 +16,14 @@ export default function ProfilePage() {
   const router = useRouter()
   const [form, setForm] = useState({ fullName: '', phone: '', hasWhatsApp: false })
   const [email, setEmail] = useState('')
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
+  const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!loading && !user) router.push('/login')
@@ -28,10 +35,25 @@ export default function ProfilePage() {
       if (profile) {
         setForm({ fullName: profile.fullName, phone: profile.phone, hasWhatsApp: profile.hasWhatsApp })
         setEmail(profile.email)
+        setPhotoUrl(profile.photoUrl)
+        setPhotoPreview(profile.photoUrl)
       }
       setProfileLoading(false)
     })
   }, [user])
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Photo must be under 10 MB. Please choose a smaller image.')
+      e.target.value = ''
+      return
+    }
+    setError('')
+    setPhotoFile(file)
+    setPhotoPreview(URL.createObjectURL(file))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,7 +62,14 @@ export default function ProfilePage() {
     setSaved(false)
     setSaving(true)
     try {
-      await updateUser(user.uid, form)
+      let finalPhotoUrl = photoUrl
+      if (photoFile) {
+        const storageRef = ref(getFirebaseStorage(), `users/${user.uid}/avatar.jpg`)
+        await uploadBytes(storageRef, photoFile, { contentType: photoFile.type || 'image/jpeg' })
+        finalPhotoUrl = await getDownloadURL(storageRef)
+        setPhotoUrl(finalPhotoUrl)
+      }
+      await updateUser(user.uid, { ...form, photoUrl: finalPhotoUrl })
       setSaved(true)
     } catch {
       setError('Failed to save changes. Please try again.')
@@ -51,6 +80,10 @@ export default function ProfilePage() {
 
   if (loading || !user || profileLoading) return null
 
+  const initials = form.fullName
+    ? form.fullName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
+    : '?'
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
@@ -60,6 +93,35 @@ export default function ProfilePage() {
 
       <main className="max-w-lg mx-auto p-4">
         <form onSubmit={handleSubmit} className="space-y-5 bg-white rounded-2xl border border-gray-100 p-6">
+
+          {/* Profile photo */}
+          <div className="flex flex-col items-center gap-2">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="relative w-24 h-24 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+              aria-label="Upload profile photo"
+            >
+              {photoPreview ? (
+                <>
+                  <Image src={photoPreview} alt="Profile photo" fill className="object-cover" />
+                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-all flex items-center justify-center">
+                    <span className="text-white text-xs font-semibold opacity-0 hover:opacity-100 transition-opacity">Change</span>
+                  </div>
+                </>
+              ) : (
+                <span className="text-2xl font-bold text-orange-500">{initials}</span>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="text-xs text-orange-600 font-medium hover:underline"
+            >
+              {photoPreview ? 'Change photo' : 'Upload photo'}
+            </button>
+            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} aria-hidden="true" />
+          </div>
 
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-gray-900 mb-1">Full name</label>

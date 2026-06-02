@@ -39,6 +39,7 @@ export interface UserProfile {
   phone: string
   email: string
   hasWhatsApp: boolean
+  photoUrl: string | null
   createdAt: Date
 }
 

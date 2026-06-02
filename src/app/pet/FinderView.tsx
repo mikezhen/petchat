@@ -6,6 +6,7 @@ import { getFirebaseDb } from '@/lib/firebase'
 import type { Pet, EmergencyContact } from '@/types'
 import { Timestamp } from 'firebase/firestore'
 import Image from 'next/image'
+import { getUser } from '@/lib/users'
 
 function formatAge(birthday: string): string {
   const born = new Date(birthday)
@@ -26,15 +27,30 @@ const STATUS_LABEL: Record<string, string> = {
   active: 'Has a home',
 }
 
-function ContactButtons({ contacts }: { contacts: EmergencyContact[] }) {
+function ContactButtons({ contacts, ownerPhotoUrl }: { contacts: EmergencyContact[]; ownerPhotoUrl?: string | null }) {
   const primary = contacts.find(c => c.isPrimary) ?? contacts[0]
   if (!primary) return null
 
   const phone = primary.phone.replace(/\D/g, '')
+  const initials = primary.name
+    ? primary.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
+    : '?'
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-gray-700 text-center">Contact {primary.name}</p>
+      <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Contact Owner</h2>
+      <div className="flex items-center gap-3 mb-1">
+        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-orange-100 flex-shrink-0 flex items-center justify-center">
+          {ownerPhotoUrl
+            ? <Image src={ownerPhotoUrl} alt={primary.name} fill className="object-cover" />
+            : <span className="text-sm font-bold text-orange-500">{initials}</span>
+          }
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-gray-900">{primary.name}</p>
+          <p className="text-xs text-gray-500">{primary.relationship || 'Owner'}</p>
+        </div>
+      </div>
       <div className={`grid gap-2 ${primary.hasWhatsApp ? 'grid-cols-3' : 'grid-cols-2'}`}>
         <a href={`tel:${phone}`} className="flex flex-col items-center gap-1 bg-green-500 hover:bg-green-600 text-white rounded-xl py-4 transition-colors">
           <span className="text-2xl" aria-hidden="true">📞</span>
@@ -68,6 +84,7 @@ function ContactButtons({ contacts }: { contacts: EmergencyContact[] }) {
 
 export default function FinderView({ petId }: { petId: string }) {
   const [pet, setPet] = useState<Pet | null>(null)
+  const [ownerPhotoUrl, setOwnerPhotoUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
@@ -77,7 +94,7 @@ export default function FinderView({ petId }: { petId: string }) {
         const snap = await getDoc(doc(getFirebaseDb(), 'pets', petId))
         if (!snap.exists()) { setNotFound(true); return }
         const d = snap.data()
-        setPet({
+        const loadedPet: Pet = {
           id: snap.id,
           ownerId: d.ownerId,
           name: d.name,
@@ -94,7 +111,13 @@ export default function FinderView({ petId }: { petId: string }) {
           contacts: d.contacts ?? [],
           createdAt: (d.createdAt as Timestamp)?.toDate() ?? new Date(),
           updatedAt: (d.updatedAt as Timestamp)?.toDate() ?? new Date(),
-        })
+        }
+        setPet(loadedPet)
+        if (d.ownerId) {
+          getUser(d.ownerId as string).then(profile => {
+            if (profile?.photoUrl) setOwnerPhotoUrl(profile.photoUrl)
+          }).catch(() => {})
+        }
       } catch {
         setNotFound(true)
       } finally {
@@ -179,10 +202,10 @@ export default function FinderView({ petId }: { petId: string }) {
 
         <div className="p-5 space-y-5">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {pet.name}
-              {pet.gender === 'male' && <span className="text-blue-500 ml-1">♂</span>}
-              {pet.gender === 'female' && <span className="text-pink-400 ml-1">♀</span>}
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-between">
+              <span>{pet.name}</span>
+              {pet.gender === 'male' && <span className="text-blue-500">♂</span>}
+              {pet.gender === 'female' && <span className="text-pink-400">♀</span>}
             </h1>
             {(pet.breed || pet.color) && (
               <p className="text-gray-700 mt-1">{[pet.breed, pet.color].filter(Boolean).join(' · ')}</p>
@@ -217,7 +240,7 @@ export default function FinderView({ petId }: { petId: string }) {
 
           {(pet.vet?.name || pet.vet?.phone) && (
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-              <p className="text-gray-900 font-semibold text-sm mb-1">🏥 Vet</p>
+              <p className="text-gray-900 font-semibold text-sm mb-1">🏥 Veterinarian</p>
               {pet.vet.name && <p className="text-sm text-gray-700">{pet.vet.name}</p>}
               {pet.vet.phone && (
                 <a href={`tel:${pet.vet.phone.replace(/\D/g, '')}`} className="text-sm text-orange-600 font-medium hover:underline">
@@ -228,7 +251,7 @@ export default function FinderView({ petId }: { petId: string }) {
           )}
 
           <div>
-            <ContactButtons contacts={pet.contacts} />
+            <ContactButtons contacts={pet.contacts} ownerPhotoUrl={ownerPhotoUrl} />
           </div>
 
           <div className="pt-4 border-t border-gray-100 text-center">

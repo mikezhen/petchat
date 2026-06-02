@@ -8,6 +8,7 @@ function toUserProfile(data: Record<string, unknown>): UserProfile {
     phone: data.phone as string,
     email: data.email as string,
     hasWhatsApp: (data.hasWhatsApp as boolean) ?? false,
+    photoUrl: (data.photoUrl as string) ?? null,
     createdAt: (data.createdAt as Timestamp)?.toDate() ?? new Date(),
   }
 }
@@ -20,7 +21,7 @@ export async function getUser(userId: string): Promise<UserProfile | null> {
 
 export async function updateUser(
   userId: string,
-  data: Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'>
+  data: Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp' | 'photoUrl'>
 ): Promise<void> {
   await updateDoc(doc(getFirebaseDb(), 'users', userId), data)
 }
