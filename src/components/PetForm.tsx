@@ -5,6 +5,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { getFirebaseStorage } from '@/lib/firebase'
 import Image from 'next/image'
 import type { Pet, EmergencyContact, PetGender, PetStatus, UserProfile } from '@/types'
+import { formatPhone } from '@/lib/formatPhone'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 
@@ -30,8 +31,8 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
     description: initial?.description ?? '',
     status: initial?.status ?? 'active',
     medicalNotes: initial?.medicalNotes ?? '',
-    vet: initial?.vet ?? { name: '', phone: '' },
-    contacts: initial?.contacts?.filter(c => !c.isPrimary) ?? [],
+    vet: { name: initial?.vet?.name ?? '', phone: formatPhone(initial?.vet?.phone ?? '') },
+    contacts: initial?.contacts?.filter(c => !c.isPrimary).map(c => ({ ...c, phone: formatPhone(c.phone) })) ?? [],
   })
 
   const [photoFile, setPhotoFile] = useState<File | null>(null)
@@ -267,7 +268,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
               id="vet-phone"
               type="tel"
               value={form.vet.phone}
-              onChange={e => setField('vet', { ...form.vet, phone: e.target.value })}
+              onChange={e => setField('vet', { ...form.vet, phone: formatPhone(e.target.value) })}
               placeholder="(555) 000-0000"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -327,7 +328,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
                   id={`contact-${i}-phone`}
                   aria-label={`Additional contact ${i + 1} phone`}
                   value={c.phone}
-                  onChange={e => setContact(i, 'phone', e.target.value)}
+                  onChange={e => setContact(i, 'phone', formatPhone(e.target.value))}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>

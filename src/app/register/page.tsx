@@ -8,6 +8,7 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { getFirebaseAuth, getFirebaseDb } from '@/lib/firebase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { formatPhone } from '@/lib/formatPhone'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -77,7 +78,7 @@ export default function RegisterPage() {
               required
               autoComplete="tel"
               value={form.phone}
-              onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+              onChange={e => setForm(f => ({ ...f, phone: formatPhone(e.target.value) }))}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>

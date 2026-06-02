@@ -10,6 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { useAuth } from '@/lib/auth-context'
 import { getFirebaseStorage } from '@/lib/firebase'
 import { getUser, updateUser } from '@/lib/users'
+import { formatPhone } from '@/lib/formatPhone'
 
 export default function ProfilePage() {
   const { user, loading } = useAuth()
@@ -33,7 +34,7 @@ export default function ProfilePage() {
     if (!user) return
     getUser(user.uid).then(profile => {
       if (profile) {
-        setForm({ fullName: profile.fullName, phone: profile.phone, hasWhatsApp: profile.hasWhatsApp })
+        setForm({ fullName: profile.fullName, phone: formatPhone(profile.phone), hasWhatsApp: profile.hasWhatsApp })
         setEmail(profile.email)
         setPhotoUrl(profile.photoUrl)
         setPhotoPreview(profile.photoUrl)
@@ -144,7 +145,7 @@ export default function ProfilePage() {
               required
               autoComplete="tel"
               value={form.phone}
-              onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+              onChange={e => setForm(f => ({ ...f, phone: formatPhone(e.target.value) }))}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
