@@ -116,7 +116,7 @@ function CallbackInner() {
               placeholder="you@example.com"
               value={emailInput}
               onChange={e => setEmailInput(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
             {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
             <button

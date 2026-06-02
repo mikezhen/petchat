@@ -65,10 +65,10 @@ function QRPageInner() {
         )}
 
         <div className="bg-amber-100 border border-amber-100 rounded-xl p-4 w-full text-sm text-amber-800 space-y-1">
-          <p className="font-semibold">Engraving tips</p>
+          <p className="font-semibold">Engraving Tips</p>
           <ul className="list-disc list-inside space-y-1 text-amber-700">
             <li>Minimum tag size: 1 inch × 1 inch</li>
-            <li>Request laser engraving, not stamping</li>
+            <li>Request laser engraving; not stamping</li>
             <li>High contrast (black on silver/gold works best)</li>
             <li>Test scan the QR before attaching to collar</li>
           </ul>

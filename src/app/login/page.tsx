@@ -111,7 +111,7 @@ export default function LoginPage() {
                   autoComplete="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
               {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
@@ -135,7 +135,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
             <div>
@@ -147,7 +147,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
             {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
