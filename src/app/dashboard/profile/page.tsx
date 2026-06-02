@@ -95,9 +95,9 @@ export default function ProfilePage() {
                 onChange={e => setForm(f => ({ ...f, hasWhatsApp: e.target.checked }))}
                 className="accent-orange-500 w-4 h-4"
               />
-              <span className="text-sm font-medium text-gray-900">I'm available on WhatsApp</span>
+              <span className="text-sm font-medium text-gray-900">I&apos;m available on WhatsApp</span>
             </label>
-            <p className="text-xs text-gray-600 mt-1 ml-7">Shows a WhatsApp button on your pet's finder page.</p>
+            <p className="text-xs text-gray-600 mt-1 ml-7">Shows a WhatsApp button on your pet&apos;s finder page.</p>
           </div>
 
           <div>

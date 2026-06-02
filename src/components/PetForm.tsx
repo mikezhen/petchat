@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { getFirebaseStorage } from '@/lib/firebase'
+import Image from 'next/image'
 import type { Pet, EmergencyContact, PetGender, PetStatus, UserProfile } from '@/types'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
@@ -112,7 +113,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           className="w-full aspect-video bg-gray-100 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative hover:bg-gray-200 transition-colors"
         >
           {photoPreview
-            ? <img src={photoPreview} alt="Pet photo preview" className="w-full h-full object-cover" />
+            ? <Image src={photoPreview} alt="Pet photo preview" fill className="object-cover rounded-xl" />
             : <span className="text-gray-600 text-sm">Tap to upload photo</span>
           }
         </div>

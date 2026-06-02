@@ -5,6 +5,7 @@ import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/fires
 import { getFirebaseDb } from '@/lib/firebase'
 import type { Pet, EmergencyContact } from '@/types'
 import { Timestamp } from 'firebase/firestore'
+import Image from 'next/image'
 
 function formatAge(birthday: string): string {
   const born = new Date(birthday)
@@ -165,7 +166,7 @@ export default function FinderView({ petId }: { petId: string }) {
 
         <div className="relative w-full aspect-square bg-gray-100">
           {pet.photoUrl
-            ? <img src={pet.photoUrl} alt={`Photo of ${pet.name}`} className="w-full h-full object-cover" />
+            ? <Image src={pet.photoUrl} alt={`Photo of ${pet.name}`} fill className="object-cover" />
             : <div className="flex items-center justify-center h-full text-7xl" aria-hidden="true">🐾</div>
           }
           <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-semibold ${STATUS_STYLES[pet.status]}`}>

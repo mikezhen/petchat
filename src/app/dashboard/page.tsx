@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signOut } from 'firebase/auth'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/lib/auth-context'
 import { getFirebaseAuth } from '@/lib/firebase'
 import { getPetsByOwner } from '@/lib/pets'
@@ -86,10 +87,10 @@ export default function DashboardPage() {
           <div className="space-y-3">
             {pets.map(pet => (
               <div key={pet.id} className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 flex items-center justify-center text-2xl">
+                <div className="relative w-14 h-14 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 flex items-center justify-center text-2xl">
                   {pet.photoUrl
-                    ? <img src={pet.photoUrl} alt={pet.name} className="w-full h-full object-cover" />
-                    : '🐾'}
+                    ? <Image src={pet.photoUrl} alt={pet.name} fill className="object-cover" />
+                    : <span aria-hidden="true">🐾</span>}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
