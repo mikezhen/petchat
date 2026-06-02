@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { getFirebaseStorage } from '@/lib/firebase'
 import Image from 'next/image'
-import type { Pet, EmergencyContact, PetGender, PetStatus, UserProfile } from '@/types'
+import type { Pet, EmergencyContact, PetGender, UserProfile } from '@/types'
 import { formatPhone } from '@/lib/formatPhone'
 import { resizeImage } from '@/lib/resizeImage'
 

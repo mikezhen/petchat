@@ -44,7 +44,7 @@ function QRPageInner() {
           <h1 className="text-lg font-semibold text-gray-900">
             {petName ? `${petName}'s QR Code` : 'QR Code'}
           </h1>
-          {petName && <p className="text-xs text-gray-400">Scan to view {petName}'s profile</p>}
+          {petName && <p className="text-xs text-gray-400">{`Scan to view ${petName}'s profile`}</p>}
         </div>
       </header>
 

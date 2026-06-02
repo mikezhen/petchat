@@ -12,53 +12,80 @@ import { useRouter } from 'next/navigation'
 export const EMAIL_STORAGE_KEY = 'pawcode_signin_email'
 export const PENDING_PROFILE_KEY = 'pawcode_pending_profile'
 
+// Module-level — no React state, safe to call from effects and event handlers
+async function doSignIn(email: string, href: string): Promise<void> {
+  const auth = getFirebaseAuth()
+  const result = await signInWithEmailLink(auth, email, href)
+  localStorage.removeItem(EMAIL_STORAGE_KEY)
+
+  const db = getFirebaseDb()
+  const userSnap = await getDoc(doc(db, 'users', result.user.uid))
+  if (!userSnap.exists()) {
+    const pendingStr = localStorage.getItem(PENDING_PROFILE_KEY)
+    const pending = pendingStr ? JSON.parse(pendingStr) : null
+    await setDoc(doc(db, 'users', result.user.uid), {
+      fullName: pending?.fullName ?? '',
+      phone: pending?.phone ?? '',
+      email: result.user.email ?? email,
+      createdAt: serverTimestamp(),
+    })
+  }
+  localStorage.removeItem(PENDING_PROFILE_KEY)
+}
+
 function CallbackInner() {
   const router = useRouter()
-  const [status, setStatus] = useState<'processing' | 'needs_email' | 'error'>('processing')
+
+  // Lazy initializer: synchronous URL + storage checks at first render (client-only)
+  const [init] = useState<{
+    isValidLink: boolean
+    savedEmail: string | null
+  }>(() => {
+    if (typeof window === 'undefined') return { isValidLink: false, savedEmail: null }
+    const auth = getFirebaseAuth()
+    const isValidLink = isSignInWithEmailLink(auth, window.location.href)
+    return {
+      isValidLink,
+      savedEmail: isValidLink ? localStorage.getItem(EMAIL_STORAGE_KEY) : null,
+    }
+  })
+
+  // Derive initial UI state from the synchronous check above — no effect needed
+  const [status, setStatus] = useState<'processing' | 'needs_email' | 'error'>(
+    () => (init.isValidLink && !init.savedEmail) ? 'needs_email' : 'processing'
+  )
   const [emailInput, setEmailInput] = useState('')
   const [error, setError] = useState('')
 
-  async function completeSignIn(email: string) {
-    try {
-      const auth = getFirebaseAuth()
-      const result = await signInWithEmailLink(auth, email, window.location.href)
-      localStorage.removeItem(EMAIL_STORAGE_KEY)
-
-      const db = getFirebaseDb()
-      const userSnap = await getDoc(doc(db, 'users', result.user.uid))
-      if (!userSnap.exists()) {
-        const pendingStr = localStorage.getItem(PENDING_PROFILE_KEY)
-        const pending = pendingStr ? JSON.parse(pendingStr) : null
-        await setDoc(doc(db, 'users', result.user.uid), {
-          fullName: pending?.fullName ?? '',
-          phone: pending?.phone ?? '',
-          email: result.user.email ?? email,
-          createdAt: serverTimestamp(),
-        })
-      }
-      localStorage.removeItem(PENDING_PROFILE_KEY)
-
-      router.push('/dashboard')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign-in failed. The link may have expired.')
-      setStatus('error')
-    }
-  }
-
+  // Effect: redirect if invalid link, or complete async sign-in — setState only in callbacks
   useEffect(() => {
-    const auth = getFirebaseAuth()
-    if (!isSignInWithEmailLink(auth, window.location.href)) {
+    if (!init.isValidLink) {
       router.push('/login')
       return
     }
-    const saved = localStorage.getItem(EMAIL_STORAGE_KEY)
-    if (saved) {
-      completeSignIn(saved)
-    } else {
-      setStatus('needs_email')
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    if (!init.savedEmail) return // waiting for user to enter email
+
+    const href = window.location.href
+    doSignIn(init.savedEmail, href)
+      .then(() => router.push('/dashboard'))
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : 'Sign-in failed. The link may have expired.')
+        setStatus('error')
+      })
+  }, [init, router])
+
+  // Event handler: setState in event handlers is always fine
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('processing')
+    const href = window.location.href
+    doSignIn(emailInput, href)
+      .then(() => router.push('/dashboard'))
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : 'Sign-in failed. The link may have expired.')
+        setStatus('error')
+      })
+  }
 
   if (status === 'processing') {
     return (
@@ -82,22 +109,24 @@ function CallbackInner() {
               To finish signing in, re-enter your email address.
             </p>
           </div>
-          <input
-            type="email"
-            required
-            placeholder="you@example.com"
-            value={emailInput}
-            onChange={e => setEmailInput(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
-          {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
-          <button
-            onClick={() => completeSignIn(emailInput)}
-            disabled={!emailInput}
-            className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-2.5 transition-colors"
-          >
-            Continue
-          </button>
+          <form onSubmit={handleEmailSubmit} className="space-y-3">
+            <input
+              type="email"
+              required
+              placeholder="you@example.com"
+              value={emailInput}
+              onChange={e => setEmailInput(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+            {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
+            <button
+              type="submit"
+              disabled={!emailInput}
+              className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-2.5 transition-colors"
+            >
+              Continue
+            </button>
+          </form>
         </div>
       </div>
     )

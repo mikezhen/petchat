@@ -16,8 +16,7 @@
     "next": "16.2.6",
     "qrcode": "^1.5.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "resend": "^6.12.4"
+    "react-dom": "19.2.4"
   },
   "optionalDependencies": {
     "lightningcss-darwin-arm64": "file:stubs/lightningcss-darwin-arm64",
