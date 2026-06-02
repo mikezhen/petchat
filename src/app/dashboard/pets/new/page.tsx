@@ -14,7 +14,7 @@ import type { Pet, UserProfile } from '@/types'
 export default function NewPetPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const [ownerProfile, setOwnerProfile] = useState<Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'> | null>(null)
+  const [ownerProfile, setOwnerProfile] = useState<UserProfile | null>(null)
 
   useEffect(() => {
     if (!loading && !user) router.push('/login')
@@ -22,13 +22,7 @@ export default function NewPetPage() {
 
   useEffect(() => {
     if (!user) return
-    getUser(user.uid).then(profile => {
-      setOwnerProfile({
-        fullName: profile?.fullName ?? '',
-        phone: profile?.phone ?? '',
-        hasWhatsApp: profile?.hasWhatsApp ?? false,
-      })
-    })
+    getUser(user.uid).then(setOwnerProfile)
   }, [user])
 
   const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>) => {
@@ -37,7 +31,7 @@ export default function NewPetPage() {
     router.push(`/dashboard/qr?id=${petId}`)
   }
 
-  if (loading || !user || ownerProfile === null) return null
+  if (loading || !user || !ownerProfile) return null
 
   return (
     <div className="min-h-screen bg-gray-50">

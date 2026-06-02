@@ -18,24 +18,20 @@ function EditPageInner() {
   const { user } = useAuth()
   const router = useRouter()
   const [pet, setPet] = useState<Pet | null>(null)
-  const [ownerProfile, setOwnerProfile] = useState<Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'> | null>(null)
+  const [ownerProfile, setOwnerProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!id || !user) return
     Promise.all([getPet(id), getUser(user.uid)]).then(([p, profile]) => {
       setPet(p)
-      setOwnerProfile({
-        fullName: profile?.fullName ?? '',
-        phone: profile?.phone ?? '',
-        hasWhatsApp: profile?.hasWhatsApp ?? false,
-      })
+      setOwnerProfile(profile)
       setLoading(false)
     })
   }, [id, user])
 
-  if (loading) return <div className="flex items-center justify-center h-screen text-gray-400">Loading…</div>
-  if (!pet || pet.ownerId !== user?.uid || !ownerProfile) return <div className="p-4 text-red-500">Not found</div>
+  if (loading) return <div className="flex items-center justify-center h-screen text-gray-600">Loading…</div>
+  if (!pet || pet.ownerId !== user?.uid || !ownerProfile) return <div className="p-4 text-red-700">Not found</div>
 
   const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>) => {
     await updatePet(id, data)
@@ -57,7 +53,7 @@ function EditPageInner() {
 
 export default function EditPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-screen text-gray-400">Loading…</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-screen text-gray-600">Loading…</div>}>
       <EditPageInner />
     </Suspense>
   )
