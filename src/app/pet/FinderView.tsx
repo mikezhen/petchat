@@ -298,12 +298,12 @@ export default function FinderView({ petId }: { petId: string }) {
             {(pet.weight || pet.birthday) && (
               <div className="flex flex-wrap gap-2 mt-2">
                 {pet.birthday && (
-                  <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">
+                  <span className="text-xs bg-gray-200 text-gray-700 px-2.5 py-1 rounded-full">
                     {formatAge(pet.birthday)}
                   </span>
                 )}
                 {pet.weight && (
-                  <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full">{pet.weight}</span>
+                  <span className="text-xs bg-gray-200 text-gray-700 px-2.5 py-1 rounded-full">{pet.weight}</span>
                 )}
               </div>
             )}
