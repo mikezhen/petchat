@@ -37,7 +37,7 @@ function QRPageInner() {
   }, [id, profileUrl])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
         <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">←</Link>
         <div>
@@ -64,7 +64,7 @@ function QRPageInner() {
           </a>
         )}
 
-        <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 w-full text-sm text-amber-800 space-y-1">
+        <div className="bg-amber-100 border border-amber-100 rounded-xl p-4 w-full text-sm text-amber-800 space-y-1">
           <p className="font-semibold">Engraving tips</p>
           <ul className="list-disc list-inside space-y-1 text-amber-700">
             <li>Minimum tag size: 1 inch × 1 inch</li>

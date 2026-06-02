@@ -69,7 +69,7 @@ export default function DashboardPage() {
     : (user.email?.[0] ?? '?').toUpperCase()
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <span className="text-xl font-bold text-orange-500">🐾 PawCode</span>
 
@@ -95,14 +95,14 @@ export default function DashboardPage() {
               <Link
                 href="/dashboard/profile"
                 onClick={() => setShowMenu(false)}
-                className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100"
               >
                 View Profile
               </Link>
               <div className="border-t border-gray-100 my-1" />
               <button
                 onClick={handleSignOut}
-                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100"
               >
                 Sign Out
               </button>
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                   </Link>
                   <Link
                     href={`/dashboard/edit?id=${pet.id}`}
-                    className="flex items-center justify-center gap-1.5 text-xs bg-orange-50 hover:bg-orange-100 text-orange-600 px-3 py-2 rounded-lg font-medium transition-colors"
+                    className="flex items-center justify-center gap-1.5 text-xs bg-orange-100 hover:bg-orange-200 text-orange-600 px-3 py-2 rounded-lg font-medium transition-colors"
                   >
                     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
                       <path d="M9 1.5a1.5 1.5 0 0 1 2.5 1.5L4 11H1.5V8.5L9 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
@@ -191,7 +191,7 @@ export default function DashboardPage() {
                     className={`text-xs font-semibold py-2 rounded-lg transition-colors ${
                       pet.status === 'lost'
                         ? 'bg-green-500 hover:bg-green-600 text-white'
-                        : 'bg-red-50 hover:bg-red-100 text-red-600'
+                        : 'bg-red-100 hover:bg-red-200 text-red-600'
                     }`}
                   >
                     {pet.status === 'lost' ? 'Mark Safe' : 'Mark Lost'}

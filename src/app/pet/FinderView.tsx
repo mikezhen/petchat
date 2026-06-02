@@ -140,7 +140,7 @@ function ContactModal({
               <a
                 key={i}
                 href={`tel:${c.phone.replace(/\D/g, '')}`}
-                className="flex items-center justify-between w-full bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-3 transition-colors"
+                className="flex items-center justify-between w-full bg-gray-100 hover:bg-gray-200 rounded-xl px-4 py-3 transition-colors"
               >
                 <span className="text-sm font-medium text-gray-900">{c.name}</span>
                 <span className="text-sm text-gray-500">{c.relationship} · {c.phone}</span>
@@ -234,7 +234,7 @@ export default function FinderView({ petId }: { petId: string }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <p className="text-gray-600">Loading…</p>
       </div>
     )
@@ -242,7 +242,7 @@ export default function FinderView({ petId }: { petId: string }) {
 
   if (notFound || !pet) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <span className="text-5xl" aria-hidden="true">🐾</span>
           <p className="mt-4 text-gray-900 font-medium">Pet not found</p>
@@ -255,7 +255,7 @@ export default function FinderView({ petId }: { petId: string }) {
   const hasContacts = pet.contacts.length > 0
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <div className="max-w-md mx-auto bg-white min-h-screen shadow-sm">
 
         <div className="relative w-full aspect-square bg-gray-100">
@@ -299,7 +299,7 @@ export default function FinderView({ petId }: { petId: string }) {
           </div>
 
           {pet.medicalNotes && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <div className="bg-amber-100 border border-amber-200 rounded-xl p-4">
               <p className="text-amber-800 font-semibold text-sm mb-1">⚠️ Medical Notes</p>
               <p className="text-amber-700 text-sm">{pet.medicalNotes}</p>
             </div>
@@ -313,7 +313,7 @@ export default function FinderView({ petId }: { petId: string }) {
           )}
 
           {(pet.vet?.name || pet.vet?.phone) && (
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+            <div className="bg-gray-100 border border-gray-200 rounded-xl p-4">
               <p className="text-gray-900 font-semibold text-sm mb-1">🏥 Veterinarian</p>
               {pet.vet.name && <p className="text-sm text-gray-700">{pet.vet.name}</p>}
               {pet.vet.phone && (

@@ -10,7 +10,7 @@ function PetPageInner() {
 
   if (!petId) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <span className="text-5xl">🐾</span>
           <p className="mt-4 text-gray-600 font-medium">Invalid pet tag</p>
@@ -26,7 +26,7 @@ function PetPageInner() {
 export default function PetPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <p className="text-gray-400">Loading…</p>
       </div>
     }>

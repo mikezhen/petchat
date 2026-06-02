@@ -150,7 +150,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             className={`py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500 ${
               form.status === 'active'
                 ? 'bg-green-500 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-50'
+                : 'bg-white text-gray-600 hover:bg-gray-100'
             }`}
           >
             Safe at Home
@@ -161,7 +161,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             className={`py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500 ${
               form.status === 'lost'
                 ? 'bg-red-500 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-50'
+                : 'bg-white text-gray-600 hover:bg-gray-100'
             }`}
           >
             🚨 Report Lost
@@ -288,7 +288,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
         <div className="space-y-3">
 
           {/* Owner — read-only primary contact */}
-          <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
+          <div className="bg-orange-100 border border-orange-200 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-semibold text-orange-700 uppercase tracking-wide">Primary Contact · You</span>
               <a href="/dashboard/profile" className="text-xs text-orange-600 hover:underline">Edit in Profile →</a>
@@ -302,7 +302,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
 
           {/* Additional contacts */}
           {form.contacts.map((c, i) => (
-            <div key={i} className="bg-gray-50 rounded-xl p-4 space-y-3">
+            <div key={i} className="bg-gray-100 rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Additional Contact</span>
                 <button
