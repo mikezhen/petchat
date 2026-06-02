@@ -7,6 +7,7 @@ import type { Pet, EmergencyContact } from '@/types'
 import { Timestamp } from 'firebase/firestore'
 import Image from 'next/image'
 import { getUser } from '@/lib/users'
+import { formatPhone } from '@/lib/formatPhone'
 
 function formatAge(birthday: string): string {
   const born = new Date(birthday)
@@ -143,7 +144,7 @@ function ContactModal({
                 className="flex items-center justify-between w-full bg-gray-100 hover:bg-gray-200 rounded-xl px-4 py-3 transition-colors"
               >
                 <span className="text-sm font-medium text-gray-900">{c.name}</span>
-                <span className="text-sm text-gray-500">{c.relationship} · {c.phone}</span>
+                <span className="text-sm text-gray-500">{c.relationship} · {formatPhone(c.phone)}</span>
               </a>
             ))}
           </div>
@@ -318,7 +319,7 @@ export default function FinderView({ petId }: { petId: string }) {
               {pet.vet.name && <p className="text-sm text-gray-700">{pet.vet.name}</p>}
               {pet.vet.phone && (
                 <a href={`tel:${pet.vet.phone.replace(/\D/g, '')}`} className="text-sm text-orange-600 font-medium hover:underline">
-                  {pet.vet.phone}
+                  {formatPhone(pet.vet.phone)}
                 </a>
               )}
             </div>
