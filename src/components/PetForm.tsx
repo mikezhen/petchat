@@ -60,6 +60,12 @@ export default function PetForm({ initial, petId, onSubmit, submitLabel }: PetFo
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Photo must be under 10 MB. Please choose a smaller image.')
+      e.target.value = ''
+      return
+    }
+    setError('')
     setPhotoFile(file)
     setPhotoPreview(URL.createObjectURL(file))
   }
