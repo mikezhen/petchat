@@ -6,7 +6,7 @@ import { Resend } from 'resend'
 
 initializeApp()
 
-const resendApiKey = defineSecret('RESEND_API_KEY')
+const resendApiKey = defineSecret('resend-api-key')
 
 const RATE_LIMIT_MAX = 5
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
