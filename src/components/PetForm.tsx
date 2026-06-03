@@ -174,7 +174,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
       </div>}
 
       {/* Breed + color */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <div>
           <label htmlFor="pet-breed" className="block text-sm font-medium text-gray-900 mb-1">Breed</label>
           <input
@@ -198,7 +198,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
       </div>
 
       {/* Weight + Gender */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <div>
           <label htmlFor="pet-weight" className="block text-sm font-medium text-gray-900 mb-1">Weight</label>
           <input
@@ -228,14 +228,16 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
       {/* Birthday */}
       <div>
         <label htmlFor="pet-birthday" className="block text-sm font-medium text-gray-900 mb-1">Birthday</label>
-        <input
-          id="pet-birthday"
-          type="date"
-          value={form.birthday}
-          max={new Date().toISOString().split('T')[0]}
-          onChange={e => setField('birthday', e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-        />
+        <div className="min-w-0 overflow-hidden">
+          <input
+            id="pet-birthday"
+            type="date"
+            value={form.birthday}
+            max={new Date().toISOString().split('T')[0]}
+            onChange={e => setField('birthday', e.target.value)}
+            className="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+        </div>
       </div>
 
       {/* Notes */}
@@ -253,7 +255,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
 
       {/* Vet */}
       <div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label htmlFor="vet-name" className="block text-sm font-medium text-gray-900 mb-1">Vet Clinic Name</label>
             <input
@@ -317,7 +319,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
                   Remove
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
                   type="text" required placeholder="Name"
                   id={`contact-${i}-name`}
