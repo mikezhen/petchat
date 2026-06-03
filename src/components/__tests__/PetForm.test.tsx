@@ -18,6 +18,9 @@ vi.mock('@/lib/firebase', () => ({
 vi.mock('@/lib/resizeImage', () => ({
   resizeImage: vi.fn().mockResolvedValue(new Blob(['img'], { type: 'image/jpeg' })),
 }))
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}))
 
 const ownerProfile: Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'> = {
   fullName: 'Jane Doe',

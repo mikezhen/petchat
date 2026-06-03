@@ -4,7 +4,6 @@ export const dynamic = 'force-static'
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import Image from 'next/image'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { useAuth } from '@/lib/auth-context'
@@ -15,7 +14,8 @@ import { resizeImage } from '@/lib/resizeImage'
 import { cropImage } from '@/lib/cropImage'
 import type { CropArea } from '@/lib/cropImage'
 import ImageCropModal from '@/components/ImageCropModal'
-import { useUnsavedChanges, confirmDiscardIfDirty } from '@/lib/useUnsavedChanges'
+import UnsavedChangesModal from '@/components/UnsavedChangesModal'
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges'
 
 export default function ProfilePage() {
   const { user, loading } = useAuth()
@@ -119,13 +119,7 @@ export default function ProfilePage() {
     )
   )
 
-  useUnsavedChanges(isDirty)
-
-  const handleBack = (e: React.MouseEvent) => {
-    if (!confirmDiscardIfDirty(isDirty)) {
-      e.preventDefault()
-    }
-  }
+  const leave = useUnsavedChanges(isDirty)
 
   if (loading || !user || profileLoading) return null
 
@@ -136,7 +130,14 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard" onClick={handleBack} className="text-gray-600 hover:text-gray-900">←</Link>
+        <button
+          type="button"
+          onClick={leave.requestLeave}
+          aria-label="Back to dashboard"
+          className="text-gray-600 hover:text-gray-900"
+        >
+          ←
+        </button>
         <h1 className="text-lg font-semibold text-gray-900">My Profile</h1>
       </header>
 
@@ -147,6 +148,12 @@ export default function ProfilePage() {
           onCancel={handleCropCancel}
         />
       )}
+
+      <UnsavedChangesModal
+        open={leave.promptOpen}
+        onLeave={leave.confirmLeave}
+        onStay={leave.cancelLeave}
+      />
 
       <main className="max-w-lg mx-auto p-4">
         <form onSubmit={handleSubmit} className="space-y-5 bg-white rounded-2xl border border-gray-100 p-6">
