@@ -10,6 +10,7 @@ import { resizeImage } from '@/lib/resizeImage'
 import { cropImage } from '@/lib/cropImage'
 import type { CropArea } from '@/lib/cropImage'
 import ImageCropModal from '@/components/ImageCropModal'
+import SaveReminder from '@/components/SaveReminder'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 
@@ -43,6 +44,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
   const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.photoUrl ?? null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
+  const [reminder, setReminder] = useState(0)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
@@ -87,6 +89,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
       const blob = await resizeImage(cropped, { maxDimension: 1080, quality: 0.82 })
       setPhotoFile(blob)
       setPhotoPreview(URL.createObjectURL(blob))
+      setReminder(Date.now())
     } catch {
       URL.revokeObjectURL(src)
       setError('Failed to process image. Please try again.')
@@ -101,6 +104,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setReminder(0)
     setSaving(true)
     try {
       let photoUrl = form.photoUrl
@@ -137,6 +141,8 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           onCancel={handleCropCancel}
         />
       )}
+
+      <SaveReminder trigger={reminder} />
 
       {/* Photo */}
       <div>

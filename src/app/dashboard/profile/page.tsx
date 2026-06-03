@@ -15,6 +15,7 @@ import { resizeImage } from '@/lib/resizeImage'
 import { cropImage } from '@/lib/cropImage'
 import type { CropArea } from '@/lib/cropImage'
 import ImageCropModal from '@/components/ImageCropModal'
+import SaveReminder from '@/components/SaveReminder'
 
 export default function ProfilePage() {
   const { user, loading } = useAuth()
@@ -25,6 +26,7 @@ export default function ProfilePage() {
   const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
+  const [reminder, setReminder] = useState(0)
   const [profileLoading, setProfileLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -70,6 +72,7 @@ export default function ProfilePage() {
       const blob = await resizeImage(cropped, { maxDimension: 500, quality: 0.85 })
       setPhotoFile(blob)
       setPhotoPreview(URL.createObjectURL(blob))
+      setReminder(Date.now())
     } catch {
       URL.revokeObjectURL(src)
       setError('Failed to process image. Please try again.')
@@ -86,6 +89,7 @@ export default function ProfilePage() {
     if (!user) return
     setError('')
     setSaved(false)
+    setReminder(0)
     setSaving(true)
     try {
       let finalPhotoUrl = photoUrl
@@ -124,6 +128,8 @@ export default function ProfilePage() {
           onCancel={handleCropCancel}
         />
       )}
+
+      <SaveReminder trigger={reminder} />
 
       <main className="max-w-lg mx-auto p-4">
         <form onSubmit={handleSubmit} className="space-y-5 bg-white rounded-2xl border border-gray-100 p-6">
