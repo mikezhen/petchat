@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { getFirebaseStorage } from '@/lib/firebase'
 import Image from 'next/image'
@@ -10,6 +11,7 @@ import { resizeImage } from '@/lib/resizeImage'
 import { cropImage } from '@/lib/cropImage'
 import type { CropArea } from '@/lib/cropImage'
 import ImageCropModal from '@/components/ImageCropModal'
+import SaveButton, { type SaveStatus } from '@/components/SaveButton'
 import { useUnsavedChanges } from '@/lib/useUnsavedChanges'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
@@ -18,8 +20,8 @@ interface PetFormProps {
   initial?: Partial<FormData>
   petId?: string
   ownerProfile: Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'>
-  onSubmit: (data: FormData) => Promise<void>
-  submitLabel: string
+  /** Persists the pet and returns the path to navigate to after the "Saved" animation. */
+  onSubmit: (data: FormData) => Promise<string | void>
   hideStatus?: boolean
   /** Notifies the parent when the form has unsaved changes (for navigation guards). */
   onDirtyChange?: (dirty: boolean) => void
@@ -27,7 +29,8 @@ interface PetFormProps {
 
 const BLANK_CONTACT: EmergencyContact = { name: '', phone: '', relationship: '', isPrimary: false, hasWhatsApp: false }
 
-export default function PetForm({ initial, petId, ownerProfile, onSubmit, submitLabel, hideStatus = false, onDirtyChange }: PetFormProps) {
+export default function PetForm({ initial, petId, ownerProfile, onSubmit, hideStatus = false, onDirtyChange }: PetFormProps) {
+  const router = useRouter()
   // Snapshot the initial form once on mount; used as the baseline for dirty detection.
   const [initialForm] = useState<FormData>(() => ({
     name: initial?.name ?? '',
@@ -45,12 +48,12 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
   }))
 
   const [form, setForm] = useState<FormData>(initialForm)
-  const [initialJson] = useState(() => JSON.stringify(initialForm))
+  const [initialJson, setInitialJson] = useState(() => JSON.stringify(initialForm))
 
   const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.photoUrl ?? null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
-  const [saving, setSaving] = useState(false)
+  const [status, setStatus] = useState<SaveStatus>('idle')
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -116,7 +119,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setSaving(true)
+    setStatus('saving')
     try {
       let photoUrl = form.photoUrl
       if (photoFile) {
@@ -132,11 +135,16 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
         isPrimary: true,
         hasWhatsApp: ownerProfile.hasWhatsApp,
       }
-      await onSubmit({ ...form, photoUrl, contacts: [primaryContact, ...form.contacts] })
+      const saved: FormData = { ...form, photoUrl, contacts: [primaryContact, ...form.contacts] }
+      const dest = await onSubmit(saved)
+      // Mark clean so the navigation guard doesn't treat the redirect as a discard.
+      setInitialJson(JSON.stringify(form))
+      setPhotoFile(null)
+      setStatus('saved')
+      if (dest) setTimeout(() => router.push(dest), 1100)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save')
-    } finally {
-      setSaving(false)
+      setStatus('idle')
     }
   }
 
@@ -400,13 +408,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
 
       {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={saving}
-        className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-3 transition-colors"
-      >
-        {saving ? 'Saving…' : submitLabel}
-      </button>
+      <SaveButton status={status} disabled={!isDirty} />
     </form>
   )
 }

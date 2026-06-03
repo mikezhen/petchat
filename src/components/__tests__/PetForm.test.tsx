@@ -35,7 +35,6 @@ function renderForm(props: Partial<Parameters<typeof PetForm>[0]> = {}) {
     <PetForm
       ownerProfile={ownerProfile}
       onSubmit={noop}
-      submitLabel="Save"
       {...props}
     />
   )
@@ -50,9 +49,11 @@ describe('PetForm', () => {
       expect(screen.getByLabelText(/pet name/i)).toBeInTheDocument()
     })
 
-    it('renders the submit button with the given label', () => {
-      renderForm({ submitLabel: 'Save & Get QR Code' })
-      expect(screen.getByRole('button', { name: /save & get qr code/i })).toBeInTheDocument()
+    it('renders the Save button, disabled until something changes', () => {
+      renderForm()
+      const save = screen.getByRole('button', { name: /^save$/i })
+      expect(save).toBeInTheDocument()
+      expect(save).toBeDisabled()
     })
 
     it('does not render status toggle when hideStatus is true', () => {

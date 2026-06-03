@@ -42,10 +42,10 @@ export default function NewPetPage() {
     })
   }, [user])
 
-  const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>) => {
+  const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>): Promise<string | void> => {
     if (!user) return
     const petId = await createPet(user.uid, data)
-    router.push(`/dashboard/qr?id=${petId}`)
+    return `/dashboard/qr?id=${petId}`
   }
 
   if (loading || !user || !ready) return null
@@ -86,7 +86,6 @@ export default function NewPetPage() {
           <PetForm
             ownerProfile={ownerProfile!}
             onSubmit={handleSubmit}
-            submitLabel="Save & Get QR Code"
             hideStatus
             onDirtyChange={setIsDirty}
           />

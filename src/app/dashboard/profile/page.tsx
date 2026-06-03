@@ -15,6 +15,7 @@ import { cropImage } from '@/lib/cropImage'
 import type { CropArea } from '@/lib/cropImage'
 import ImageCropModal from '@/components/ImageCropModal'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal'
+import SaveButton, { type SaveStatus } from '@/components/SaveButton'
 import { useUnsavedChanges } from '@/lib/useUnsavedChanges'
 
 export default function ProfilePage() {
@@ -27,8 +28,7 @@ export default function ProfilePage() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [status, setStatus] = useState<SaveStatus>('idle')
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
   const [baseline, setBaseline] = useState<{ fullName: string; phone: string; hasWhatsApp: boolean } | null>(null)
@@ -89,8 +89,7 @@ export default function ProfilePage() {
     e.preventDefault()
     if (!user) return
     setError('')
-    setSaved(false)
-    setSaving(true)
+    setStatus('saving')
     try {
       let finalPhotoUrl = photoUrl
       if (photoFile) {
@@ -100,14 +99,14 @@ export default function ProfilePage() {
         setPhotoUrl(finalPhotoUrl)
       }
       await updateUser(user.uid, { ...form, photoUrl: finalPhotoUrl })
-      // Reset the dirty baseline so the saved state is no longer "unsaved".
+      // Reset the dirty baseline so the guard no longer treats this as unsaved.
       setBaseline({ ...form })
       setPhotoFile(null)
-      setSaved(true)
+      setStatus('saved')
+      setTimeout(() => router.push('/dashboard'), 1100)
     } catch {
       setError('Failed to save changes. Please try again.')
-    } finally {
-      setSaving(false)
+      setStatus('idle')
     }
   }
 
@@ -239,15 +238,8 @@ export default function ProfilePage() {
           </div>
 
           {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
-          {saved && <p role="status" className="text-green-700 text-sm">Changes saved.</p>}
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-3 transition-colors"
-          >
-            {saving ? 'Saving…' : 'Save Changes'}
-          </button>
+          <SaveButton status={status} disabled={!isDirty} />
         </form>
       </main>
     </div>
