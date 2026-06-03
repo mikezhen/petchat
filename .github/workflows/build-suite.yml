@@ -1,8 +1,8 @@
 name: Build Suite
 
-# Reusable workflow — called by ci.yml and deploy.yml.
-# Pass upload_artifacts: true only from deploy.yml so the compiled
-# output is available to the deploy job.
+# Reusable workflow — called by ci.yml.
+# Pass upload_artifacts: true on push to main so the compiled output is
+# available to the separate Deploy workflow (deploy.yml).
 
 on:
   workflow_call:
