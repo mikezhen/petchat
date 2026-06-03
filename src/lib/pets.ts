@@ -5,7 +5,7 @@ import {
 import { getFirebaseDb } from './firebase'
 import type { Pet, EmergencyContact, PetStatus } from '@/types'
 
-function toPet(id: string, data: Record<string, unknown>): Pet {
+export function toPet(id: string, data: Record<string, unknown>): Pet {
   return {
     id,
     ownerId: data.ownerId as string,

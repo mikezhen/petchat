@@ -4,39 +4,14 @@ export const dynamic = 'force-static'
 
 import { Suspense } from 'react'
 import { useEffect, useState } from 'react'
-import { isSignInWithEmailLink, signInWithEmailLink, signOut } from 'firebase/auth'
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
-import { getFirebaseAuth, getFirebaseDb } from '@/lib/firebase'
+import { isSignInWithEmailLink } from 'firebase/auth'
+import { getFirebaseAuth } from '@/lib/firebase'
 import { useRouter } from 'next/navigation'
+import { doSignIn } from '@/lib/doSignIn'
+import { EMAIL_STORAGE_KEY } from '@/lib/authConstants'
 
-export const EMAIL_STORAGE_KEY = 'pawcode_signin_email'
-export const PENDING_PROFILE_KEY = 'pawcode_pending_profile'
-
-// Module-level — no React state, safe to call from effects and event handlers
-async function doSignIn(email: string, href: string): Promise<void> {
-  const auth = getFirebaseAuth()
-  const result = await signInWithEmailLink(auth, email, href)
-  localStorage.removeItem(EMAIL_STORAGE_KEY)
-
-  const db = getFirebaseDb()
-  const userSnap = await getDoc(doc(db, 'users', result.user.uid))
-  if (!userSnap.exists()) {
-    const pendingStr = localStorage.getItem(PENDING_PROFILE_KEY)
-    if (!pendingStr) {
-      // No registration data — this email has no account. Undo the auth and reject.
-      await signOut(auth)
-      throw new Error('No account found for this email. Please register first.')
-    }
-    const pending = JSON.parse(pendingStr)
-    await setDoc(doc(db, 'users', result.user.uid), {
-      fullName: pending?.fullName ?? '',
-      phone: pending?.phone ?? '',
-      email: result.user.email ?? email,
-      createdAt: serverTimestamp(),
-    })
-  }
-  localStorage.removeItem(PENDING_PROFILE_KEY)
-}
+export { EMAIL_STORAGE_KEY } from '@/lib/authConstants'
+export { PENDING_PROFILE_KEY } from '@/lib/authConstants'
 
 function CallbackInner() {
   const router = useRouter()

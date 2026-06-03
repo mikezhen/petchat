@@ -8,11 +8,9 @@ import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import { createPet, getPetsByOwner } from '@/lib/pets'
 import { getUser } from '@/lib/users'
+import { ACTIVE_PET_LIMIT, TOTAL_PET_LIMIT } from '@/lib/petLimits'
 import PetForm from '@/components/PetForm'
 import type { Pet, UserProfile } from '@/types'
-
-export const ACTIVE_PET_LIMIT = 5
-export const TOTAL_PET_LIMIT = 20
 
 export default function NewPetPage() {
   const { user, loading } = useAuth()

@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { sendSignInLinkToEmail } from 'firebase/auth'
 import type { ActionCodeSettings } from 'firebase/auth'
 import { getFirebaseAuth } from '@/lib/firebase'
-import { EMAIL_STORAGE_KEY, PENDING_PROFILE_KEY } from '@/app/auth/callback/page'
+import { EMAIL_STORAGE_KEY, PENDING_PROFILE_KEY } from '@/lib/authConstants'
 import Link from 'next/link'
 import { formatPhone } from '@/lib/formatPhone'
 

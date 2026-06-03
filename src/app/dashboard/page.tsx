@@ -11,7 +11,7 @@ import { useAuth } from '@/lib/auth-context'
 import { getFirebaseAuth } from '@/lib/firebase'
 import { getPetsByOwner, updatePet, deletePet } from '@/lib/pets'
 import { getUser } from '@/lib/users'
-import { ACTIVE_PET_LIMIT, TOTAL_PET_LIMIT } from '@/app/dashboard/pets/new/page'
+import { canAddPet, addPetLimitMessage } from '@/lib/petLimits'
 import type { Pet, UserProfile } from '@/types'
 
 const STATUS_BADGE: Record<string, string> = {
@@ -102,11 +102,8 @@ export default function DashboardPage() {
     return a.createdAt.getTime() - b.createdAt.getTime()
   })
 
-  const activePetCount = pets.filter(p => p.status !== 'inactive').length
-  const canAddPet = pets.length < TOTAL_PET_LIMIT && activePetCount < ACTIVE_PET_LIMIT
-  const addPetLimitMsg = pets.length >= TOTAL_PET_LIMIT
-    ? `Total pet limit reached (${TOTAL_PET_LIMIT})`
-    : `Active pet limit reached (${ACTIVE_PET_LIMIT})`
+  const canAdd = canAddPet(pets)
+  const addPetLimitMsg = addPetLimitMessage(pets)
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -154,7 +151,7 @@ export default function DashboardPage() {
       <main className="max-w-2xl mx-auto p-4">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold text-gray-900">My Pets</h1>
-          {canAddPet ? (
+          {canAdd ? (
             <Link
               href="/dashboard/pets/new"
               className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
