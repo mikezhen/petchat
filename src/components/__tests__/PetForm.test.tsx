@@ -18,6 +18,9 @@ vi.mock('@/lib/firebase', () => ({
 vi.mock('@/lib/resizeImage', () => ({
   resizeImage: vi.fn().mockResolvedValue(new Blob(['img'], { type: 'image/jpeg' })),
 }))
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}))
 
 const ownerProfile: Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'> = {
   fullName: 'Jane Doe',
@@ -32,7 +35,6 @@ function renderForm(props: Partial<Parameters<typeof PetForm>[0]> = {}) {
     <PetForm
       ownerProfile={ownerProfile}
       onSubmit={noop}
-      submitLabel="Save"
       {...props}
     />
   )
@@ -47,9 +49,11 @@ describe('PetForm', () => {
       expect(screen.getByLabelText(/pet name/i)).toBeInTheDocument()
     })
 
-    it('renders the submit button with the given label', () => {
-      renderForm({ submitLabel: 'Save & Get QR Code' })
-      expect(screen.getByRole('button', { name: /save & get qr code/i })).toBeInTheDocument()
+    it('renders the Save button, disabled until something changes', () => {
+      renderForm()
+      const save = screen.getByRole('button', { name: /^save$/i })
+      expect(save).toBeInTheDocument()
+      expect(save).toBeDisabled()
     })
 
     it('does not render status toggle when hideStatus is true', () => {
@@ -119,6 +123,36 @@ describe('PetForm', () => {
       Object.defineProperty(bigFile, 'size', { value: 11 * 1024 * 1024 })
       fireEvent.change(input, { target: { files: [bigFile] } })
       expect(await screen.findByText(/under 10 mb/i)).toBeInTheDocument()
+    })
+
+    it('opens the crop modal when a valid image is selected', async () => {
+      renderForm()
+      const input = document.querySelector('input[type="file"]') as HTMLInputElement
+      const file = new File(['img'], 'pet.jpg', { type: 'image/jpeg' })
+      fireEvent.change(input, { target: { files: [file] } })
+      expect(await screen.findByText(/zoom/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /apply/i })).toBeInTheDocument()
+    })
+
+    it('closes the crop modal without changing the photo when cancelled', async () => {
+      renderForm()
+      const input = document.querySelector('input[type="file"]') as HTMLInputElement
+      const file = new File(['img'], 'pet.jpg', { type: 'image/jpeg' })
+      fireEvent.change(input, { target: { files: [file] } })
+      const cancel = await screen.findByRole('button', { name: /cancel/i })
+      await userEvent.click(cancel)
+      await waitFor(() => expect(screen.queryByText(/zoom/i)).not.toBeInTheDocument())
+    })
+  })
+
+  describe('unsaved changes', () => {
+    it('notifies the parent when the form becomes dirty', async () => {
+      const onDirtyChange = vi.fn()
+      renderForm({ onDirtyChange })
+      // Mounts clean.
+      await waitFor(() => expect(onDirtyChange).toHaveBeenCalledWith(false))
+      await userEvent.type(screen.getByLabelText(/pet name/i), 'Buddy')
+      await waitFor(() => expect(onDirtyChange).toHaveBeenCalledWith(true))
     })
   })
 

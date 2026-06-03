@@ -1,12 +1,18 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { getFirebaseStorage } from '@/lib/firebase'
 import Image from 'next/image'
 import type { Pet, EmergencyContact, PetGender, UserProfile } from '@/types'
 import { formatPhone } from '@/lib/formatPhone'
 import { resizeImage } from '@/lib/resizeImage'
+import { cropImage } from '@/lib/cropImage'
+import type { CropArea } from '@/lib/cropImage'
+import ImageCropModal from '@/components/ImageCropModal'
+import SaveButton, { type SaveStatus } from '@/components/SaveButton'
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 
@@ -14,15 +20,19 @@ interface PetFormProps {
   initial?: Partial<FormData>
   petId?: string
   ownerProfile: Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'>
-  onSubmit: (data: FormData) => Promise<void>
-  submitLabel: string
+  /** Persists the pet and returns the path to navigate to after the "Saved" animation. */
+  onSubmit: (data: FormData) => Promise<string | void>
   hideStatus?: boolean
+  /** Notifies the parent when the form has unsaved changes (for navigation guards). */
+  onDirtyChange?: (dirty: boolean) => void
 }
 
 const BLANK_CONTACT: EmergencyContact = { name: '', phone: '', relationship: '', isPrimary: false, hasWhatsApp: false }
 
-export default function PetForm({ initial, petId, ownerProfile, onSubmit, submitLabel, hideStatus = false }: PetFormProps) {
-  const [form, setForm] = useState<FormData>({
+export default function PetForm({ initial, petId, ownerProfile, onSubmit, hideStatus = false, onDirtyChange }: PetFormProps) {
+  const router = useRouter()
+  // Snapshot the initial form once on mount; used as the baseline for dirty detection.
+  const [initialForm] = useState<FormData>(() => ({
     name: initial?.name ?? '',
     photoUrl: initial?.photoUrl ?? null,
     breed: initial?.breed ?? '',
@@ -35,13 +45,25 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
     medicalNotes: initial?.medicalNotes ?? '',
     vet: { name: initial?.vet?.name ?? '', phone: formatPhone(initial?.vet?.phone ?? '') },
     contacts: initial?.contacts?.filter(c => !c.isPrimary).map(c => ({ ...c, phone: formatPhone(c.phone) })) ?? [],
-  })
+  }))
+
+  const [form, setForm] = useState<FormData>(initialForm)
+  const [initialJson, setInitialJson] = useState(() => JSON.stringify(initialForm))
 
   const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.photoUrl ?? null)
-  const [saving, setSaving] = useState(false)
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
+  const [status, setStatus] = useState<SaveStatus>('idle')
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
+
+  const isDirty = !!photoFile || JSON.stringify(form) !== initialJson
+
+  useUnsavedChanges(isDirty)
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty)
+  }, [isDirty, onDirtyChange])
 
   const setField = <K extends keyof FormData>(key: K, value: FormData[K]) =>
     setForm(f => ({ ...f, [key]: value }))
@@ -61,24 +83,43 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
   const removeContact = (i: number) =>
     setForm(f => ({ ...f, contacts: f.contacts.filter((_, idx) => idx !== i) }))
 
-  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    e.target.value = ''
     if (file.size > 10 * 1024 * 1024) {
       setError('Photo must be under 10 MB. Please choose a smaller image.')
-      e.target.value = ''
       return
     }
     setError('')
-    const blob = await resizeImage(file, { maxDimension: 1080, quality: 0.82 })
-    setPhotoFile(blob)
-    setPhotoPreview(URL.createObjectURL(blob))
+    setCropSrc(URL.createObjectURL(file))
+  }
+
+  const handleCropConfirm = async (area: CropArea) => {
+    if (!cropSrc) return
+    const src = cropSrc
+    setCropSrc(null)
+    try {
+      const cropped = await cropImage(src, area)
+      URL.revokeObjectURL(src)
+      const blob = await resizeImage(cropped, { maxDimension: 1080, quality: 0.82 })
+      setPhotoFile(blob)
+      setPhotoPreview(URL.createObjectURL(blob))
+    } catch {
+      URL.revokeObjectURL(src)
+      setError('Failed to process image. Please try again.')
+    }
+  }
+
+  const handleCropCancel = () => {
+    if (cropSrc) URL.revokeObjectURL(cropSrc)
+    setCropSrc(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setSaving(true)
+    setStatus('saving')
     try {
       let photoUrl = form.photoUrl
       if (photoFile) {
@@ -94,16 +135,31 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
         isPrimary: true,
         hasWhatsApp: ownerProfile.hasWhatsApp,
       }
-      await onSubmit({ ...form, photoUrl, contacts: [primaryContact, ...form.contacts] })
+      const saved: FormData = { ...form, photoUrl, contacts: [primaryContact, ...form.contacts] }
+      const dest = await onSubmit(saved)
+      // Mark clean so the navigation guard doesn't treat the redirect as a discard.
+      setInitialJson(JSON.stringify(form))
+      setPhotoFile(null)
+      setStatus('saved')
+      if (dest) setTimeout(() => router.push(dest), 1100)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save')
-    } finally {
-      setSaving(false)
+      setStatus('idle')
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          aspect={1}
+          cropShape="rect"
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
 
       {/* Photo */}
       <div>
@@ -113,7 +169,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           tabIndex={0}
           aria-label="Upload pet photo"
           onKeyDown={e => e.key === 'Enter' && fileRef.current?.click()}
-          className="w-full aspect-video bg-gray-200 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative hover:bg-gray-300 transition-colors"
+          className="w-full aspect-square bg-gray-200 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative hover:bg-gray-300 transition-colors"
         >
           {photoPreview ? (
             <>
@@ -352,13 +408,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
 
       {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={saving}
-        className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-3 transition-colors"
-      >
-        {saving ? 'Saving…' : submitLabel}
-      </button>
+      <SaveButton status={status} disabled={!isDirty} />
     </form>
   )
 }

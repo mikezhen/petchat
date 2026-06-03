@@ -4,7 +4,6 @@ export const dynamic = 'force-static'
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import Image from 'next/image'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { useAuth } from '@/lib/auth-context'
@@ -12,6 +11,12 @@ import { getFirebaseStorage } from '@/lib/firebase'
 import { getUser, updateUser } from '@/lib/users'
 import { formatPhone } from '@/lib/formatPhone'
 import { resizeImage } from '@/lib/resizeImage'
+import { cropImage } from '@/lib/cropImage'
+import type { CropArea } from '@/lib/cropImage'
+import ImageCropModal from '@/components/ImageCropModal'
+import UnsavedChangesModal from '@/components/UnsavedChangesModal'
+import SaveButton, { type SaveStatus } from '@/components/SaveButton'
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges'
 
 export default function ProfilePage() {
   const { user, loading } = useAuth()
@@ -21,11 +26,12 @@ export default function ProfilePage() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [status, setStatus] = useState<SaveStatus>('idle')
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
+  const [baseline, setBaseline] = useState<{ fullName: string; phone: string; hasWhatsApp: boolean } | null>(null)
 
   useEffect(() => {
     if (!loading && !user) router.push('/login')
@@ -35,7 +41,9 @@ export default function ProfilePage() {
     if (!user) return
     getUser(user.uid).then(profile => {
       if (profile) {
-        setForm({ fullName: profile.fullName, phone: formatPhone(profile.phone), hasWhatsApp: profile.hasWhatsApp })
+        const loaded = { fullName: profile.fullName, phone: formatPhone(profile.phone), hasWhatsApp: profile.hasWhatsApp }
+        setForm(loaded)
+        setBaseline(loaded)
         setEmail(profile.email)
         setPhotoUrl(profile.photoUrl)
         setPhotoPreview(profile.photoUrl)
@@ -44,26 +52,44 @@ export default function ProfilePage() {
     })
   }, [user])
 
-  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    e.target.value = ''
     if (file.size > 10 * 1024 * 1024) {
       setError('Photo must be under 10 MB. Please choose a smaller image.')
-      e.target.value = ''
       return
     }
     setError('')
-    const blob = await resizeImage(file, { maxDimension: 500, quality: 0.85 })
-    setPhotoFile(blob)
-    setPhotoPreview(URL.createObjectURL(blob))
+    setCropSrc(URL.createObjectURL(file))
+  }
+
+  const handleCropConfirm = async (area: CropArea) => {
+    if (!cropSrc) return
+    const src = cropSrc
+    setCropSrc(null)
+    try {
+      const cropped = await cropImage(src, area)
+      URL.revokeObjectURL(src)
+      const blob = await resizeImage(cropped, { maxDimension: 500, quality: 0.85 })
+      setPhotoFile(blob)
+      setPhotoPreview(URL.createObjectURL(blob))
+    } catch {
+      URL.revokeObjectURL(src)
+      setError('Failed to process image. Please try again.')
+    }
+  }
+
+  const handleCropCancel = () => {
+    if (cropSrc) URL.revokeObjectURL(cropSrc)
+    setCropSrc(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user) return
     setError('')
-    setSaved(false)
-    setSaving(true)
+    setStatus('saving')
     try {
       let finalPhotoUrl = photoUrl
       if (photoFile) {
@@ -73,13 +99,26 @@ export default function ProfilePage() {
         setPhotoUrl(finalPhotoUrl)
       }
       await updateUser(user.uid, { ...form, photoUrl: finalPhotoUrl })
-      setSaved(true)
+      // Reset the dirty baseline so the guard no longer treats this as unsaved.
+      setBaseline({ ...form })
+      setPhotoFile(null)
+      setStatus('saved')
+      setTimeout(() => router.push('/dashboard'), 1100)
     } catch {
       setError('Failed to save changes. Please try again.')
-    } finally {
-      setSaving(false)
+      setStatus('idle')
     }
   }
+
+  const isDirty = !!photoFile || (
+    baseline != null && (
+      form.fullName !== baseline.fullName ||
+      form.phone !== baseline.phone ||
+      form.hasWhatsApp !== baseline.hasWhatsApp
+    )
+  )
+
+  const leave = useUnsavedChanges(isDirty)
 
   if (loading || !user || profileLoading) return null
 
@@ -90,9 +129,30 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">←</Link>
+        <button
+          type="button"
+          onClick={leave.requestLeave}
+          aria-label="Back to dashboard"
+          className="text-gray-600 hover:text-gray-900"
+        >
+          ←
+        </button>
         <h1 className="text-lg font-semibold text-gray-900">My Profile</h1>
       </header>
+
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
+
+      <UnsavedChangesModal
+        open={leave.promptOpen}
+        onLeave={leave.confirmLeave}
+        onStay={leave.cancelLeave}
+      />
 
       <main className="max-w-lg mx-auto p-4">
         <form onSubmit={handleSubmit} className="space-y-5 bg-white rounded-2xl border border-gray-100 p-6">
@@ -178,15 +238,8 @@ export default function ProfilePage() {
           </div>
 
           {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}
-          {saved && <p role="status" className="text-green-700 text-sm">Changes saved.</p>}
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold rounded-lg py-3 transition-colors"
-          >
-            {saving ? 'Saving…' : 'Save Changes'}
-          </button>
+          <SaveButton status={status} disabled={!isDirty} />
         </form>
       </main>
     </div>

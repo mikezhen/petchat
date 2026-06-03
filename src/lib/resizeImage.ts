@@ -3,7 +3,7 @@ export interface ResizeOptions {
   quality?: number
 }
 
-export function resizeImage(file: File, { maxDimension, quality = 0.82 }: ResizeOptions): Promise<Blob> {
+export function resizeImage(file: Blob, { maxDimension, quality = 0.82 }: ResizeOptions): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new window.Image()
     const objectUrl = URL.createObjectURL(file)

@@ -10,6 +10,8 @@ import { createPet, getPetsByOwner } from '@/lib/pets'
 import { getUser } from '@/lib/users'
 import { ACTIVE_PET_LIMIT, TOTAL_PET_LIMIT } from '@/lib/petLimits'
 import PetForm from '@/components/PetForm'
+import UnsavedChangesModal from '@/components/UnsavedChangesModal'
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges'
 import type { Pet, UserProfile } from '@/types'
 
 export default function NewPetPage() {
@@ -18,6 +20,8 @@ export default function NewPetPage() {
   const [ownerProfile, setOwnerProfile] = useState<UserProfile | null>(null)
   const [limitError, setLimitError] = useState<string | null>(null)
   const [ready, setReady] = useState(false)
+  const [isDirty, setIsDirty] = useState(false)
+  const leave = useUnsavedChanges(isDirty)
 
   useEffect(() => {
     if (!loading && !user) router.push('/login')
@@ -38,10 +42,10 @@ export default function NewPetPage() {
     })
   }, [user])
 
-  const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>) => {
+  const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>): Promise<string | void> => {
     if (!user) return
     const petId = await createPet(user.uid, data)
-    router.push(`/dashboard/qr?id=${petId}`)
+    return `/dashboard/qr?id=${petId}`
   }
 
   if (loading || !user || !ready) return null
@@ -49,9 +53,22 @@ export default function NewPetPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">←</Link>
+        <button
+          type="button"
+          onClick={leave.requestLeave}
+          aria-label="Back to dashboard"
+          className="text-gray-600 hover:text-gray-900"
+        >
+          ←
+        </button>
         <h1 className="text-lg font-semibold text-gray-900">Add New Pet</h1>
       </header>
+
+      <UnsavedChangesModal
+        open={leave.promptOpen}
+        onLeave={leave.confirmLeave}
+        onStay={leave.cancelLeave}
+      />
       <main className="max-w-lg mx-auto p-4">
         {limitError ? (
           <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center space-y-3">
@@ -69,8 +86,8 @@ export default function NewPetPage() {
           <PetForm
             ownerProfile={ownerProfile!}
             onSubmit={handleSubmit}
-            submitLabel="Save & Get QR Code"
             hideStatus
+            onDirtyChange={setIsDirty}
           />
         )}
       </main>
