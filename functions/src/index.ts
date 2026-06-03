@@ -1,12 +1,12 @@
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore, Timestamp } from 'firebase-admin/firestore'
-import { onDocumentCreated } from 'firebase-functions/v2/firestore'
-import { defineSecret } from 'firebase-functions/params'
+// import { onDocumentCreated } from 'firebase-functions/v2/firestore' // re-enable with trigger below
+// import { defineSecret } from 'firebase-functions/params'            // re-enable with trigger below
 import { Resend } from 'resend'
 
 initializeApp()
 
-const resendApiKey = defineSecret('resend-api-key')
+// const resendApiKey = defineSecret('resend-api-key') // re-enable with trigger below
 
 export const RATE_LIMIT_MAX = 5
 export const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
@@ -98,16 +98,19 @@ export async function handleScanEvent(ctx: ScanEventContext): Promise<void> {
   })
 }
 
-export const onScanEvent = onDocumentCreated(
-  {
-    document: 'pets/{petId}/scanEvents/{scanId}',
-    secrets: [resendApiKey],
-  },
-  async (event) => {
-    await handleScanEvent({
-      petId: event.params.petId,
-      data: event.data?.data() as ScanEventData | null ?? null,
-      getResendApiKey: () => resendApiKey.value(),
-    })
-  }
-)
+// Trigger disabled until a custom domain is available for Resend.
+// To re-enable: uncomment and redeploy.
+//
+// export const onScanEvent = onDocumentCreated(
+//   {
+//     document: 'pets/{petId}/scanEvents/{scanId}',
+//     secrets: [resendApiKey],
+//   },
+//   async (event) => {
+//     await handleScanEvent({
+//       petId: event.params.petId,
+//       data: event.data?.data() as ScanEventData | null ?? null,
+//       getResendApiKey: () => resendApiKey.value(),
+//     })
+//   }
+// )
