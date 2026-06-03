@@ -21,7 +21,7 @@ export default function UnsavedChangesModal({ open, onLeave, onStay }: Props) {
       >
         <div className="flex flex-col items-center text-center gap-2">
           <span className="text-3xl" aria-hidden="true">⚠️</span>
-          <h2 id="unsaved-title" className="text-lg font-semibold text-gray-900">Unsaved changes</h2>
+          <h2 id="unsaved-title" className="text-lg font-semibold text-gray-900">Unsaved Changes</h2>
           <p className="text-sm text-gray-600">
             You have changes that haven&apos;t been saved. If you leave now, they&apos;ll be lost.
           </p>
@@ -33,14 +33,14 @@ export default function UnsavedChangesModal({ open, onLeave, onStay }: Props) {
             onClick={onStay}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg py-2.5 transition-colors"
           >
-            Keep editing
+            Keep Editing
           </button>
           <button
             type="button"
             onClick={onLeave}
             className="w-full border border-gray-300 text-gray-700 font-semibold rounded-lg py-2.5 hover:bg-gray-50 transition-colors"
           >
-            Leave without saving
+            Discard Changes
           </button>
         </div>
       </div>
