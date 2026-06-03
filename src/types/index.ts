@@ -42,3 +42,12 @@ export interface UserProfile {
   photoUrl: string | null
   createdAt: Date
 }
+
+export interface ScanEvent {
+  id: string
+  petId: string
+  scannedAt: Date
+  latitude: number | null
+  longitude: number | null
+  userAgent: string | null
+}

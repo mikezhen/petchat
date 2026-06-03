@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore'
 import { getFirebaseDb } from '@/lib/firebase'
 import type { Pet, EmergencyContact } from '@/types'
 import { Timestamp } from 'firebase/firestore'
@@ -212,6 +212,38 @@ export default function FinderView({ petId }: { petId: string }) {
     load()
   }, [petId])
 
+  useEffect(() => {
+    if (!petId) return
+    const logScan = async () => {
+      try {
+        let latitude: number | null = null
+        let longitude: number | null = null
+
+        if (navigator.geolocation) {
+          await new Promise<void>(resolve => {
+            navigator.geolocation.getCurrentPosition(
+              pos => { latitude = pos.coords.latitude; longitude = pos.coords.longitude; resolve() },
+              () => resolve(),
+              { timeout: 5000 }
+            )
+          })
+        }
+
+        await addDoc(
+          collection(getFirebaseDb(), 'pets', petId, 'scanEvents'),
+          {
+            scannedAt: serverTimestamp(),
+            latitude,
+            longitude,
+            userAgent: navigator.userAgent,
+          }
+        )
+      } catch {
+        // Non-critical — don't surface to finder
+      }
+    }
+    logScan()
+  }, [petId])
 
   if (loading) {
     return (
