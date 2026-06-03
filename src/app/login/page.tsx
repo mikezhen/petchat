@@ -101,6 +101,9 @@ export default function LoginPage() {
                 We sent a sign-in link to <span className="font-medium">{email}</span>.
                 Tap the link to sign in — no password needed.
               </p>
+              <p className="text-sm text-gray-500">
+                Don&apos;t see it? Check your spam or junk folder.
+              </p>
               <button
                 onClick={() => { setSent(false); setEmail('') }}
                 className="text-sm text-orange-600 hover:underline"

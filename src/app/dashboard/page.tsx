@@ -9,17 +9,19 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '@/lib/auth-context'
 import { getFirebaseAuth } from '@/lib/firebase'
-import { getPetsByOwner, updatePet } from '@/lib/pets'
+import { getPetsByOwner, updatePet, deletePet } from '@/lib/pets'
 import { getUser } from '@/lib/users'
+import { ACTIVE_PET_LIMIT, TOTAL_PET_LIMIT } from '@/app/dashboard/pets/new/page'
 import type { Pet, UserProfile } from '@/types'
 
 const STATUS_BADGE: Record<string, string> = {
-  lost:   'bg-red-100 text-red-700',
-  active: 'bg-gray-100 text-gray-600',
+  lost:     'bg-red-100 text-red-700',
+  active:   'bg-gray-100 text-gray-600',
+  inactive: 'bg-gray-200 text-gray-400',
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  lost: 'Lost', active: 'Active',
+  lost: 'Lost', active: 'Active', inactive: 'Inactive',
 }
 
 export default function DashboardPage() {
@@ -29,6 +31,8 @@ export default function DashboardPage() {
   const [petsLoading, setPetsLoading] = useState(true)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [showMenu, setShowMenu] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState<Pet | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -57,6 +61,28 @@ export default function DashboardPage() {
     setPets(ps => ps.map(p => p.id === pet.id ? { ...p, status: next } : p))
   }
 
+  const setInactive = async (pet: Pet) => {
+    await updatePet(pet.id, { status: 'inactive' })
+    setPets(ps => ps.map(p => p.id === pet.id ? { ...p, status: 'inactive' } : p))
+  }
+
+  const reactivate = async (pet: Pet) => {
+    await updatePet(pet.id, { status: 'active' })
+    setPets(ps => ps.map(p => p.id === pet.id ? { ...p, status: 'active' } : p))
+  }
+
+  const handleDelete = async () => {
+    if (!confirmDelete) return
+    setDeleting(true)
+    try {
+      await deletePet(confirmDelete.id)
+      setPets(ps => ps.filter(p => p.id !== confirmDelete.id))
+      setConfirmDelete(null)
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   const handleSignOut = () => {
     signOut(getFirebaseAuth()).then(() => router.push('/login'))
   }
@@ -67,6 +93,20 @@ export default function DashboardPage() {
   const initials = userProfile?.fullName
     ? userProfile.fullName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
     : (user.email?.[0] ?? '?').toUpperCase()
+
+  // Active/lost first, inactive at bottom; newest first within each bucket
+  const sortedPets = [...pets].sort((a, b) => {
+    const aInactive = a.status === 'inactive'
+    const bInactive = b.status === 'inactive'
+    if (aInactive !== bInactive) return aInactive ? 1 : -1
+    return a.createdAt.getTime() - b.createdAt.getTime()
+  })
+
+  const activePetCount = pets.filter(p => p.status !== 'inactive').length
+  const canAddPet = pets.length < TOTAL_PET_LIMIT && activePetCount < ACTIVE_PET_LIMIT
+  const addPetLimitMsg = pets.length >= TOTAL_PET_LIMIT
+    ? `Total pet limit reached (${TOTAL_PET_LIMIT})`
+    : `Active pet limit reached (${ACTIVE_PET_LIMIT})`
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -114,12 +154,21 @@ export default function DashboardPage() {
       <main className="max-w-2xl mx-auto p-4">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900">My Pets</h1>
-          <Link
-            href="/dashboard/pets/new"
-            className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-          >
-            + Add Pet
-          </Link>
+          {canAddPet ? (
+            <Link
+              href="/dashboard/pets/new"
+              className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+            >
+              + Add Pet
+            </Link>
+          ) : (
+            <span
+              title={addPetLimitMsg}
+              className="bg-orange-500 text-white text-sm font-semibold px-4 py-2 rounded-lg opacity-40 cursor-not-allowed select-none"
+            >
+              + Add Pet
+            </span>
+          )}
         </div>
 
         {petsLoading ? (
@@ -138,11 +187,13 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {pets.map(pet => (
-              <div key={pet.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-
-                {/* Pet info row — no buttons, full width for name/breed */}
-                <div className="flex items-center gap-4 p-4">
+            {sortedPets.map(pet => (
+              <div
+                key={pet.id}
+                className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
+              >
+                {/* Pet info row — dimmed when inactive */}
+                <div className={`flex items-center gap-4 p-4 ${pet.status === 'inactive' ? 'opacity-50' : ''}`}>
                   <div className="relative w-14 h-14 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 flex items-center justify-center text-2xl">
                     {pet.photoUrl
                       ? <Image src={pet.photoUrl} alt={pet.name} fill className="object-cover" />
@@ -159,50 +210,153 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* Action bar */}
-                <div className="border-t border-gray-100 px-4 py-3 grid grid-cols-3 gap-2">
-                  <Link
-                    href={`/dashboard/qr?id=${pet.id}`}
-                    className="flex items-center justify-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg font-medium transition-colors"
-                  >
-                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                      <rect x="0" y="0" width="5" height="5" rx="1" fill="currentColor"/>
-                      <rect x="8" y="0" width="5" height="5" rx="1" fill="currentColor"/>
-                      <rect x="0" y="8" width="5" height="5" rx="1" fill="currentColor"/>
-                      <rect x="8" y="8" width="2" height="2" fill="currentColor"/>
-                      <rect x="11" y="8" width="2" height="2" fill="currentColor"/>
-                      <rect x="8" y="11" width="2" height="2" fill="currentColor"/>
-                      <rect x="11" y="11" width="2" height="2" fill="currentColor"/>
-                    </svg>
-                    QR
-                  </Link>
-                  <Link
-                    href={`/dashboard/edit?id=${pet.id}`}
-                    className="flex items-center justify-center gap-1.5 text-xs bg-orange-100 hover:bg-orange-200 text-orange-600 px-3 py-2 rounded-lg font-medium transition-colors"
-                  >
-                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                      <path d="M9 1.5a1.5 1.5 0 0 1 2.5 1.5L4 11H1.5V8.5L9 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-                      <path d="M7.5 3l2 2" stroke="currentColor" strokeWidth="1.3"/>
-                    </svg>
-                    Edit
-                  </Link>
-                  <button
-                    onClick={() => toggleStatus(pet)}
-                    className={`text-xs font-semibold py-2 rounded-lg transition-colors ${
-                      pet.status === 'lost'
-                        ? 'bg-green-500 hover:bg-green-600 text-white'
-                        : 'bg-red-100 hover:bg-red-200 text-red-600'
-                    }`}
-                  >
-                    {pet.status === 'lost' ? 'Mark Safe' : 'Mark Lost'}
-                  </button>
-                </div>
-
+                {pet.status === 'inactive' ? (
+                  /* Inactive: QR + Reactivate + Delete */
+                  <div className="border-t border-gray-100 px-4 py-3 grid grid-cols-3 gap-2">
+                    <Link
+                      href={`/dashboard/qr?id=${pet.id}`}
+                      className="flex items-center justify-center gap-1.5 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                        <rect x="0" y="0" width="5" height="5" rx="1" fill="currentColor"/>
+                        <rect x="8" y="0" width="5" height="5" rx="1" fill="currentColor"/>
+                        <rect x="0" y="8" width="5" height="5" rx="1" fill="currentColor"/>
+                        <rect x="8" y="8" width="2" height="2" fill="currentColor"/>
+                        <rect x="11" y="8" width="2" height="2" fill="currentColor"/>
+                        <rect x="8" y="11" width="2" height="2" fill="currentColor"/>
+                        <rect x="11" y="11" width="2" height="2" fill="currentColor"/>
+                      </svg>
+                      QR
+                    </Link>
+                    <button
+                      onClick={() => reactivate(pet)}
+                      className="flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg bg-green-200 hover:bg-green-300 text-green-700 transition-colors"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                        <path d="M4 3.5L2 5.5l2 2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M2.5 5.5H8a3 3 0 1 1-3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                      </svg>
+                      Reactivate
+                    </button>
+                    <button
+                      onClick={() => setConfirmDelete(pet)}
+                      className="flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg bg-red-200 hover:bg-red-300 text-red-700 transition-colors"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                        <path d="M2 4h9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                        <path d="M10 4l-.5 7h-6L3 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M5 4V3h3v1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Delete
+                    </button>
+                  </div>
+                ) : (
+                  /* Active / Lost: QR + Edit + Status toggle + Set Inactive link */
+                  <>
+                    <div className="border-t border-gray-100 px-4 py-3 grid grid-cols-3 gap-2">
+                      <Link
+                        href={`/dashboard/qr?id=${pet.id}`}
+                        className="flex items-center justify-center gap-1.5 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg font-medium transition-colors"
+                      >
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                          <rect x="0" y="0" width="5" height="5" rx="1" fill="currentColor"/>
+                          <rect x="8" y="0" width="5" height="5" rx="1" fill="currentColor"/>
+                          <rect x="0" y="8" width="5" height="5" rx="1" fill="currentColor"/>
+                          <rect x="8" y="8" width="2" height="2" fill="currentColor"/>
+                          <rect x="11" y="8" width="2" height="2" fill="currentColor"/>
+                          <rect x="8" y="11" width="2" height="2" fill="currentColor"/>
+                          <rect x="11" y="11" width="2" height="2" fill="currentColor"/>
+                        </svg>
+                        QR
+                      </Link>
+                      <Link
+                        href={`/dashboard/edit?id=${pet.id}`}
+                        className="flex items-center justify-center gap-1.5 text-xs bg-orange-200 hover:bg-orange-300 text-orange-700 px-3 py-2 rounded-lg font-medium transition-colors"
+                      >
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                          <path d="M9 1.5a1.5 1.5 0 0 1 2.5 1.5L4 11H1.5V8.5L9 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                          <path d="M7.5 3l2 2" stroke="currentColor" strokeWidth="1.3"/>
+                        </svg>
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => toggleStatus(pet)}
+                        className={`flex items-center justify-center gap-1.5 text-xs font-semibold py-2 rounded-lg transition-colors ${
+                          pet.status === 'lost'
+                            ? 'bg-green-200 hover:bg-green-300 text-green-700'
+                            : 'bg-red-200 hover:bg-red-300 text-red-700'
+                        }`}
+                      >
+                        {pet.status === 'lost' ? (
+                          <>
+                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                              <path d="M2 7l3.5 3.5L11 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            Mark Safe
+                          </>
+                        ) : (
+                          <>
+                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                              <path d="M6.5 2.5l4.5 8H2l4.5-8Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                              <path d="M6.5 5.5v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                              <circle cx="6.5" cy="9.2" r="0.65" fill="currentColor"/>
+                            </svg>
+                            Mark Lost
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="px-4 pb-3 flex justify-end">
+                      <button
+                        onClick={() => setInactive(pet)}
+                        className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                          <path d="M1.5 3.5h10v2h-10z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                          <path d="M2.5 5.5v5h8v-5" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                          <path d="M5 8.5h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                        </svg>
+                        Set As Inactive
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
         )}
       </main>
+
+      {/* Delete confirmation modal */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-xl">
+            <div className="text-center">
+              <span className="text-4xl" aria-hidden="true">⚠️</span>
+              <h2 className="text-lg font-bold text-gray-900 mt-2">Delete {confirmDelete.name}?</h2>
+              <p className="text-sm text-gray-600 mt-2">
+                This will permanently delete <span className="font-semibold">{confirmDelete.name}</span> and all associated data including scan history. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                disabled={deleting}
+                className="flex-1 border border-gray-200 text-gray-700 font-semibold rounded-lg py-2.5 hover:bg-gray-100 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg py-2.5 transition-colors disabled:opacity-50"
+              >
+                {deleting ? 'Deleting…' : 'Delete Forever'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

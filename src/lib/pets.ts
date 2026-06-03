@@ -1,5 +1,5 @@
 import {
-  collection, doc, getDoc, getDocs, addDoc, updateDoc,
+  collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
   query, where, orderBy, serverTimestamp, Timestamp,
 } from 'firebase/firestore'
 import { getFirebaseDb } from './firebase'
@@ -17,7 +17,7 @@ function toPet(id: string, data: Record<string, unknown>): Pet {
     gender: (data.gender as Pet['gender']) ?? '',
     birthday: (data.birthday as string) ?? '',
     description: (data.description as string) ?? '',
-    status: (data.status === 'lost' ? 'lost' : 'active') as PetStatus,
+    status: (['lost', 'inactive'].includes(data.status as string) ? data.status : 'active') as PetStatus,
     medicalNotes: (data.medicalNotes as string) ?? '',
     vet: (data.vet as Pet['vet']) ?? { name: '', phone: '' },
     contacts: (data.contacts as EmergencyContact[]) ?? [],
@@ -63,4 +63,8 @@ export async function updatePet(
     ...data,
     updatedAt: serverTimestamp(),
   })
+}
+
+export async function deletePet(petId: string): Promise<void> {
+  await deleteDoc(doc(getFirebaseDb(), 'pets', petId))
 }

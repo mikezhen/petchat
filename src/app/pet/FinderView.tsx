@@ -21,13 +21,15 @@ function formatAge(birthday: string): string {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  lost:   'bg-red-500 text-white',
-  active: 'bg-gray-200 text-gray-700',
+  lost:     'bg-red-500 text-white',
+  active:   'bg-gray-200 text-gray-700',
+  inactive: 'bg-gray-500 text-white',
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  lost:   '🚨 LOST',
-  active: 'Has a home',
+  lost:     '🚨 LOST',
+  active:   'Has a home',
+  inactive: 'Inactive',
 }
 
 function ContactModal({
@@ -278,8 +280,13 @@ export default function FinderView({ petId }: { petId: string }) {
             {STATUS_LABEL[pet.status]}
           </div>
           {pet.status === 'lost' && (
-            <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-3 px-4">
+            <div className="absolute bottom-0 left-0 right-0 bg-red-500/90 text-white text-center py-3 px-4">
               <p className="text-sm font-bold">PLEASE CONTACT MY OWNER</p>
+            </div>
+          )}
+          {pet.status === 'inactive' && (
+            <div className="absolute bottom-0 left-0 right-0 bg-gray-700/90 text-white text-center py-3 px-4">
+              <p className="text-sm font-medium">This pet&apos;s profile is no longer active</p>
             </div>
           )}
         </div>

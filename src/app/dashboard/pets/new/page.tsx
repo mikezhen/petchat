@@ -6,15 +6,20 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
-import { createPet } from '@/lib/pets'
+import { createPet, getPetsByOwner } from '@/lib/pets'
 import { getUser } from '@/lib/users'
 import PetForm from '@/components/PetForm'
 import type { Pet, UserProfile } from '@/types'
+
+export const ACTIVE_PET_LIMIT = 5
+export const TOTAL_PET_LIMIT = 20
 
 export default function NewPetPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [ownerProfile, setOwnerProfile] = useState<UserProfile | null>(null)
+  const [limitError, setLimitError] = useState<string | null>(null)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) router.push('/login')
@@ -22,7 +27,17 @@ export default function NewPetPage() {
 
   useEffect(() => {
     if (!user) return
-    getUser(user.uid).then(setOwnerProfile)
+    Promise.all([getUser(user.uid), getPetsByOwner(user.uid)]).then(([profile, pets]) => {
+      setOwnerProfile(profile)
+      const activeCount = pets.filter(p => p.status !== 'inactive').length
+      const totalCount = pets.length
+      if (totalCount >= TOTAL_PET_LIMIT) {
+        setLimitError(`You've reached the maximum of ${TOTAL_PET_LIMIT} pets. Remove inactive pets to add more.`)
+      } else if (activeCount >= ACTIVE_PET_LIMIT) {
+        setLimitError(`You've reached the limit of ${ACTIVE_PET_LIMIT} active pets. Set a pet as inactive before adding another.`)
+      }
+      setReady(true)
+    })
   }, [user])
 
   const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>) => {
@@ -31,7 +46,7 @@ export default function NewPetPage() {
     router.push(`/dashboard/qr?id=${petId}`)
   }
 
-  if (loading || !user || !ownerProfile) return null
+  if (loading || !user || !ready) return null
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -40,12 +55,26 @@ export default function NewPetPage() {
         <h1 className="text-lg font-semibold text-gray-900">Add New Pet</h1>
       </header>
       <main className="max-w-lg mx-auto p-4">
-        <PetForm
-          ownerProfile={ownerProfile}
-          onSubmit={handleSubmit}
-          submitLabel="Save & Get QR Code"
-          hideStatus
-        />
+        {limitError ? (
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center space-y-3">
+            <span className="text-4xl" aria-hidden="true">🐾</span>
+            <p className="font-semibold text-gray-900">Pet limit reached</p>
+            <p className="text-sm text-gray-600">{limitError}</p>
+            <Link
+              href="/dashboard"
+              className="inline-block mt-2 text-sm text-orange-600 font-medium hover:underline"
+            >
+              ← Back To Dashboard
+            </Link>
+          </div>
+        ) : (
+          <PetForm
+            ownerProfile={ownerProfile!}
+            onSubmit={handleSubmit}
+            submitLabel="Save & Get QR Code"
+            hideStatus
+          />
+        )}
       </main>
     </div>
   )

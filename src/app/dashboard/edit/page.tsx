@@ -32,6 +32,10 @@ function EditPageInner() {
 
   if (loading) return <div className="flex items-center justify-center h-screen text-gray-600">Loading…</div>
   if (!pet || pet.ownerId !== user?.uid || !ownerProfile) return <div className="p-4 text-red-700">Not found</div>
+  if (pet.status === 'inactive') {
+    router.replace('/dashboard')
+    return null
+  }
 
   const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>) => {
     await updatePet(id, data)

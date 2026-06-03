@@ -7,12 +7,10 @@ import { sendSignInLinkToEmail } from 'firebase/auth'
 import type { ActionCodeSettings } from 'firebase/auth'
 import { getFirebaseAuth } from '@/lib/firebase'
 import { EMAIL_STORAGE_KEY, PENDING_PROFILE_KEY } from '@/app/auth/callback/page'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatPhone } from '@/lib/formatPhone'
 
 export default function RegisterPage() {
-  const router = useRouter()
   const [form, setForm] = useState({ fullName: '', email: '', phone: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -54,6 +52,9 @@ export default function RegisterPage() {
             <p className="text-sm text-gray-600">
               We sent a sign-in link to <span className="font-medium">{form.email}</span>.
               Tap the link to activate your account — no password needed.
+            </p>
+            <p className="text-sm text-gray-500">
+              Don&apos;t see it? Check your spam or junk folder.
             </p>
             <button
               onClick={() => { setSent(false); setForm(f => ({ ...f, email: '' })) }}
