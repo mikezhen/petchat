@@ -1,8 +1,8 @@
 name: CI / Deploy
 
-# Runs on every push and on PRs targeting main.
+# Runs on PRs targeting main (pre-merge gate) and on push to main (deploy).
 # On push to main the build artifact is uploaded and the deploy job runs.
-# On all other pushes/PRs the deploy job is skipped and no artifact is stored.
+# On PRs the deploy job is skipped and no artifact is stored.
 # This ensures the exact artifact validated by CI is the one shipped to production.
 #
 # Branch protection for `main` should require these status checks to pass:
@@ -13,7 +13,7 @@ name: CI / Deploy
 
 on:
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
     branches: [main]
 
