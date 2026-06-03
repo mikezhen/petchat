@@ -21,10 +21,10 @@ describe('UnsavedChangesModal', () => {
     expect(onStay).toHaveBeenCalledOnce()
   })
 
-  it('calls onLeave when "Leave without saving" is clicked', async () => {
+  it('calls onLeave when "Discard Changes" is clicked', async () => {
     const onLeave = vi.fn()
     render(<UnsavedChangesModal open onLeave={onLeave} onStay={vi.fn()} />)
-    await userEvent.click(screen.getByRole('button', { name: /leave without saving/i }))
+    await userEvent.click(screen.getByRole('button', { name: /discard changes/i }))
     expect(onLeave).toHaveBeenCalledOnce()
   })
 })
