@@ -111,7 +111,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <span className="text-xl font-bold text-orange-500">🐾 PawCode</span>
+        <span className="text-2xl font-bold text-orange-500">🐾 PawCode</span>
 
         <div className="relative" ref={menuRef}>
           <button
@@ -124,7 +124,7 @@ export default function DashboardPage() {
                 : <span className="text-xs font-bold text-orange-500">{initials}</span>
               }
             </div>
-            <span className="text-sm font-medium text-gray-700">{firstName}</span>
+            <span className="text-base font-medium text-gray-700">{firstName}</span>
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" className="text-gray-400">
               <path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -153,7 +153,7 @@ export default function DashboardPage() {
 
       <main className="max-w-2xl mx-auto p-4">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">My Pets</h1>
+          <h1 className="text-xl font-bold text-gray-900">My Pets</h1>
           {canAddPet ? (
             <Link
               href="/dashboard/pets/new"

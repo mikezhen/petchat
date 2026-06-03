@@ -140,7 +140,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           type="text" required
           value={form.name}
           onChange={e => setField('name', e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
         />
       </div>
 
@@ -182,7 +182,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             type="text"
             value={form.breed}
             onChange={e => setField('breed', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
         <div>
@@ -192,7 +192,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             type="text"
             value={form.color}
             onChange={e => setField('color', e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
       </div>
@@ -207,7 +207,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             value={form.weight}
             onChange={e => setField('weight', e.target.value)}
             placeholder="e.g. 25 lbs"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
         <div>
@@ -216,7 +216,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             id="pet-gender"
             value={form.gender}
             onChange={e => setField('gender', e.target.value as PetGender)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
           >
             <option value="">Not specified</option>
             <option value="male">Male</option>
@@ -235,7 +235,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
             value={form.birthday}
             max={new Date().toISOString().split('T')[0]}
             onChange={e => setField('birthday', e.target.value)}
-            className="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
       </div>
@@ -249,7 +249,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           value={form.description}
           onChange={e => setField('description', e.target.value)}
           placeholder="Personality, habits, how to approach them…"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
         />
       </div>
 
@@ -264,7 +264,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
               value={form.vet.name}
               onChange={e => setField('vet', { ...form.vet, name: e.target.value })}
               placeholder="City Vet Clinic"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
           <div>
@@ -275,7 +275,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
               value={form.vet.phone}
               onChange={e => setField('vet', { ...form.vet, phone: formatPhone(e.target.value) })}
               placeholder="(555) 000-0000"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
         </div>
@@ -326,7 +326,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
                   aria-label={`Additional contact ${i + 1} name`}
                   value={c.name}
                   onChange={e => setContact(i, 'name', e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
                 <input
                   type="tel" required placeholder="Phone"
@@ -334,7 +334,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
                   aria-label={`Additional contact ${i + 1} phone`}
                   value={c.phone}
                   onChange={e => setContact(i, 'phone', formatPhone(e.target.value))}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
               <input
@@ -343,7 +343,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
                 aria-label={`Additional contact ${i + 1} relationship`}
                 value={c.relationship}
                 onChange={e => setContact(i, 'relationship', e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
           ))}

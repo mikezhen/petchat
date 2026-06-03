@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  font-size: 112.5%; /* 18px base — keeps all rem sizes proportional */
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

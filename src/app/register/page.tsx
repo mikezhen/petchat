@@ -74,7 +74,7 @@ export default function RegisterPage() {
                 autoComplete="name"
                 value={form.fullName}
                 onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
             <div>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
                 autoComplete="email"
                 value={form.email}
                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
             <div>
@@ -98,7 +98,7 @@ export default function RegisterPage() {
                 autoComplete="tel"
                 value={form.phone}
                 onChange={e => setForm(f => ({ ...f, phone: formatPhone(e.target.value) }))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
             {error && <p role="alert" className="text-red-700 text-sm">{error}</p>}

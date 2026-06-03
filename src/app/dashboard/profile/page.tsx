@@ -53,7 +53,7 @@ export default function ProfilePage() {
       return
     }
     setError('')
-    const blob = await resizeImage(file, { maxDimension: 400, quality: 0.85 })
+    const blob = await resizeImage(file, { maxDimension: 500, quality: 0.85 })
     setPhotoFile(blob)
     setPhotoPreview(URL.createObjectURL(blob))
   }
@@ -102,7 +102,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="relative w-24 h-24 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+              className="relative w-36 h-36 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
               aria-label="Upload profile photo"
             >
               {photoPreview ? (
@@ -113,7 +113,7 @@ export default function ProfilePage() {
                   </div>
                 </>
               ) : (
-                <span className="text-2xl font-bold text-orange-500">{initials}</span>
+                <span className="text-4xl font-bold text-orange-500">{initials}</span>
               )}
             </button>
             <button
@@ -135,7 +135,7 @@ export default function ProfilePage() {
               autoComplete="name"
               value={form.fullName}
               onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
@@ -148,7 +148,7 @@ export default function ProfilePage() {
               autoComplete="tel"
               value={form.phone}
               onChange={e => setForm(f => ({ ...f, phone: formatPhone(e.target.value) }))}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
@@ -173,7 +173,7 @@ export default function ProfilePage() {
               value={email}
               disabled
               aria-describedby="email-hint"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-500 cursor-not-allowed"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-base bg-gray-100 text-gray-500 cursor-not-allowed"
             />
           </div>
 

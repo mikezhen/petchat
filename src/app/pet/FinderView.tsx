@@ -99,10 +99,10 @@ function ContactModal({
 
         {/* Owner identity */}
         <div className="flex flex-col items-center gap-2 pt-1">
-          <div className="relative w-20 h-20 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center">
+          <div className="relative w-36 h-36 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center">
             {ownerPhotoUrl
               ? <Image src={ownerPhotoUrl} alt={primary.name} fill className="object-cover" />
-              : <span className="text-2xl font-bold text-orange-500">{initials}</span>
+              : <span className="text-4xl font-bold text-orange-500">{initials}</span>
             }
           </div>
           <p className="text-lg font-semibold text-gray-900">{primary.name}</p>
