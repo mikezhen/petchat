@@ -70,7 +70,7 @@ jobs:
         run: firebase deploy --only firestore,storage --project pawcode-85f05
 
       - name: Deploy Cloud Functions
-        run: firebase deploy --only functions --project pawcode-85f05
+        run: firebase deploy --only functions --force --project pawcode-85f05
 
       - name: Deploy to Firebase Hosting
         run: firebase deploy --only hosting --project pawcode-85f05
