@@ -1,7 +1,9 @@
-name: CI
+name: CI / Deploy
 
-# Runs on every branch push (developer feedback) and on PRs targeting main
-# (the required gate before any code reaches production).
+# Runs on every push and on PRs targeting main.
+# On push to main the build artifact is uploaded and the deploy job runs.
+# On all other pushes/PRs the deploy job is skipped and no artifact is stored.
+# This ensures the exact artifact validated by CI is the one shipped to production.
 #
 # Branch protection for `main` should require these status checks to pass:
 #   - "tests / Unit & component tests"
@@ -15,15 +17,60 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   tests:
     uses: ./.github/workflows/test-suite.yml
 
-  # ── Type check, lint & build (gates on all test jobs) ─────────────────────
   build:
     needs: tests
     uses: ./.github/workflows/build-suite.yml
     with:
-      upload_artifacts: false
+      upload_artifacts: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
     secrets: inherit
+
+  # ── Runs only on push to main; skipped on branches and PRs ────────────────
+  deploy:
+    name: Deploy to Firebase
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install app dependencies
+        run: npm ci
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: build-output
+
+      - name: Install function dependencies
+        run: npm ci
+        working-directory: functions
+
+      - uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PAWCODE_85F05 }}
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy Firestore rules & indexes
+        run: firebase deploy --only firestore,storage --project pawcode-85f05
+
+      - name: Deploy Cloud Functions
+        run: firebase deploy --only functions --project pawcode-85f05
+
+      - name: Deploy to Firebase Hosting
+        run: firebase deploy --only hosting --project pawcode-85f05
