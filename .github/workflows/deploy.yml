@@ -4,6 +4,11 @@ name: Deploy
 # It does NOT re-run tests or rebuild — it downloads the exact artifact CI
 # produced and ships that, so production gets precisely what was validated.
 
+# Surface the triggering commit/PR in the run title (workflow_run runs would
+# otherwise show only a generic name). display_title mirrors what CI shows —
+# the squash-merge commit message, including the "(#NN)" PR reference.
+run-name: "Deploy: ${{ github.event.workflow_run.display_title }}"
+
 on:
   workflow_run:
     workflows: [CI]
