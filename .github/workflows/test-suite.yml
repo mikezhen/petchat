@@ -1,0 +1,80 @@
+name: Test Suite
+
+# Reusable workflow — called by ci.yml and deploy.yml.
+# Status check names (for branch protection) are prefixed by the
+# caller's job name, e.g. "tests / Unit & component tests".
+
+on:
+  workflow_call:
+
+jobs:
+
+  # ── Layer 1 & 2: unit + component tests ──────────────────────────────────
+  test-app:
+    name: Unit & component tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit & component tests
+        run: npm test
+
+  # ── Cloud Function unit tests ─────────────────────────────────────────────
+  test-functions:
+    name: Cloud Function tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install function dependencies
+        run: npm ci
+        working-directory: functions
+
+      - name: Run Cloud Function tests
+        run: npm test
+        working-directory: functions
+
+  # ── Layer 3: Firestore security rules (requires emulator) ─────────────────
+  test-rules:
+    name: Firestore security rules tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cache Firebase emulator JARs
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/firebase/emulators
+          key: firebase-emulators-${{ runner.os }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Pre-download Firestore emulator JAR
+        run: npx firebase-tools setup:emulators:firestore
+
+      - name: Run Firestore rules tests
+        run: npx firebase-tools emulators:exec --only firestore --project pawcode-test "npm run test:rules"

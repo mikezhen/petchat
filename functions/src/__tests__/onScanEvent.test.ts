@@ -1,13 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // vi.hoisted ensures these are available inside vi.mock factories
-const { mockSendEmail, mockCountGet, mockPetGet, mockOwnerGet, mockWhere } = vi.hoisted(() => {
+const { mockSendEmail, mockPetGet, mockOwnerGet, mockWhere } = vi.hoisted(() => {
   const mockSendEmail = vi.fn().mockResolvedValue({ id: 'email-id' })
-  const mockCountGet = vi.fn()
   const mockPetGet = vi.fn()
   const mockOwnerGet = vi.fn()
   const mockWhere = vi.fn()
-  return { mockSendEmail, mockCountGet, mockPetGet, mockOwnerGet, mockWhere }
+  return { mockSendEmail, mockPetGet, mockOwnerGet, mockWhere }
 })
 
 vi.mock('firebase-admin/app', () => ({ initializeApp: vi.fn() }))

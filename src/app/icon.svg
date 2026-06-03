@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Toe pads: evenly spaced horizontally (20px apart), outer toes lower than inner -->
+  <ellipse cx="20" cy="30" rx="9" ry="8" fill="#f97316"/>
+  <ellipse cx="40" cy="19" rx="9" ry="8" fill="#f97316"/>
+  <ellipse cx="60" cy="19" rx="9" ry="8" fill="#f97316"/>
+  <ellipse cx="80" cy="30" rx="9" ry="8" fill="#f97316"/>
+  <!-- Palm pad -->
+  <ellipse cx="50" cy="64" rx="26" ry="22" fill="#f97316"/>
+</svg>
