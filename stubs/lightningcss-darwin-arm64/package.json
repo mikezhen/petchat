@@ -1,0 +1,6 @@
+{
+  "name": "lightningcss-darwin-arm64",
+  "version": "1.32.0",
+  "description": "Pure-JS dev stub — passes CSS through so macOS dev works without a native binary.",
+  "main": "index.js"
+}

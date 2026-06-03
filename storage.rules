@@ -1,16 +1,18 @@
 rules_version = '2';
-
-// Returns true if uploaded file is an image & its size is below given MB
-function isImageBelowMaxSize(maxSizeMB) {
-	return request.resource.size < maxSizeMB * 1024 * 1024
-  	&& request.resource.contentType.matches('images/.*');
-}
-
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read;
-      allow write: if false && isImageBelowMaxSize(5);
+    match /pets/{petId}/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.resource.size < 10 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+    match /users/{userId}/avatar.jpg {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && request.resource.size < 10 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
     }
   }
 }
