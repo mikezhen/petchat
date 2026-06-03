@@ -141,6 +141,17 @@ describe('PetForm', () => {
     })
   })
 
+  describe('unsaved changes', () => {
+    it('notifies the parent when the form becomes dirty', async () => {
+      const onDirtyChange = vi.fn()
+      renderForm({ onDirtyChange })
+      // Mounts clean.
+      await waitFor(() => expect(onDirtyChange).toHaveBeenCalledWith(false))
+      await userEvent.type(screen.getByLabelText(/pet name/i), 'Buddy')
+      await waitFor(() => expect(onDirtyChange).toHaveBeenCalledWith(true))
+    })
+  })
+
   describe('form submission', () => {
     it('calls onSubmit with form data including primary contact', async () => {
       const onSubmit = vi.fn().mockResolvedValue(undefined)

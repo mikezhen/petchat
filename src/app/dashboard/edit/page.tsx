@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth-context'
 import { getPet, updatePet } from '@/lib/pets'
 import { getUser } from '@/lib/users'
 import PetForm from '@/components/PetForm'
+import { confirmDiscardIfDirty } from '@/lib/useUnsavedChanges'
 import type { Pet, UserProfile } from '@/types'
 import Link from 'next/link'
 
@@ -20,6 +21,7 @@ function EditPageInner() {
   const [pet, setPet] = useState<Pet | null>(null)
   const [ownerProfile, setOwnerProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isDirty, setIsDirty] = useState(false)
 
   useEffect(() => {
     if (!id || !user) return
@@ -42,14 +44,18 @@ function EditPageInner() {
     router.push('/dashboard')
   }
 
+  const handleBack = (e: React.MouseEvent) => {
+    if (!confirmDiscardIfDirty(isDirty)) e.preventDefault()
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">←</Link>
+        <Link href="/dashboard" onClick={handleBack} className="text-gray-600 hover:text-gray-900">←</Link>
         <h1 className="text-lg font-semibold text-gray-900">Edit {pet.name}</h1>
       </header>
       <main className="max-w-lg mx-auto p-4">
-        <PetForm initial={pet} petId={id} ownerProfile={ownerProfile} onSubmit={handleSubmit} submitLabel="Save Changes" />
+        <PetForm initial={pet} petId={id} ownerProfile={ownerProfile} onSubmit={handleSubmit} submitLabel="Save Changes" onDirtyChange={setIsDirty} />
       </main>
     </div>
   )

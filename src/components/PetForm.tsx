@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { getFirebaseStorage } from '@/lib/firebase'
 import Image from 'next/image'
@@ -10,7 +10,7 @@ import { resizeImage } from '@/lib/resizeImage'
 import { cropImage } from '@/lib/cropImage'
 import type { CropArea } from '@/lib/cropImage'
 import ImageCropModal from '@/components/ImageCropModal'
-import SaveReminder from '@/components/SaveReminder'
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 
@@ -21,12 +21,15 @@ interface PetFormProps {
   onSubmit: (data: FormData) => Promise<void>
   submitLabel: string
   hideStatus?: boolean
+  /** Notifies the parent when the form has unsaved changes (for navigation guards). */
+  onDirtyChange?: (dirty: boolean) => void
 }
 
 const BLANK_CONTACT: EmergencyContact = { name: '', phone: '', relationship: '', isPrimary: false, hasWhatsApp: false }
 
-export default function PetForm({ initial, petId, ownerProfile, onSubmit, submitLabel, hideStatus = false }: PetFormProps) {
-  const [form, setForm] = useState<FormData>({
+export default function PetForm({ initial, petId, ownerProfile, onSubmit, submitLabel, hideStatus = false, onDirtyChange }: PetFormProps) {
+  // Snapshot the initial form once on mount; used as the baseline for dirty detection.
+  const [initialForm] = useState<FormData>(() => ({
     name: initial?.name ?? '',
     photoUrl: initial?.photoUrl ?? null,
     breed: initial?.breed ?? '',
@@ -39,15 +42,25 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
     medicalNotes: initial?.medicalNotes ?? '',
     vet: { name: initial?.vet?.name ?? '', phone: formatPhone(initial?.vet?.phone ?? '') },
     contacts: initial?.contacts?.filter(c => !c.isPrimary).map(c => ({ ...c, phone: formatPhone(c.phone) })) ?? [],
-  })
+  }))
+
+  const [form, setForm] = useState<FormData>(initialForm)
+  const [initialJson] = useState(() => JSON.stringify(initialForm))
 
   const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.photoUrl ?? null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
-  const [reminder, setReminder] = useState(0)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
+
+  const isDirty = !!photoFile || JSON.stringify(form) !== initialJson
+
+  useUnsavedChanges(isDirty)
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty)
+  }, [isDirty, onDirtyChange])
 
   const setField = <K extends keyof FormData>(key: K, value: FormData[K]) =>
     setForm(f => ({ ...f, [key]: value }))
@@ -89,7 +102,6 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
       const blob = await resizeImage(cropped, { maxDimension: 1080, quality: 0.82 })
       setPhotoFile(blob)
       setPhotoPreview(URL.createObjectURL(blob))
-      setReminder(Date.now())
     } catch {
       URL.revokeObjectURL(src)
       setError('Failed to process image. Please try again.')
@@ -104,7 +116,6 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    setReminder(0)
     setSaving(true)
     try {
       let photoUrl = form.photoUrl
@@ -141,8 +152,6 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           onCancel={handleCropCancel}
         />
       )}
-
-      <SaveReminder trigger={reminder} />
 
       {/* Photo */}
       <div>

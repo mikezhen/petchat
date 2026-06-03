@@ -15,7 +15,7 @@ import { resizeImage } from '@/lib/resizeImage'
 import { cropImage } from '@/lib/cropImage'
 import type { CropArea } from '@/lib/cropImage'
 import ImageCropModal from '@/components/ImageCropModal'
-import SaveReminder from '@/components/SaveReminder'
+import { useUnsavedChanges, confirmDiscardIfDirty } from '@/lib/useUnsavedChanges'
 
 export default function ProfilePage() {
   const { user, loading } = useAuth()
@@ -26,12 +26,12 @@ export default function ProfilePage() {
   const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
-  const [reminder, setReminder] = useState(0)
   const [profileLoading, setProfileLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
+  const [baseline, setBaseline] = useState<{ fullName: string; phone: string; hasWhatsApp: boolean } | null>(null)
 
   useEffect(() => {
     if (!loading && !user) router.push('/login')
@@ -41,7 +41,9 @@ export default function ProfilePage() {
     if (!user) return
     getUser(user.uid).then(profile => {
       if (profile) {
-        setForm({ fullName: profile.fullName, phone: formatPhone(profile.phone), hasWhatsApp: profile.hasWhatsApp })
+        const loaded = { fullName: profile.fullName, phone: formatPhone(profile.phone), hasWhatsApp: profile.hasWhatsApp }
+        setForm(loaded)
+        setBaseline(loaded)
         setEmail(profile.email)
         setPhotoUrl(profile.photoUrl)
         setPhotoPreview(profile.photoUrl)
@@ -72,7 +74,6 @@ export default function ProfilePage() {
       const blob = await resizeImage(cropped, { maxDimension: 500, quality: 0.85 })
       setPhotoFile(blob)
       setPhotoPreview(URL.createObjectURL(blob))
-      setReminder(Date.now())
     } catch {
       URL.revokeObjectURL(src)
       setError('Failed to process image. Please try again.')
@@ -89,7 +90,6 @@ export default function ProfilePage() {
     if (!user) return
     setError('')
     setSaved(false)
-    setReminder(0)
     setSaving(true)
     try {
       let finalPhotoUrl = photoUrl
@@ -100,11 +100,30 @@ export default function ProfilePage() {
         setPhotoUrl(finalPhotoUrl)
       }
       await updateUser(user.uid, { ...form, photoUrl: finalPhotoUrl })
+      // Reset the dirty baseline so the saved state is no longer "unsaved".
+      setBaseline({ ...form })
+      setPhotoFile(null)
       setSaved(true)
     } catch {
       setError('Failed to save changes. Please try again.')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const isDirty = !!photoFile || (
+    baseline != null && (
+      form.fullName !== baseline.fullName ||
+      form.phone !== baseline.phone ||
+      form.hasWhatsApp !== baseline.hasWhatsApp
+    )
+  )
+
+  useUnsavedChanges(isDirty)
+
+  const handleBack = (e: React.MouseEvent) => {
+    if (!confirmDiscardIfDirty(isDirty)) {
+      e.preventDefault()
     }
   }
 
@@ -117,7 +136,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">←</Link>
+        <Link href="/dashboard" onClick={handleBack} className="text-gray-600 hover:text-gray-900">←</Link>
         <h1 className="text-lg font-semibold text-gray-900">My Profile</h1>
       </header>
 
@@ -128,8 +147,6 @@ export default function ProfilePage() {
           onCancel={handleCropCancel}
         />
       )}
-
-      <SaveReminder trigger={reminder} />
 
       <main className="max-w-lg mx-auto p-4">
         <form onSubmit={handleSubmit} className="space-y-5 bg-white rounded-2xl border border-gray-100 p-6">
