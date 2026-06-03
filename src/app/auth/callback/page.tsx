@@ -4,7 +4,7 @@ export const dynamic = 'force-static'
 
 import { Suspense } from 'react'
 import { useEffect, useState } from 'react'
-import { isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth'
+import { isSignInWithEmailLink, signInWithEmailLink, signOut } from 'firebase/auth'
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { getFirebaseAuth, getFirebaseDb } from '@/lib/firebase'
 import { useRouter } from 'next/navigation'
@@ -22,7 +22,12 @@ async function doSignIn(email: string, href: string): Promise<void> {
   const userSnap = await getDoc(doc(db, 'users', result.user.uid))
   if (!userSnap.exists()) {
     const pendingStr = localStorage.getItem(PENDING_PROFILE_KEY)
-    const pending = pendingStr ? JSON.parse(pendingStr) : null
+    if (!pendingStr) {
+      // No registration data — this email has no account. Undo the auth and reject.
+      await signOut(auth)
+      throw new Error('No account found for this email. Please register first.')
+    }
+    const pending = JSON.parse(pendingStr)
     await setDoc(doc(db, 'users', result.user.uid), {
       fullName: pending?.fullName ?? '',
       phone: pending?.phone ?? '',
@@ -132,18 +137,39 @@ function CallbackInner() {
     )
   }
 
+  const noAccount = error.startsWith('No account found')
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm p-8 text-center space-y-4">
         <span className="text-4xl" aria-hidden="true">⚠️</span>
-        <h1 className="text-xl font-bold text-gray-900">Sign-in failed</h1>
+        <h1 className="text-xl font-bold text-gray-900">
+          {noAccount ? 'No account found' : 'Sign-in failed'}
+        </h1>
         <p className="text-sm text-gray-600">{error}</p>
-        <a
-          href="/login"
-          className="block w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg py-2.5 text-center transition-colors"
-        >
-          Back To Login
-        </a>
+        {noAccount ? (
+          <div className="flex flex-col gap-2">
+            <a
+              href="/register"
+              className="block w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg py-2.5 text-center transition-colors"
+            >
+              Create An Account
+            </a>
+            <a
+              href="/login"
+              className="block w-full border border-gray-200 text-gray-700 font-semibold rounded-lg py-2.5 text-center hover:bg-gray-100 transition-colors"
+            >
+              Try A Different Email
+            </a>
+          </div>
+        ) : (
+          <a
+            href="/login"
+            className="block w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg py-2.5 text-center transition-colors"
+          >
+            Back To Login
+          </a>
+        )}
       </div>
     </div>
   )
