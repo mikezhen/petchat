@@ -21,53 +21,11 @@ jobs:
 
   # ── Build (gates on all three test jobs) ──────────────────────────────────
   build:
-    name: Type check, lint & build
-    runs-on: ubuntu-latest
     needs: tests
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: TypeScript type check
-        run: npx tsc --noEmit
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Build static frontend
-        run: npm run build
-        env:
-          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY_PAWCODE_85F05 }}
-          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: pawcode-85f05.firebaseapp.com
-          NEXT_PUBLIC_FIREBASE_PROJECT_ID: pawcode-85f05
-          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: pawcode-85f05.firebasestorage.app
-          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID_PAWCODE_85F05 }}
-          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID_PAWCODE_85F05 }}
-          NEXT_PUBLIC_APP_URL: https://pawcode-85f05.web.app
-
-      - name: Install function dependencies
-        run: npm ci
-        working-directory: functions
-
-      - name: Compile Cloud Functions
-        run: npm run build
-        working-directory: functions
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: build-output
-          path: |
-            out/
-            functions/lib/
-          retention-days: 1
+    uses: ./.github/workflows/build-suite.yml
+    with:
+      upload_artifacts: true
+    secrets: inherit
 
   # ── Deploy (only runs if build — and therefore all tests — passed) ─────────
   deploy:
