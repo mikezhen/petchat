@@ -52,11 +52,21 @@ jobs:
           NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID_PAWCODE_85F05 }}
           NEXT_PUBLIC_APP_URL: https://pawcode-85f05.web.app
 
-      - name: Upload build artifact
+      - name: Install function dependencies
+        run: npm ci
+        working-directory: functions
+
+      - name: Compile Cloud Functions
+        run: npm run build
+        working-directory: functions
+
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: next-out
-          path: out/
+          name: build-output
+          path: |
+            out/
+            functions/lib/
           retention-days: 1
 
   # ── Deploy (only runs if build — and therefore all tests — passed) ─────────
@@ -75,18 +85,13 @@ jobs:
       - name: Install app dependencies
         run: npm ci
 
-      - name: Download build artifact
+      - name: Download build artifacts
         uses: actions/download-artifact@v7
         with:
-          name: next-out
-          path: out/
+          name: build-output
 
       - name: Install function dependencies
         run: npm ci
-        working-directory: functions
-
-      - name: Compile Cloud Functions
-        run: npm run build
         working-directory: functions
 
       - uses: google-github-actions/auth@v3
