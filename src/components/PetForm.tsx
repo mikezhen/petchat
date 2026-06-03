@@ -7,6 +7,9 @@ import Image from 'next/image'
 import type { Pet, EmergencyContact, PetGender, UserProfile } from '@/types'
 import { formatPhone } from '@/lib/formatPhone'
 import { resizeImage } from '@/lib/resizeImage'
+import { cropImage } from '@/lib/cropImage'
+import type { CropArea } from '@/lib/cropImage'
+import ImageCropModal from '@/components/ImageCropModal'
 
 type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 
@@ -39,6 +42,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
 
   const [photoFile, setPhotoFile] = useState<Blob | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.photoUrl ?? null)
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
@@ -61,18 +65,37 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
   const removeContact = (i: number) =>
     setForm(f => ({ ...f, contacts: f.contacts.filter((_, idx) => idx !== i) }))
 
-  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    e.target.value = ''
     if (file.size > 10 * 1024 * 1024) {
       setError('Photo must be under 10 MB. Please choose a smaller image.')
-      e.target.value = ''
       return
     }
     setError('')
-    const blob = await resizeImage(file, { maxDimension: 1080, quality: 0.82 })
-    setPhotoFile(blob)
-    setPhotoPreview(URL.createObjectURL(blob))
+    setCropSrc(URL.createObjectURL(file))
+  }
+
+  const handleCropConfirm = async (area: CropArea) => {
+    if (!cropSrc) return
+    const src = cropSrc
+    setCropSrc(null)
+    try {
+      const cropped = await cropImage(src, area)
+      URL.revokeObjectURL(src)
+      const blob = await resizeImage(cropped, { maxDimension: 1080, quality: 0.82 })
+      setPhotoFile(blob)
+      setPhotoPreview(URL.createObjectURL(blob))
+    } catch {
+      URL.revokeObjectURL(src)
+      setError('Failed to process image. Please try again.')
+    }
+  }
+
+  const handleCropCancel = () => {
+    if (cropSrc) URL.revokeObjectURL(cropSrc)
+    setCropSrc(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,6 +128,16 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
 
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          aspect={1}
+          cropShape="rect"
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
+
       {/* Photo */}
       <div>
         <div
@@ -113,7 +146,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, submit
           tabIndex={0}
           aria-label="Upload pet photo"
           onKeyDown={e => e.key === 'Enter' && fileRef.current?.click()}
-          className="w-full aspect-video bg-gray-200 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative hover:bg-gray-300 transition-colors"
+          className="w-full aspect-square bg-gray-200 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden relative hover:bg-gray-300 transition-colors"
         >
           {photoPreview ? (
             <>

@@ -120,6 +120,25 @@ describe('PetForm', () => {
       fireEvent.change(input, { target: { files: [bigFile] } })
       expect(await screen.findByText(/under 10 mb/i)).toBeInTheDocument()
     })
+
+    it('opens the crop modal when a valid image is selected', async () => {
+      renderForm()
+      const input = document.querySelector('input[type="file"]') as HTMLInputElement
+      const file = new File(['img'], 'pet.jpg', { type: 'image/jpeg' })
+      fireEvent.change(input, { target: { files: [file] } })
+      expect(await screen.findByText(/zoom/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /apply/i })).toBeInTheDocument()
+    })
+
+    it('closes the crop modal without changing the photo when cancelled', async () => {
+      renderForm()
+      const input = document.querySelector('input[type="file"]') as HTMLInputElement
+      const file = new File(['img'], 'pet.jpg', { type: 'image/jpeg' })
+      fireEvent.change(input, { target: { files: [file] } })
+      const cancel = await screen.findByRole('button', { name: /cancel/i })
+      await userEvent.click(cancel)
+      await waitFor(() => expect(screen.queryByText(/zoom/i)).not.toBeInTheDocument())
+    })
   })
 
   describe('form submission', () => {

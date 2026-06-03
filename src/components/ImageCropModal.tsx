@@ -9,9 +9,17 @@ interface Props {
   imageSrc: string
   onConfirm: (area: CropArea) => void
   onCancel: () => void
+  aspect?: number
+  cropShape?: 'round' | 'rect'
 }
 
-export default function AvatarCropModal({ imageSrc, onConfirm, onCancel }: Props) {
+export default function ImageCropModal({
+  imageSrc,
+  onConfirm,
+  onCancel,
+  aspect = 1,
+  cropShape = 'round',
+}: Props) {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
@@ -30,8 +38,8 @@ export default function AvatarCropModal({ imageSrc, onConfirm, onCancel }: Props
             image={imageSrc}
             crop={crop}
             zoom={zoom}
-            aspect={1}
-            cropShape="round"
+            aspect={aspect}
+            cropShape={cropShape}
             showGrid={false}
             onCropChange={setCrop}
             onZoomChange={setZoom}

@@ -14,7 +14,7 @@ import { formatPhone } from '@/lib/formatPhone'
 import { resizeImage } from '@/lib/resizeImage'
 import { cropImage } from '@/lib/cropImage'
 import type { CropArea } from '@/lib/cropImage'
-import AvatarCropModal from '@/components/AvatarCropModal'
+import ImageCropModal from '@/components/ImageCropModal'
 
 export default function ProfilePage() {
   const { user, loading } = useAuth()
@@ -118,7 +118,7 @@ export default function ProfilePage() {
       </header>
 
       {cropSrc && (
-        <AvatarCropModal
+        <ImageCropModal
           imageSrc={cropSrc}
           onConfirm={handleCropConfirm}
           onCancel={handleCropCancel}
