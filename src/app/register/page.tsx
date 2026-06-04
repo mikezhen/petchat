@@ -7,6 +7,7 @@ import { sendSignInLinkToEmail } from 'firebase/auth'
 import type { ActionCodeSettings } from 'firebase/auth'
 import { getFirebaseAuth } from '@/lib/firebase'
 import { EMAIL_STORAGE_KEY, PENDING_PROFILE_KEY } from '@/lib/authConstants'
+import { useSendCooldown } from '@/lib/useSendCooldown'
 import Link from 'next/link'
 import { formatPhone } from '@/lib/formatPhone'
 
@@ -15,10 +16,15 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
+  const cooldown = useSendCooldown()
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    if (!cooldown.canSend()) {
+      setError('Please wait a moment before requesting another link.')
+      return
+    }
     setLoading(true)
     try {
       const settings: ActionCodeSettings = {
@@ -26,6 +32,7 @@ export default function RegisterPage() {
         handleCodeInApp: true,
       }
       await sendSignInLinkToEmail(getFirebaseAuth(), form.email, settings)
+      cooldown.markSent()
       localStorage.setItem(EMAIL_STORAGE_KEY, form.email)
       localStorage.setItem(PENDING_PROFILE_KEY, JSON.stringify({ fullName: form.fullName, phone: form.phone }))
       setSent(true)

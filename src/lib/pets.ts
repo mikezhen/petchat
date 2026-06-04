@@ -1,9 +1,21 @@
 import {
-  collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
+  collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc,
   query, where, orderBy, serverTimestamp, Timestamp,
 } from 'firebase/firestore'
-import { getFirebaseDb } from './firebase'
+import { ref, deleteObject } from 'firebase/storage'
+import { getFirebaseDb, getFirebaseStorage } from './firebase'
 import type { Pet, EmergencyContact, PetStatus } from '@/types'
+
+/** Generates a pet document ID without writing, so the same ID can be used for
+ *  the Storage photo path before the pet doc itself is created. */
+export function newPetId(): string {
+  return doc(collection(getFirebaseDb(), 'pets')).id
+}
+
+/** Owner-scoped Storage path for a pet's photo. */
+export function petPhotoPath(petId: string, ownerUid: string): string {
+  return `pets/${petId}/${ownerUid}/photo.jpg`
+}
 
 export function toPet(id: string, data: Record<string, unknown>): Pet {
   return {
@@ -43,16 +55,17 @@ export async function getPetsByOwner(ownerId: string): Promise<Pet[]> {
 }
 
 export async function createPet(
+  petId: string,
   ownerId: string,
   data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
-  const ref = await addDoc(collection(getFirebaseDb(), 'pets'), {
+  await setDoc(doc(getFirebaseDb(), 'pets', petId), {
     ...data,
     ownerId,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
-  return ref.id
+  return petId
 }
 
 export async function updatePet(
@@ -65,6 +78,14 @@ export async function updatePet(
   })
 }
 
-export async function deletePet(petId: string): Promise<void> {
+export async function deletePet(petId: string, ownerUid: string): Promise<void> {
+  // Best-effort: remove the pet's photo so it doesn't linger as an orphaned
+  // (but still billed) Storage object. Non-fatal if there's no photo, it's a
+  // legacy-path image, or it's already gone.
+  try {
+    await deleteObject(ref(getFirebaseStorage(), petPhotoPath(petId, ownerUid)))
+  } catch {
+    // ignore — proceed to delete the document regardless
+  }
   await deleteDoc(doc(getFirebaseDb(), 'pets', petId))
 }

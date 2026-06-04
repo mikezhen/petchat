@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword, sendSignInLinkToEmail } from 'firebase/auth
 import type { ActionCodeSettings } from 'firebase/auth'
 import { getFirebaseAuth } from '@/lib/firebase'
 import { EMAIL_STORAGE_KEY } from '@/lib/authConstants'
+import { useSendCooldown } from '@/lib/useSendCooldown'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -22,6 +23,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [sent, setSent] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const cooldown = useSendCooldown()
 
   useEffect(() => {
     if (!authLoading && user) router.replace('/dashboard')
@@ -46,6 +48,10 @@ export default function LoginPage() {
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    if (!cooldown.canSend()) {
+      setError('Please wait a moment before requesting another link.')
+      return
+    }
     setSubmitting(true)
     try {
       const settings: ActionCodeSettings = {
@@ -53,6 +59,7 @@ export default function LoginPage() {
         handleCodeInApp: true,
       }
       await sendSignInLinkToEmail(getFirebaseAuth(), email, settings)
+      cooldown.markSent()
       localStorage.setItem(EMAIL_STORAGE_KEY, email)
       setSent(true)
     } catch (err) {

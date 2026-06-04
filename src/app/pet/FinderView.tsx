@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { getFirebaseDb } from '@/lib/firebase'
 import type { Pet, EmergencyContact } from '@/types'
 import { Timestamp } from 'firebase/firestore'
@@ -229,13 +229,18 @@ export default function FinderView({ petId }: { petId: string }) {
           })
         }
 
-        await addDoc(
-          collection(getFirebaseDb(), 'pets', petId, 'scanEvents'),
+        // Deterministic per-minute document ID: the security rules only allow
+        // a create when the ID matches the current minute bucket, so repeat
+        // scans within the same minute are denied (rate limit) rather than
+        // creating unbounded documents.
+        const bucketId = String(Math.floor(Date.now() / 60000))
+        await setDoc(
+          doc(getFirebaseDb(), 'pets', petId, 'scanEvents', bucketId),
           {
             scannedAt: serverTimestamp(),
             latitude,
             longitude,
-            userAgent: navigator.userAgent,
+            userAgent: navigator.userAgent.slice(0, 512),
           }
         )
       } catch {

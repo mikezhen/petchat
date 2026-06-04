@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
-import { createPet, getPetsByOwner } from '@/lib/pets'
+import { createPet, getPetsByOwner, newPetId } from '@/lib/pets'
 import { getUser } from '@/lib/users'
 import { ACTIVE_PET_LIMIT, TOTAL_PET_LIMIT } from '@/lib/petLimits'
 import PetForm from '@/components/PetForm'
@@ -21,6 +21,7 @@ export default function NewPetPage() {
   const [limitError, setLimitError] = useState<string | null>(null)
   const [ready, setReady] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
+  const [newId] = useState(() => newPetId())
   const leave = useUnsavedChanges(isDirty)
 
   useEffect(() => {
@@ -44,8 +45,8 @@ export default function NewPetPage() {
 
   const handleSubmit = async (data: Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>): Promise<string | void> => {
     if (!user) return
-    const petId = await createPet(user.uid, data)
-    return `/dashboard/qr?id=${petId}`
+    await createPet(newId, user.uid, data)
+    return `/dashboard/qr?id=${newId}`
   }
 
   if (loading || !user || !ready) return null
@@ -84,6 +85,8 @@ export default function NewPetPage() {
           </div>
         ) : (
           <PetForm
+            petId={newId}
+            ownerUid={user.uid}
             ownerProfile={ownerProfile!}
             onSubmit={handleSubmit}
             hideStatus
