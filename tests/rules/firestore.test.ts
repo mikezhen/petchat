@@ -172,6 +172,53 @@ describe('pets/{petId}', () => {
   })
 })
 
+// ─── field-size limits ──────────────────────────────────────────────────────
+
+describe('field-size limits', () => {
+  const bigText = (n: number) => 'x'.repeat(n)
+
+  it('rejects a pet with an over-long name', async () => {
+    const db = asUser('alice')
+    await assertFails(setDoc(doc(db, 'pets', 'pet-x'), {
+      ownerId: 'alice', name: bigText(101), status: 'active',
+    }))
+  })
+
+  it('rejects a pet with an over-long description', async () => {
+    const db = asUser('alice')
+    await assertFails(setDoc(doc(db, 'pets', 'pet-x'), {
+      ownerId: 'alice', name: 'Max', status: 'active', description: bigText(2001),
+    }))
+  })
+
+  it('rejects a pet update with over-long medical notes', async () => {
+    await seedPet('pet-1', 'alice')
+    const db = asUser('alice')
+    await assertFails(updateDoc(doc(db, 'pets', 'pet-1'), { medicalNotes: bigText(5001) }))
+  })
+
+  it('rejects a pet with too many contacts', async () => {
+    const db = asUser('alice')
+    await assertFails(setDoc(doc(db, 'pets', 'pet-x'), {
+      ownerId: 'alice', name: 'Max', status: 'active', contacts: [1, 2, 3, 4, 5, 6],
+    }))
+  })
+
+  it('allows a pet whose text is exactly at the limit', async () => {
+    const db = asUser('alice')
+    await assertSucceeds(setDoc(doc(db, 'pets', 'pet-ok'), {
+      ownerId: 'alice', name: 'Max', status: 'active', description: bigText(2000),
+    }))
+  })
+
+  it('rejects a user with an over-long full name', async () => {
+    const db = asUser('alice')
+    await assertFails(setDoc(doc(db, 'users', 'alice'), {
+      fullName: bigText(101), email: 'a@b.com',
+    }))
+  })
+})
+
 // ─── pets/{petId}/scanEvents ────────────────────────────────────────────────
 
 describe('pets/{petId}/scanEvents', () => {

@@ -75,7 +75,7 @@ export default function DashboardPage() {
     if (!confirmDelete) return
     setDeleting(true)
     try {
-      await deletePet(confirmDelete.id)
+      await deletePet(confirmDelete.id, confirmDelete.ownerId)
       setPets(ps => ps.filter(p => p.id !== confirmDelete.id))
       setConfirmDelete(null)
     } finally {
