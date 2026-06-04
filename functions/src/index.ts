@@ -1,10 +1,16 @@
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore, Timestamp } from 'firebase-admin/firestore'
+import { setGlobalOptions } from 'firebase-functions/v2'
 // import { onDocumentCreated } from 'firebase-functions/v2/firestore' // re-enable with trigger below
 // import { defineSecret } from 'firebase-functions/params'            // re-enable with trigger below
 import { Resend } from 'resend'
 
 initializeApp()
+
+// Cap concurrency across every function so a traffic spike or abuse can't fan
+// out into runaway invocation cost. Tune per-function with their own options
+// if a specific workload needs more headroom.
+setGlobalOptions({ maxInstances: 10 })
 
 // const resendApiKey = defineSecret('resend-api-key') // re-enable with trigger below
 
