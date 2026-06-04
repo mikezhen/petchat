@@ -43,8 +43,21 @@ service cloud.firestore {
       allow delete: if request.auth != null
                     && resource.data.ownerId == request.auth.uid;
 
+      // Public scan capture for analytics, rate-limited by the rules alone:
+      //  - the doc ID must be the current (or previous) minute bucket, so a
+      //    repeat scan in the same minute targets the same ID and is denied as
+      //    an update — capping records to ~1-2 per pet per minute;
+      //  - the pet must exist, which blocks fabricated-petId spam (pet IDs are
+      //    unguessable random strings);
+      //  - the payload is constrained to the expected shape and size.
       match /scanEvents/{scanId} {
-        allow create: if true;
+        allow create: if
+          (scanId == string(int(request.time.toMillis() / 60000)) ||
+           scanId == string(int(request.time.toMillis() / 60000) - 1))
+          && exists(/databases/$(database)/documents/pets/$(petId))
+          && request.resource.data.keys().hasOnly(['scannedAt', 'latitude', 'longitude', 'userAgent'])
+          && request.resource.data.scannedAt is timestamp
+          && request.resource.data.get('userAgent', '').size() <= 512;
         allow read: if request.auth != null
                     && get(/databases/$(database)/documents/pets/$(petId)).data.ownerId == request.auth.uid;
       }
