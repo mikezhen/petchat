@@ -67,7 +67,7 @@ function EditPageInner() {
       />
 
       <main className="max-w-lg mx-auto p-4">
-        <PetForm initial={pet} petId={id} ownerProfile={ownerProfile} onSubmit={handleSubmit} onDirtyChange={setIsDirty} />
+        <PetForm initial={pet} petId={id} ownerUid={pet.ownerId} ownerProfile={ownerProfile} onSubmit={handleSubmit} onDirtyChange={setIsDirty} />
       </main>
     </div>
   )

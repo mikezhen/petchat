@@ -172,15 +172,78 @@ describe('pets/{petId}', () => {
   })
 })
 
+// ─── field-size limits ──────────────────────────────────────────────────────
+
+describe('field-size limits', () => {
+  const bigText = (n: number) => 'x'.repeat(n)
+
+  it('rejects a pet with an over-long name', async () => {
+    const db = asUser('alice')
+    await assertFails(setDoc(doc(db, 'pets', 'pet-x'), {
+      ownerId: 'alice', name: bigText(101), status: 'active',
+    }))
+  })
+
+  it('rejects a pet with an over-long description', async () => {
+    const db = asUser('alice')
+    await assertFails(setDoc(doc(db, 'pets', 'pet-x'), {
+      ownerId: 'alice', name: 'Max', status: 'active', description: bigText(2001),
+    }))
+  })
+
+  it('rejects a pet update with over-long medical notes', async () => {
+    await seedPet('pet-1', 'alice')
+    const db = asUser('alice')
+    await assertFails(updateDoc(doc(db, 'pets', 'pet-1'), { medicalNotes: bigText(5001) }))
+  })
+
+  it('rejects a pet with too many contacts', async () => {
+    const db = asUser('alice')
+    await assertFails(setDoc(doc(db, 'pets', 'pet-x'), {
+      ownerId: 'alice', name: 'Max', status: 'active', contacts: [1, 2, 3, 4, 5, 6],
+    }))
+  })
+
+  it('allows a pet whose text is exactly at the limit', async () => {
+    const db = asUser('alice')
+    await assertSucceeds(setDoc(doc(db, 'pets', 'pet-ok'), {
+      ownerId: 'alice', name: 'Max', status: 'active', description: bigText(2000),
+    }))
+  })
+
+  it('rejects a user with an over-long full name', async () => {
+    const db = asUser('alice')
+    await assertFails(setDoc(doc(db, 'users', 'alice'), {
+      fullName: bigText(101), email: 'a@b.com',
+    }))
+  })
+})
+
 // ─── pets/{petId}/scanEvents ────────────────────────────────────────────────
 
 describe('pets/{petId}/scanEvents', () => {
-  describe('creates', () => {
-    it('unauthenticated user can write a scan event', async () => {
+  // The rules require the document ID to be the current minute bucket.
+  const bucketId = () => String(Math.floor(Date.now() / 60000))
+
+  describe('creates (rate-limited by time-bucket ID)', () => {
+    it('allows a scan event written to the current-minute bucket ID', async () => {
       await seedPet('pet-1', 'alice')
       const db = asGuest()
       await assertSucceeds(
-        addDoc(collection(db, 'pets', 'pet-1', 'scanEvents'), {
+        setDoc(doc(db, 'pets', 'pet-1', 'scanEvents', bucketId()), {
+          scannedAt: new Date(),
+          latitude: null,
+          longitude: null,
+          userAgent: 'test',
+        })
+      )
+    })
+
+    it('rejects a scan event with a non-bucket (random) document ID', async () => {
+      await seedPet('pet-1', 'alice')
+      const db = asGuest()
+      await assertFails(
+        setDoc(doc(db, 'pets', 'pet-1', 'scanEvents', 'arbitrary-id'), {
           scannedAt: new Date(),
           latitude: null,
           longitude: null,
@@ -188,14 +251,40 @@ describe('pets/{petId}/scanEvents', () => {
       )
     })
 
-    it('authenticated non-owner can write a scan event', async () => {
-      await seedPet('pet-1', 'alice')
-      const db = asUser('bob')
-      await assertSucceeds(
-        addDoc(collection(db, 'pets', 'pet-1', 'scanEvents'), {
+    it('rejects a scan event for a non-existent pet', async () => {
+      const db = asGuest()
+      await assertFails(
+        setDoc(doc(db, 'pets', 'ghost-pet', 'scanEvents', bucketId()), {
           scannedAt: new Date(),
-          latitude: 32.7,
-          longitude: -117.1,
+          latitude: null,
+          longitude: null,
+        })
+      )
+    })
+
+    it('rejects a second write to the same minute bucket (rate limit)', async () => {
+      await seedPet('pet-1', 'alice')
+      const db = asGuest()
+      const id = bucketId()
+      await assertSucceeds(
+        setDoc(doc(db, 'pets', 'pet-1', 'scanEvents', id), {
+          scannedAt: new Date(), latitude: null, longitude: null, userAgent: 'test',
+        })
+      )
+      // Same ID again within the minute is an update, which is denied.
+      await assertFails(
+        setDoc(doc(db, 'pets', 'pet-1', 'scanEvents', id), {
+          scannedAt: new Date(), latitude: 1, longitude: 1, userAgent: 'test',
+        })
+      )
+    })
+
+    it('rejects a scan event with unexpected extra fields', async () => {
+      await seedPet('pet-1', 'alice')
+      const db = asGuest()
+      await assertFails(
+        setDoc(doc(db, 'pets', 'pet-1', 'scanEvents', bucketId()), {
+          scannedAt: new Date(), latitude: null, longitude: null, evil: 'x'.repeat(100000),
         })
       )
     })

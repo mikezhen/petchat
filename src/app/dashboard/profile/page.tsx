@@ -193,6 +193,7 @@ export default function ProfilePage() {
               id="fullName"
               type="text"
               required
+              maxLength={100}
               autoComplete="name"
               value={form.fullName}
               onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}

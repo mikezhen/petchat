@@ -33,6 +33,7 @@ const noop = vi.fn().mockResolvedValue(undefined)
 function renderForm(props: Partial<Parameters<typeof PetForm>[0]> = {}) {
   return render(
     <PetForm
+      ownerUid="owner-1"
       ownerProfile={ownerProfile}
       onSubmit={noop}
       {...props}

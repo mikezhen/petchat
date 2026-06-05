@@ -6,6 +6,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { getFirebaseStorage } from '@/lib/firebase'
 import Image from 'next/image'
 import type { Pet, EmergencyContact, PetGender, UserProfile } from '@/types'
+import { petPhotoPath } from '@/lib/pets'
 import { formatPhone } from '@/lib/formatPhone'
 import { resizeImage } from '@/lib/resizeImage'
 import { cropImage } from '@/lib/cropImage'
@@ -19,6 +20,8 @@ type FormData = Omit<Pet, 'id' | 'ownerId' | 'createdAt' | 'updatedAt'>
 interface PetFormProps {
   initial?: Partial<FormData>
   petId?: string
+  /** UID of the pet's owner — used for the owner-scoped photo Storage path. */
+  ownerUid: string
   ownerProfile: Pick<UserProfile, 'fullName' | 'phone' | 'hasWhatsApp'>
   /** Persists the pet and returns the path to navigate to after the "Saved" animation. */
   onSubmit: (data: FormData) => Promise<string | void>
@@ -29,7 +32,7 @@ interface PetFormProps {
 
 const BLANK_CONTACT: EmergencyContact = { name: '', phone: '', relationship: '', isPrimary: false, hasWhatsApp: false }
 
-export default function PetForm({ initial, petId, ownerProfile, onSubmit, hideStatus = false, onDirtyChange }: PetFormProps) {
+export default function PetForm({ initial, petId, ownerUid, ownerProfile, onSubmit, hideStatus = false, onDirtyChange }: PetFormProps) {
   const router = useRouter()
   // Snapshot the initial form once on mount; used as the baseline for dirty detection.
   const [initialForm] = useState<FormData>(() => ({
@@ -122,9 +125,8 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, hideSt
     setStatus('saving')
     try {
       let photoUrl = form.photoUrl
-      if (photoFile) {
-        const id = petId ?? `temp-${Date.now()}`
-        const storageRef = ref(getFirebaseStorage(), `pets/${id}/photo.jpg`)
+      if (photoFile && petId) {
+        const storageRef = ref(getFirebaseStorage(), petPhotoPath(petId, ownerUid))
         await uploadBytes(storageRef, photoFile, { contentType: 'image/jpeg' })
         photoUrl = await getDownloadURL(storageRef)
       }
@@ -194,6 +196,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, hideSt
         <input
           id="pet-name"
           type="text" required
+          maxLength={100}
           value={form.name}
           onChange={e => setField('name', e.target.value)}
           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -302,6 +305,7 @@ export default function PetForm({ initial, petId, ownerProfile, onSubmit, hideSt
         <textarea
           id="pet-description"
           rows={3}
+          maxLength={2000}
           value={form.description}
           onChange={e => setField('description', e.target.value)}
           placeholder="Personality, habits, how to approach them…"
