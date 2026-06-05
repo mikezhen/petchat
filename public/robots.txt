@@ -1,0 +1,6 @@
+# The finder page (/pet) shows an owner's contact details, and /dashboard
+# and /auth are the private app. Keep all of them out of search indexes.
+User-agent: *
+Disallow: /pet
+Disallow: /dashboard
+Disallow: /auth
