@@ -14,6 +14,7 @@ import { resizeImage } from '@/lib/resizeImage'
 import { cropImage } from '@/lib/cropImage'
 import type { CropArea } from '@/lib/cropImage'
 import ImageCropModal from '@/components/ImageCropModal'
+import BackArrow from '@/components/BackArrow'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal'
 import SaveButton, { type SaveStatus } from '@/components/SaveButton'
 import { useUnsavedChanges } from '@/lib/useUnsavedChanges'
@@ -133,9 +134,9 @@ export default function ProfilePage() {
           type="button"
           onClick={leave.requestLeave}
           aria-label="Back to dashboard"
-          className="text-gray-600 hover:text-gray-900"
+          className="-ml-1 text-gray-700 hover:text-gray-900"
         >
-          ←
+          <BackArrow />
         </button>
         <h1 className="text-lg font-semibold text-gray-900">My Profile</h1>
       </header>

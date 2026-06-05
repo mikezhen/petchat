@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth-context'
 import { getPet, updatePet } from '@/lib/pets'
 import { getUser } from '@/lib/users'
 import PetForm from '@/components/PetForm'
+import BackArrow from '@/components/BackArrow'
 import UnsavedChangesModal from '@/components/UnsavedChangesModal'
 import { useUnsavedChanges } from '@/lib/useUnsavedChanges'
 import type { Pet, UserProfile } from '@/types'
@@ -52,9 +53,9 @@ function EditPageInner() {
           type="button"
           onClick={leave.requestLeave}
           aria-label="Back to dashboard"
-          className="text-gray-600 hover:text-gray-900"
+          className="-ml-1 text-gray-700 hover:text-gray-900"
         >
-          ←
+          <BackArrow />
         </button>
         <h1 className="text-lg font-semibold text-gray-900">Edit {pet.name}</h1>
       </header>
