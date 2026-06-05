@@ -9,6 +9,7 @@ import { doc, getDoc } from 'firebase/firestore'
 import { getFirebaseDb } from '@/lib/firebase'
 import QRCode from 'qrcode'
 import Link from 'next/link'
+import BackArrow from '@/components/BackArrow'
 
 function QRPageInner() {
   const params = useSearchParams()
@@ -39,7 +40,7 @@ function QRPageInner() {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">←</Link>
+        <Link href="/dashboard" aria-label="Back to dashboard" className="-ml-1 text-gray-700 hover:text-gray-900"><BackArrow /></Link>
         <div>
           <h1 className="text-lg font-semibold text-gray-900">
             {petName ? `${petName}'s QR Code` : 'QR Code'}
